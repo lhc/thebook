@@ -4,6 +4,7 @@ from django.core.management.base import BaseCommand
 from faker import Faker
 
 from moneybook.bookkeeping.models import Account, Category, Transaction
+from moneybook.users.models import User
 
 
 class Command(BaseCommand):
@@ -13,6 +14,7 @@ class Command(BaseCommand):
         accounts = Account.objects.bulk_create(
             [Account(name="Capybara Bank"), Account(name="Paypal")]
         )
+        user = User.objects.create(email="testuser@fakedata.com")
         categories = Category.objects.bulk_create(
             [
                 Category(name="groceries"),
@@ -35,6 +37,7 @@ class Command(BaseCommand):
                     notes=fake.sentence(),
                     account=random.choice(accounts),
                     category=random.choice(categories),
+                    created_by=user,
                 )
             )
         Transaction.objects.bulk_create(transactions)

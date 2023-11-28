@@ -1,0 +1,28 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<table>
+  <thead>
+    <th>#</th>
+    <th>Date</th>
+    <th>Amount</th>
+    <th>Description</th>
+    <th>Account</th>
+    <th>Category</th>
+    <th>Balance</th>
+  </thead>
+  <tbody>
+  {% for transaction in transactions %}
+    <tr>
+      <td>{{ transaction.id }}</td>
+      <td>{{ transaction.date }}</td>
+      <td>{{ transaction.amount }}</td>
+      <td>{{ transaction.description }}</td>
+      <td>{{ transaction.account }}</td>
+      <td>{{ transaction.category }}</td>
+      <td></td>
+    </tr>
+  {% endfor %}
+  </tbody>
+<table>
+{% endblock %}
