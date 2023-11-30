@@ -1,0 +1,32 @@
+# fly.toml app configuration file generated for moneybook on 2023-11-28T17:42:39-03:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = "moneybook"
+primary_region = "gru"
+console_command = "/code/manage.py shell"
+
+[build]
+
+[env]
+  ALLOWED_HOSTS = "moneybook.fly.dev"
+  DEBUG = "1"
+  PORT = "8000"
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ["app"]
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 1024
+
+[[statics]]
+  guest_path = "/code/static"
+  url_prefix = "/static/"
