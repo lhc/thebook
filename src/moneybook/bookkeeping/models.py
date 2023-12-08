@@ -64,5 +64,8 @@ class Transaction(models.Model):
 
     objects = TransactionManager()
 
+    class Meta:
+        ordering = ["date"]
+
     def __str__(self):
         return f"{self.description} ({self.amount:.2f})"

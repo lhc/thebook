@@ -11,7 +11,7 @@ def transactions(request):
         "description",
         "account__name",
         "category__name",
-    ).order_by("date")
+    )
 
     transactions_balance = 0
     for transaction in transactions:
