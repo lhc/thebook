@@ -1,7 +1,7 @@
 {% extends 'core/base.html' %}
 
 {% block content %}
-<table>
+<table class="table table-striped table-hover table-sm">
   <thead>
     <th>#</th>
     <th>Date</th>
@@ -16,11 +16,11 @@
     <tr>
       <td>{{ transaction.id }}</td>
       <td>{{ transaction.date }}</td>
-      <td>{{ transaction.amount }}</td>
+      <td{% if transaction.amount < 0%} class="text-danger"{% endif %}>{{ transaction.amount }}</td>
       <td>{{ transaction.description }}</td>
-      <td>{{ transaction.account }}</td>
-      <td>{{ transaction.category }}</td>
-      <td></td>
+      <td>{{ transaction.account__name }}</td>
+      <td>{{ transaction.category__name }}</td>
+      <td{% if transaction.balance < 0%} class="text-danger"{% endif %}>{{ transaction.balance }}</td>
     </tr>
   {% endfor %}
   </tbody>
