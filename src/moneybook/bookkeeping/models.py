@@ -2,6 +2,8 @@ from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext as _
 
+from moneybook.bookkeeping.managers import TransactionManager
+
 
 class Account(models.Model):
     name = models.CharField(max_length=64, unique=True)
@@ -59,6 +61,8 @@ class Transaction(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
     )
+
+    objects = TransactionManager()
 
     def __str__(self):
         return f"{self.description} ({self.amount:.2f})"
