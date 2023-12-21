@@ -14,7 +14,7 @@
   <tbody>
   {% for transaction in transactions %}
     <tr>
-      <td>{{ transaction.id }}</td>
+      <td>{{ transaction.reference }}</td>
       <td>{{ transaction.date }}</td>
       <td{% if transaction.amount < 0%} class="text-danger"{% endif %}>{{ transaction.amount }}</td>
       <td>{{ transaction.description }}</td>

@@ -42,6 +42,7 @@ class Transaction(models.Model):
         (INCOME, _("Income")),
     ]
 
+    reference = models.CharField(max_length=32, unique=True)
     date = models.DateField()
     description = models.CharField(max_length=256)
     transaction_type = models.SmallIntegerField(choices=TRANSACTION_TYPE_CHOICES)

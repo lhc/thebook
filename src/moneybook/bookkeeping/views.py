@@ -5,7 +5,7 @@ from moneybook.bookkeeping.models import Transaction
 
 def transactions(request):
     transactions = Transaction.objects.values(
-        "id",
+        "reference",
         "date",
         "amount",
         "description",

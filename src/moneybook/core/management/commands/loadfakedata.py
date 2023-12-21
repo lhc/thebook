@@ -25,9 +25,10 @@ class Command(BaseCommand):
 
         fake = Faker()
         transactions = []
-        for _ in range(30):
+        for idx in range(30):
             transactions.append(
                 Transaction(
+                    reference=str(idx),
                     date=fake.date(),
                     description=f"Payment for {fake.name()}",
                     transaction_type=random.choice(
