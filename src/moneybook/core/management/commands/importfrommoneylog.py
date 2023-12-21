@@ -1,3 +1,4 @@
+import datetime
 import sqlite3
 from dataclasses import dataclass
 from pathlib import Path
@@ -22,6 +23,10 @@ class Entry:
         return self.tags
 
     @property
+    def date(self):
+        return datetime.datetime.strptime(self.entry_date, "%Y-%m-%d").date()
+
+    @property
     def reference(self):
         return f"L{self.id_:05}"
 
@@ -37,14 +42,26 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument("db", type=str)
+        parser.add_argument(
+            "year",
+            nargs="?",
+            default=None,
+            type=int,
+            help="Import only entries of specified year",
+        )
 
     def handle(self, *args, **options):
         db_path = Path(options["db"])
+        year = options["year"]
+
         self.stdout.write(self.style.SUCCESS(f"Processing database {db_path}"))
 
         if not db_path.is_file():
             self.stdout.write(self.style.ERROR(f"Unable to find {db_path}"))
             return
+
+        if year is not None:
+            self.stdout.write(self.style.WARNING(f"Processing entries of year {year}"))
 
         automation_user, _ = User.objects.get_or_create(email="contato@lhc.net.br")
         accounts = {account.name: account for account in Account.objects.all()}
@@ -73,6 +90,9 @@ class Command(BaseCommand):
 
             if legacy_entry.category == "inicial":
                 # We don't need to have a transaction fo the year start
+                continue
+
+            if year is not None and legacy_entry.date.year != year:
                 continue
 
             entry_account = accounts.get(legacy_entry.account)
