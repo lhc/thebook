@@ -15,4 +15,14 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Transaction)
 class TransactionAdmin(admin.ModelAdmin):
-    ...
+    list_display = [
+        "reference",
+        "date",
+        "description",
+        "amount",
+        "transaction_type",
+    ]
+    list_filter = [
+        "account",
+        "category",
+    ]
