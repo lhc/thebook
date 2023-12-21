@@ -1,3 +1,4 @@
+dj-database-url
 django
 gunicorn
 model-bakery
