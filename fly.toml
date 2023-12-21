@@ -7,10 +7,14 @@ app = "moneybook"
 primary_region = "gru"
 console_command = "/code/manage.py shell"
 
+[deploy]
+  release_command = "python manage.py migrate"
+
 [build]
 
 [env]
   ALLOWED_HOSTS = "moneybook.fly.dev"
+  CSRF_TRUSTED_ORIGINS = "https://moneybook.fly.dev"
   DEBUG = "1"
   PORT = "8000"
 

@@ -2,6 +2,7 @@ dj-database-url
 django
 gunicorn
 model-bakery
+psycopg2-binary
 pytest-django
 python-decouple
 whitenoise
