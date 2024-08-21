@@ -1,10 +1,10 @@
 from dataclasses import dataclass
-from datetime import date, datetime
+from datetime import date
 from decimal import Decimal
 
 from django.conf import settings
 from django.db import IntegrityError
-from ofxtools.Parser import OFXTree
+from ofxparse import OfxParser
 
 from thebook.bookkeeping.models import Category, Transaction
 
@@ -53,25 +53,14 @@ def get_ofx_transactions(ofxfile, ignored_memos=IGNORED_MEMOS):
 
 
 def get_all_ofx_transactions(ofxfile):
-    parser = OFXTree()
     with open(ofxfile, "rb") as f:
-        parser.parse(f)
+        ofx = OfxParser.parse(f)
 
-    transaction_stmts = parser.findall(".//STMTTRN")
-    for transaction in transaction_stmts:
-        ofx_transaction = OFXTransaction()
-
-        for element in transaction.iter():
-            match element.tag:
-                case "DTPOSTED":
-                    ofx_transaction.dtposted = datetime.strptime(
-                        element.text, "%Y%m%d%H%M%S"
-                    )
-                case "TRNAMT":
-                    ofx_transaction.trnamt = Decimal(element.text.replace(",", "."))
-                case "FITID":
-                    ofx_transaction.fitid = element.text
-                case "MEMO":
-                    ofx_transaction.memo = element.text
-
-        yield ofx_transaction
+    transactions = ofx.account.statement.transactions
+    for transaction in transactions:
+        yield OFXTransaction(
+            dtposted=transaction.date.date(),
+            trnamt=transaction.amount,
+            fitid=transaction.id,
+            memo=transaction.memo,
+        )

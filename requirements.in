@@ -3,6 +3,7 @@ django
 django-debug-toolbar
 gunicorn
 model-bakery
+ofxparse
 psycopg2-binary
 pytest-django
 python-decouple
