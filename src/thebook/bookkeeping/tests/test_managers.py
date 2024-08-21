@@ -54,8 +54,8 @@ def test_transactions_summary_with_transactions(
 ):
     transactions_summary = Transaction.objects.summary(month=4, year=2024)
 
-    assert transactions_summary.incomes_month == decimal.Decimal("64.04")
-    assert transactions_summary.expenses_month == decimal.Decimal("-85.07")
+    assert transactions_summary.deposits_month == decimal.Decimal("234.04")
+    assert transactions_summary.withdraws_month == decimal.Decimal("-315.07")
     assert transactions_summary.balance_month == decimal.Decimal("-81.03")
     assert transactions_summary.balance_year == decimal.Decimal("159.87")
     assert transactions_summary.current_balance == decimal.Decimal("259.87")

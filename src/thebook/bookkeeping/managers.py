@@ -8,8 +8,8 @@ from django.db.models import F, Q, Sum, Value, Window
 
 @dataclass
 class TransactionSummary:
-    incomes_month: decimal.Decimal
-    expenses_month: decimal.Decimal
+    deposits_month: decimal.Decimal
+    withdraws_month: decimal.Decimal
     balance_month: decimal.Decimal
     balance_year: decimal.Decimal
     current_balance: decimal.Decimal
@@ -52,14 +52,16 @@ class TransactionQuerySet(models.QuerySet):
         return initial_balance
 
     def summary(self, month, year):
-        incomes_month = self.filter(
-            date__month=month, date__year=year, transaction_type=self.model.INCOME
-        ).aggregate(incomes_month=Sum("amount"))["incomes_month"] or decimal.Decimal(
+        deposits_month = self.filter(
+            amount__gte=decimal.Decimal("0"), date__month=month, date__year=year
+        ).aggregate(deposits_month=Sum("amount"))["deposits_month"] or decimal.Decimal(
             "0"
         )
-        expenses_month = self.filter(
-            date__month=month, date__year=year, transaction_type=self.model.EXPENSE
-        ).aggregate(expenses_month=Sum("amount"))["expenses_month"] or decimal.Decimal(
+        withdraws_month = self.filter(
+            amount__lte=decimal.Decimal("0"), date__month=month, date__year=year
+        ).aggregate(withdraws_month=Sum("amount"))[
+            "withdraws_month"
+        ] or decimal.Decimal(
             "0"
         )
 
@@ -81,8 +83,8 @@ class TransactionQuerySet(models.QuerySet):
         ] or decimal.Decimal("0")
 
         return TransactionSummary(
-            incomes_month=incomes_month,
-            expenses_month=expenses_month,
+            deposits_month=deposits_month,
+            withdraws_month=withdraws_month,
             balance_month=balance_month,
             balance_year=balance_year,
             current_balance=current_balance,

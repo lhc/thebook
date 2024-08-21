@@ -37,30 +37,6 @@ def test_each_transaction_need_a_unique_reference_value():
 
 
 @pytest.mark.django_db
-@pytest.mark.parametrize(
-    "transaction_type,expected_final_amount",
-    [
-        (Transaction.DEPOSIT, decimal.Decimal("42.56")),
-        (Transaction.EXPENSE, decimal.Decimal("-42.56")),
-        (Transaction.INCOME, decimal.Decimal("42.56")),
-        (Transaction.WITHDRAW, decimal.Decimal("-42.56")),
-    ],
-)
-def test_set_negative_amount_based_on_transaction_type(
-    transaction_type, expected_final_amount
-):
-    amount = decimal.Decimal("42.56")
-
-    transaction = baker.make(
-        Transaction,
-        amount=amount,
-        transaction_type=transaction_type,
-    )
-
-    assert transaction.amount == expected_final_amount
-
-
-@pytest.mark.django_db
 @pytest.mark.parametrize("cash_book_name", ["Paypal Account", "Bank", "Cash Account"])
 def test_set_cash_book_slug_based_in_name(cash_book_name):
     cash_book = CashBook(name=cash_book_name)
@@ -73,17 +49,15 @@ def test_set_cash_book_slug_based_in_name(cash_book_name):
 @pytest.mark.freeze_time("2024-04-12")
 def test_cash_book_summary_with_transactions(db, cash_book_one_with_transactions):
     # Income and Expense of Cash Book different than the fixture
-    extra_income = baker.make(  # noqa
+    extra_deposit = baker.make(  # noqa
         Transaction,
         date=datetime.date(2024, 4, 2),
         amount=decimal.Decimal("15"),
-        transaction_type=Transaction.INCOME,
     )
-    extra_expense = baker.make(  # noqa
+    extra_withdraw = baker.make(  # noqa
         Transaction,
         date=datetime.date(2024, 4, 2),
-        amount=decimal.Decimal("17.1"),
-        transaction_type=Transaction.EXPENSE,
+        amount=decimal.Decimal("-17.1"),
     )
 
     cash_book_summary = cash_book_one_with_transactions.summary(month=4, year=2024)
@@ -92,10 +66,8 @@ def test_cash_book_summary_with_transactions(db, cash_book_one_with_transactions
         "id": cash_book_one_with_transactions.id,
         "name": cash_book_one_with_transactions.name,
         "slug": cash_book_one_with_transactions.slug,
-        "incomes": decimal.Decimal("64.04"),
-        "expenses": decimal.Decimal("-79.65"),
-        "deposits": decimal.Decimal("170"),
-        "withdraws": decimal.Decimal("-80"),
+        "deposits": decimal.Decimal("234.04"),
+        "withdraws": decimal.Decimal("-159.65"),
         "balance": decimal.Decimal("74.39"),
         "month": 4,
         "year": 2024,

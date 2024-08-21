@@ -27,6 +27,7 @@ class Migration(migrations.Migration):
                 ),
                 ("name", models.CharField(max_length=64, unique=True)),
                 ("slug", models.SlugField(max_length=64, unique=True)),
+                ("description", models.TextField(blank=True)),
             ],
         ),
         migrations.CreateModel(
@@ -62,17 +63,6 @@ class Migration(migrations.Migration):
                 ("reference", models.CharField(max_length=32, unique=True)),
                 ("date", models.DateField()),
                 ("description", models.CharField(max_length=256)),
-                (
-                    "transaction_type",
-                    models.SmallIntegerField(
-                        choices=[
-                            (1, "Deposit"),
-                            (2, "Expense"),
-                            (3, "Income"),
-                            (4, "Withdraw"),
-                        ]
-                    ),
-                ),
                 ("amount", models.DecimalField(decimal_places=2, max_digits=10)),
                 ("notes", models.TextField(blank=True)),
                 ("created_at", models.DateTimeField(auto_now_add=True)),

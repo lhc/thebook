@@ -21,10 +21,10 @@
             <div class="row no-gutters align-items-center">
               <div class="col mr-2">
                 <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                  {% translate "Incomes (current month)" %}
+                  {% translate "Deposits (current month)" %}
                 </div>
                 <div class="h5 mb-0 font-weight-bold text-gray-800">
-                  {{ transactions_summary.incomes_month|money }}
+                  {{ transactions_summary.deposits_month|money }}
                 </div>
               </div>
               <div class="col-auto">
@@ -40,10 +40,10 @@
             <div class="row no-gutters align-items-center">
               <div class="col mr-2">
                 <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
-                  {% translate "Expenses (current month)" %}
+                  {% translate "Withdraws (current month)" %}
                 </div>
                 <div class="h5 mb-0 font-weight-bold text-gray-800">
-                  {{ transactions_summary.expenses_month|money }}
+                  {{ transactions_summary.withdraws_month|money }}
                 </div>
               </div>
               <div class="col-auto">

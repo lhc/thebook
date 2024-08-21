@@ -19,7 +19,6 @@ class TransactionAdmin(admin.ModelAdmin):
         "description",
         "amount",
         "cash_book",
-        "transaction_type",
     ]
     list_filter = [
         "cash_book",
