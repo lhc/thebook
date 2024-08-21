@@ -132,3 +132,5 @@ AUTH_USER_MODEL = "users.User"
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
+
+BOOKKEEPING_UNCATEGORIZED = "Uncategorized"
