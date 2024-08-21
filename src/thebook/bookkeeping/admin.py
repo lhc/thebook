@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from thebook.bookkeeping.models import CashBook, Category, Transaction
+from thebook.bookkeeping.models import CashBook, Category, Document, Transaction
 
 
 @admin.register(CashBook)
@@ -11,10 +11,18 @@ class CashBookAdmin(admin.ModelAdmin): ...
 class CategoryAdmin(admin.ModelAdmin): ...
 
 
+@admin.register(Document)
+class DocumentAdmin(admin.ModelAdmin): ...
+
+
+class DocumentInline(admin.TabularInline):
+    model = Document
+
+
 @admin.register(Transaction)
 class TransactionAdmin(admin.ModelAdmin):
     list_display = [
-        "reference",
+        "ref",
         "date",
         "description",
         "amount",
@@ -24,3 +32,9 @@ class TransactionAdmin(admin.ModelAdmin):
         "cash_book",
         "category",
     ]
+    inlines = [
+        DocumentInline,
+    ]
+
+    def ref(self, obj):
+        return obj.reference.split("-").pop()
