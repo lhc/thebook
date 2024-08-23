@@ -15,8 +15,11 @@ django==5.0
     #   -r requirements.in
     #   dj-database-url
     #   django-debug-toolbar
+    #   django-storages
     #   model-bakery
 django-debug-toolbar==4.2.0
+    # via -r requirements.in
+django-storages==1.14.4
     # via -r requirements.in
 freezegun==1.5.1
     # via pytest-freezegun
