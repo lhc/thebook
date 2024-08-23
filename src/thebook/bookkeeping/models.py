@@ -80,7 +80,7 @@ class Document(models.Model):
 
 
 class Transaction(models.Model):
-    reference = models.CharField(max_length=32, unique=True)
+    reference = models.CharField(max_length=36, unique=True)
     date = models.DateField()
     description = models.CharField(max_length=256)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
