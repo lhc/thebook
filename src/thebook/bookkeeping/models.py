@@ -1,4 +1,6 @@
 import decimal
+import uuid
+from pathlib import Path
 
 from django.conf import settings
 from django.db import models
@@ -55,11 +57,23 @@ class Category(models.Model):
         return self.name
 
 
+def document_upload_path(instance, filename):
+    cash_book_slug = instance.transaction.cash_book.slug
+
+    filepath = Path(filename)
+    extension = filepath.suffix
+
+    new_filename = "".join([uuid.uuid4().hex, extension])
+
+    return f"{cash_book_slug}/{new_filename}"
+
+
 class Document(models.Model):
     transaction = models.ForeignKey(
         "bookkeeping.Transaction", on_delete=models.CASCADE, related_name="documents"
     )
-    document_file = models.FileField()
+    document_file = models.FileField(upload_to=document_upload_path)
+    notes = models.CharField(max_length=64, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
