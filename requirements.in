@@ -1,7 +1,7 @@
 dj-database-url
 django
 django-debug-toolbar
-django-storages
+django-storages[s3]
 gunicorn
 model-bakery
 ofxparse

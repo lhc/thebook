@@ -8,6 +8,12 @@ asgiref==3.7.2
     # via django
 beautifulsoup4==4.12.3
     # via ofxparse
+boto3==1.35.6
+    # via django-storages
+botocore==1.35.7
+    # via
+    #   boto3
+    #   s3transfer
 dj-database-url==2.1.0
     # via -r requirements.in
 django==5.0
@@ -19,7 +25,7 @@ django==5.0
     #   model-bakery
 django-debug-toolbar==4.2.0
     # via -r requirements.in
-django-storages==1.14.4
+django-storages[s3]==1.14.4
     # via -r requirements.in
 freezegun==1.5.1
     # via pytest-freezegun
@@ -27,6 +33,10 @@ gunicorn==21.2.0
     # via -r requirements.in
 iniconfig==2.0.0
     # via pytest
+jmespath==1.0.1
+    # via
+    #   boto3
+    #   botocore
 lxml==5.3.0
     # via ofxparse
 model-bakery==1.17.0
@@ -50,9 +60,13 @@ pytest-django==4.7.0
 pytest-freezegun==0.4.2
     # via -r requirements.in
 python-dateutil==2.9.0.post0
-    # via freezegun
+    # via
+    #   botocore
+    #   freezegun
 python-decouple==3.8
     # via -r requirements.in
+s3transfer==0.10.2
+    # via boto3
 six==1.16.0
     # via
     #   ofxparse
@@ -65,5 +79,7 @@ sqlparse==0.4.4
     #   django-debug-toolbar
 typing-extensions==4.9.0
     # via dj-database-url
+urllib3==2.2.2
+    # via botocore
 whitenoise==6.6.0
     # via -r requirements.in
