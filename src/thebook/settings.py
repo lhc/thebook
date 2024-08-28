@@ -142,15 +142,21 @@ AWS_STORAGE_BUCKET_NAME = "lhc-thebook-static"
 
 STORAGES = {
     "default": {
-        "BACKEND": "storages.backends.s3.S3Storage",
+        "BACKEND": config(
+            "STORAGES_DEFAULT_BACKEND",
+            default="django.core.files.storage.FileSystemStorage",
+        ),
         "OPTIONS": {"bucket_name": "lhc-bookkeeping"},
     },
     "staticfiles": {
-        "BACKEND": "storages.backends.s3.S3Storage",
+        "BACKEND": config(
+            "STORAGES_STATICFILES_BACKEND",
+            default="django.contrib.staticfiles.storage.StaticFilesStorage",
+        ),
         "OPTIONS": {
             "bucket_name": AWS_STORAGE_BUCKET_NAME,
         },
     },
 }
 
-STATIC_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.{AWS_S3_ENDPOINT_URL}/"
+STATIC_URL = config("STATIC_URL", default="static/")
