@@ -12,4 +12,5 @@ urlpatterns = [
         views.cash_book_transactions,
         name="cash-book-transactions",
     ),
+    path("cb/import-ofx", views.import_ofx, name="import-ofx"),
 ]

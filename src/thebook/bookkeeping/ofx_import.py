@@ -53,8 +53,8 @@ def get_ofx_transactions(ofxfile, ignored_memos=IGNORED_MEMOS):
 
 
 def get_all_ofx_transactions(ofxfile):
-    with open(ofxfile, "rb") as f:
-        ofx = OfxParser.parse(f)
+    # ofxfile needs to be a file-like object
+    ofx = OfxParser.parse(ofxfile)
 
     transactions = ofx.account.statement.transactions
     for transaction in transactions:
