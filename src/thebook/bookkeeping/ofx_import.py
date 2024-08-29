@@ -65,7 +65,7 @@ def get_all_ofx_transactions(ofxfile):
                 fitid=transaction.id,
                 memo=transaction.memo,
             )
-    except TypeError:
+    except (UnicodeDecodeError, TypeError):
         from ofxtools.Parser import OFXTree
 
         ofxfile.seek(0)

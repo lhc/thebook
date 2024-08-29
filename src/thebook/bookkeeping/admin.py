@@ -31,6 +31,7 @@ class TransactionAdmin(admin.ModelAdmin):
     list_filter = [
         "cash_book",
         "category",
+        "date",
     ]
     inlines = [
         DocumentInline,
