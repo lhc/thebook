@@ -14,8 +14,7 @@
           <div class="card-body">
             <form method="post"
                   action="{% url 'bookkeeping:import-ofx' %}"
-                  enctype="multipart/form-data"
-                  .>
+                  enctype="multipart/form-data">
               {% csrf_token %}
               <input type="file" name="ofx" />
               <input type="hidden" name="cash_book" value="{{ cash_book.slug }}" />

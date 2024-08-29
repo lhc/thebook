@@ -5,6 +5,7 @@ django-storages[s3]
 gunicorn
 model-bakery
 ofxparse
+ofxtools
 psycopg2-binary
 pytest-django
 python-decouple

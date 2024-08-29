@@ -1,11 +1,11 @@
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, datetime
 from decimal import Decimal
 
 from django.conf import settings
 from django.db import IntegrityError
-from ofxparse import OfxParser
 
+from ofxparse import OfxParser
 from thebook.bookkeeping.models import Category, Transaction
 
 
@@ -54,13 +54,39 @@ def get_ofx_transactions(ofxfile, ignored_memos=IGNORED_MEMOS):
 
 def get_all_ofx_transactions(ofxfile):
     # ofxfile needs to be a file-like object
-    ofx = OfxParser.parse(ofxfile)
+    try:
+        ofx = OfxParser.parse(ofxfile)
 
-    transactions = ofx.account.statement.transactions
-    for transaction in transactions:
-        yield OFXTransaction(
-            dtposted=transaction.date.date(),
-            trnamt=transaction.amount,
-            fitid=transaction.id,
-            memo=transaction.memo,
-        )
+        transactions = ofx.account.statement.transactions
+        for transaction in transactions:
+            yield OFXTransaction(
+                dtposted=transaction.date.date(),
+                trnamt=transaction.amount,
+                fitid=transaction.id,
+                memo=transaction.memo,
+            )
+    except TypeError:
+        from ofxtools.Parser import OFXTree
+
+        ofxfile.seek(0)
+        parser = OFXTree()
+        parser.parse(ofxfile)
+
+        transaction_stmts = parser.findall(".//STMTTRN")
+        for transaction in transaction_stmts:
+            ofx_transaction = OFXTransaction()
+
+            for element in transaction.iter():
+                match element.tag:
+                    case "DTPOSTED":
+                        ofx_transaction.dtposted = datetime.strptime(
+                            element.text, "%Y%m%d%H%M%S"
+                        )
+                    case "TRNAMT":
+                        ofx_transaction.trnamt = Decimal(element.text.replace(",", "."))
+                    case "FITID":
+                        ofx_transaction.fitid = element.text
+                    case "MEMO":
+                        ofx_transaction.memo = element.text
+
+            yield ofx_transaction

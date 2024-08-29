@@ -43,6 +43,8 @@ model-bakery==1.19.5
     # via -r requirements.in
 ofxparse==0.21
     # via -r requirements.in
+ofxtools==0.9.5
+    # via -r requirements.in
 packaging==24.1
     # via
     #   gunicorn
