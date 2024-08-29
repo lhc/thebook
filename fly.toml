@@ -1,4 +1,4 @@
-# fly.toml app configuration file generated for thebook on 2024-04-23T18:34:44-03:00
+# fly.toml app configuration file generated for thebook on 2024-06-25T09:37:14-03:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
@@ -13,8 +13,8 @@ console_command = '/code/manage.py shell'
   release_command = 'python manage.py migrate --noinput'
 
 [env]
-  ALLOWED_HOSTS = 'thebook.lhc.net.br'
-  CSRF_TRUSTED_ORIGINS = 'https://thebook.lhc.net.br'
+  ALLOWED_HOSTS = 'thebook.lhc.net.br,thebook.fly.dev'
+  CSRF_TRUSTED_ORIGINS = 'https://thebook.lhc.net.br,https://thebook.fly.dev'
   DEBUG = '1'
   PORT = '8000'
 
