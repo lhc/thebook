@@ -14,6 +14,7 @@ class OFXTransaction:
     dtposted: date = None
     trnamt: Decimal = None
     fitid: str = None
+    checknum: str = None
     memo: str = None
 
 
@@ -31,8 +32,9 @@ def import_transactions(ofxfile, cash_book, user):
 
     for transaction in get_ofx_transactions(ofxfile):
         try:
+            reference = transaction.checknum or transaction.fitid
             obj, created = Transaction.objects.get_or_create(
-                reference=transaction.fitid,
+                reference=reference,
                 date=transaction.dtposted,
                 description=transaction.memo,
                 amount=transaction.trnamt,
@@ -86,6 +88,8 @@ def get_all_ofx_transactions(ofxfile):
                         ofx_transaction.trnamt = Decimal(element.text.replace(",", "."))
                     case "FITID":
                         ofx_transaction.fitid = element.text
+                    case "CHECKNUM":
+                        ofx_transaction.checknum = element.text
                     case "MEMO":
                         ofx_transaction.memo = element.text
 
