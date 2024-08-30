@@ -25,6 +25,12 @@ IGNORED_MEMOS = [
 ]
 
 
+def get_reference(transaction):
+    return "-".join(
+        [field for field in (transaction.fitid, transaction.checknum) if field]
+    )
+
+
 def import_transactions(ofxfile, cash_book, user):
     category, _ = Category.objects.get_or_create(
         name=settings.BOOKKEEPING_UNCATEGORIZED
@@ -32,9 +38,8 @@ def import_transactions(ofxfile, cash_book, user):
 
     for transaction in get_ofx_transactions(ofxfile):
         try:
-            reference = transaction.checknum or transaction.fitid
             obj, created = Transaction.objects.get_or_create(
-                reference=reference,
+                reference=get_reference(transaction),
                 date=transaction.dtposted,
                 description=transaction.memo,
                 amount=transaction.trnamt,
@@ -58,13 +63,13 @@ def get_all_ofx_transactions(ofxfile):
     # ofxfile needs to be a file-like object
     try:
         ofx = OfxParser.parse(ofxfile)
-
         transactions = ofx.account.statement.transactions
         for transaction in transactions:
             yield OFXTransaction(
                 dtposted=transaction.date.date(),
                 trnamt=transaction.amount,
                 fitid=transaction.id,
+                checknum=transaction.checknum,
                 memo=transaction.memo,
             )
     except (UnicodeDecodeError, TypeError):
