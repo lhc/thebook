@@ -12,5 +12,10 @@ urlpatterns = [
         views.cash_book_transactions,
         name="cash-book-transactions",
     ),
+    path(
+        "cb/<slug:cash_book_slug>/transactions/export",
+        views.export_transactions,
+        name="export-transactions",
+    ),
     path("cb/import-ofx", views.import_ofx, name="import-ofx"),
 ]
