@@ -8,24 +8,26 @@
   <!-- Begin Page Content -->
   <div class="container-fluid">
 
-    <div class="row">
-      <div class="col-xl-2 col-md-2 mb-2">
-        <div class="card shadow mb-2">
-          <div class="card-body">
-            <form method="post"
-                  action="{% url 'bookkeeping:import-ofx' %}"
-                  enctype="multipart/form-data">
-              {% csrf_token %}
-              <input type="file" name="ofx" />
-              <input type="hidden" name="cash_book" value="{{ cash_book.slug }}" />
-              <button type="submit" class="btn btn-primary btn-block">
-                Import OFX
-              </button>
-            </form>
+    {% if request.user.is_staff %}
+      <div class="row">
+        <div class="col-xl-2 col-md-2 mb-2">
+          <div class="card shadow mb-2">
+            <div class="card-body">
+              <form method="post"
+                    action="{% url 'bookkeeping:import-ofx' %}"
+                    enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="file" name="ofx" />
+                <input type="hidden" name="cash_book" value="{{ cash_book.slug }}" />
+                <button type="submit" class="btn btn-primary btn-block">
+                  Import OFX
+                </button>
+              </form>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    {% endif %}
 
     <div class="row">
       <div class="col-xl-12 col-md-12 mb-12">
