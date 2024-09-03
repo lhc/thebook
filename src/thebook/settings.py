@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 import dj_database_url
@@ -141,23 +142,10 @@ AWS_S3_REGION_NAME = config("AWS_S3_REGION_NAME", default="us-east-005")
 AWS_S3_ENDPOINT_URL = f"https://s3.{AWS_S3_REGION_NAME}.backblazeb2.com"
 AWS_STORAGE_BUCKET_NAME = "lhc-thebook-static"
 
-STORAGES = {
-    "default": {
-        "BACKEND": config(
-            "STORAGES_DEFAULT_BACKEND",
-            default="django.core.files.storage.FileSystemStorage",
-        ),
-        "OPTIONS": {"bucket_name": "lhc-bookkeeping"},
-    },
-    "staticfiles": {
-        "BACKEND": config(
-            "STORAGES_STATICFILES_BACKEND",
-            default="django.contrib.staticfiles.storage.StaticFilesStorage",
-        ),
-        "OPTIONS": {
-            "bucket_name": AWS_STORAGE_BUCKET_NAME,
-        },
-    },
-}
+STORAGES = config(
+    "STORAGES",
+    default='{"default": {"BACKEND": "django.core.files.storage.FileSystemStorage"}, "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"}}',
+    cast=lambda x: json.loads(x),
+)
 
 STATIC_URL = config("STATIC_URL", default="static/")
