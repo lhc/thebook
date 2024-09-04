@@ -5,7 +5,12 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from thebook.bookkeeping.models import CashBook
-from thebook.bookkeeping.ofx_import import import_transactions
+from thebook.bookkeeping.ofx_import import (
+    import_transactions as import_ofx_transactions,
+)
+from thebook.bookkeeping.paypal_import import (
+    import_transactions as import_paypal_transactions,
+)
 
 
 def cash_books(request):
@@ -99,7 +104,24 @@ def import_ofx(request):
     """
     cash_book = CashBook.objects.get(slug=request.POST["cash_book"])
 
-    import_transactions(request.FILES["ofx"], cash_book, request.user)
+    import_ofx_transactions(request.FILES["ofx"], cash_book, request.user)
+
+    return HttpResponseRedirect(
+        reverse("bookkeeping:cash-book-transactions", args=(cash_book.slug,))
+    )
+
+
+def import_paypal_csv(request):
+    """
+    This is a temporary view that imports the content of a PayPal CSV
+    and converts it to Transactions into a Cash Book. There is no
+    content validation or error handling, expecting that the user
+    provides the right file with the right content. Temporary solution
+    to allow us to use the system right now
+    """
+    cash_book = CashBook.objects.get(slug=request.POST["cash_book"])
+
+    import_paypal_transactions(request.FILES["csv"], cash_book, request.user)
 
     return HttpResponseRedirect(
         reverse("bookkeeping:cash-book-transactions", args=(cash_book.slug,))

@@ -18,4 +18,5 @@ urlpatterns = [
         name="export-transactions",
     ),
     path("cb/import-ofx", views.import_ofx, name="import-ofx"),
+    path("cb/import-paypal-csv", views.import_paypal_csv, name="import-paypal-csv"),
 ]

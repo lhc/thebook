@@ -13,98 +13,105 @@
         <div class="col-xl-2 col-md-2 mb-2">
           <div class="card shadow mb-2">
             <div class="card-body">
-              <form method="post"
-                    action="{% url 'bookkeeping:import-ofx' %}"
-                    enctype="multipart/form-data">
-                {% csrf_token %}
-                <input type="file" name="ofx" />
-                <input type="hidden" name="cash_book" value="{{ cash_book.slug }}" />
-                <button type="submit" class="btn btn-primary btn-block">
-                  Import OFX
+              {% if cash_book.slug == 'paypal' %}
+                <form method="post"
+                      action="{% url 'bookkeeping:import-paypal-csv' %}"
+                      enctype="multipart/form-data">
+                  <input type="file" name="csv" />
+                {% else %}
+                  <form method="post"
+                        action="{% url 'bookkeeping:import-ofx' %}"
+                        enctype="multipart/form-data">
+                    <input type="file" name="ofx" />
+                  {% endif %}
+                  {% csrf_token %}
+                  <input type="hidden" name="cash_book" value="{{ cash_book.slug }}" />
+                  <button type="submit" class="btn btn-primary btn-block">
+                    Import File
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+
+      <div class="row">
+        <div class="col-xl-12 col-md-12 mb-12">
+          <div class="card shadow mb-12">
+            <div class="card-header">
+              <h4 class="m-0 font-weight-bold text-primary">
+                {{ cash_book.name }}
+              </h4>
+              <a href="{% url 'bookkeeping:export-transactions' cash_book.slug %}{{ query_string }}"
+                 class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                {% translate "Export Transactions" %}
+              </a>
+              <form method="get"
+                    action="{% url 'bookkeeping:cash-book-transactions' cash_book.slug %}">
+                <input size="4" placeholder="month" type="text" name="month" />
+                /
+                <input size="4" placeholder="year" type="text" name="year" />
+                <button class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
+                        type="submit">
+                  {% translate "Filter" %}
                 </button>
               </form>
+            </div>
+            <div class="card-body">
+              <table class="table table-striped table-hover table-sm">
+                <thead>
+                  <tr>
+                    <th>
+                      #
+                    </th>
+                    <th>
+                      {% translate "Date" %}
+                    </th>
+                    <th>
+                      {% translate "Amount" %}
+                    </th>
+                    <th>
+                      {% translate "Description" %}
+                    </th>
+                    <th>
+                      {% translate "Category" %}
+                    </th>
+                    <th>
+                      {% translate "Balance" %}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for transaction in transactions %}
+                    <tr>
+                      <td>
+                        {{ transaction.reference }}
+                      </td>
+                      <td>
+                        {{ transaction.date }}
+                      </td>
+                      <td {% if transaction.amount < 0 %}class="text-danger"{% endif %}>
+                        {{ transaction.amount|money }}
+                      </td>
+                      <td>
+                        {{ transaction.description }}
+                      </td>
+                      <td>
+                        {{ transaction.category.name }}
+                      </td>
+                      <td {% if transaction.cumulative_sum < 0 %}class="text-danger"{% endif %}>
+                        {{ transaction.cumulative_sum|money }}
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
       </div>
-    {% endif %}
 
-    <div class="row">
-      <div class="col-xl-12 col-md-12 mb-12">
-        <div class="card shadow mb-12">
-          <div class="card-header">
-            <h4 class="m-0 font-weight-bold text-primary">
-              {{ cash_book.name }}
-            </h4>
-            <a href="{% url 'bookkeeping:export-transactions' cash_book.slug %}{{ query_string }}"
-               class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-              {% translate "Export Transactions" %}
-            </a>
-            <form method="get"
-                  action="{% url 'bookkeeping:cash-book-transactions' cash_book.slug %}">
-              <input size="4" placeholder="month" type="text" name="month" />
-              /
-              <input size="4" placeholder="year" type="text" name="year" />
-              <button class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
-                      type="submit">
-                {% translate "Filter" %}
-              </button>
-            </form>
-          </div>
-          <div class="card-body">
-            <table class="table table-striped table-hover table-sm">
-              <thead>
-                <tr>
-                  <th>
-                    #
-                  </th>
-                  <th>
-                    {% translate "Date" %}
-                  </th>
-                  <th>
-                    {% translate "Amount" %}
-                  </th>
-                  <th>
-                    {% translate "Description" %}
-                  </th>
-                  <th>
-                    {% translate "Category" %}
-                  </th>
-                  <th>
-                    {% translate "Balance" %}
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for transaction in transactions %}
-                  <tr>
-                    <td>
-                      {{ transaction.reference }}
-                    </td>
-                    <td>
-                      {{ transaction.date }}
-                    </td>
-                    <td {% if transaction.amount < 0 %}class="text-danger"{% endif %}>
-                      {{ transaction.amount|money }}
-                    </td>
-                    <td>
-                      {{ transaction.description }}
-                    </td>
-                    <td>
-                      {{ transaction.category.name }}
-                    </td>
-                    <td {% if transaction.cumulative_sum < 0 %}class="text-danger"{% endif %}>
-                      {{ transaction.cumulative_sum|money }}
-                    </td>
-                  </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
     </div>
-
-  </div>
-  <!-- /.container-fluid -->
-{% endblock content %}
+    <!-- /.container-fluid -->
+  {% endblock content %}

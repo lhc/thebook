@@ -3,6 +3,7 @@ from django.conf import settings
 from thebook.bookkeeping.models import Category, Transaction
 
 DONATION = "Doação"
+RECURRING_DONATION = "Doação Recorrente"
 BANK_FEES = "Tarifas Bancárias"
 BANK_INCOME = "Investimentos"
 RECURRING = "Recorrente"
@@ -16,6 +17,7 @@ def categorize():
         name=settings.BOOKKEEPING_UNCATEGORIZED
     )
     donation, _ = Category.objects.get_or_create(name=DONATION)
+    recurring_donation, _ = Category.objects.get_or_create(name=RECURRING_DONATION)
     bank_fees, _ = Category.objects.get_or_create(name=BANK_FEES)
     bank_income, _ = Category.objects.get_or_create(name=BANK_INCOME)
     recurring, _ = Category.objects.get_or_create(name=RECURRING)
