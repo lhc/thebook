@@ -41,6 +41,11 @@ def categorize():
             transaction.category = accountant
         elif "CONTADOR" in transaction.description:
             transaction.category = accountant
+        elif (
+            "TED-TRANSF ELET DISPON REMET.PAYPAL DO BRASIL SER"
+            in transaction.description
+        ):
+            transaction.category = cash_book_transfer
         elif 0 < transaction.amount < 50:
             transaction.category = donation
 
