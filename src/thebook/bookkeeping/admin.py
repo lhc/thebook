@@ -26,6 +26,7 @@ class TransactionAdmin(admin.ModelAdmin):
         "date",
         "description",
         "amount",
+        "category",
         "cash_book",
     ]
     list_filter = [
