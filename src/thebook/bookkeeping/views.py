@@ -34,6 +34,10 @@ def cash_book_transactions(request, cash_book_slug):
     if month is not None and year is not None:
         transactions = transactions.for_period(month, year)
 
+    if month is None and year is not None:
+        query_string = f"?year={year}"
+        transactions = transactions.filter(date__year=year)
+
     initial_balance = 0
 
     return render(
