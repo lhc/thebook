@@ -3,6 +3,13 @@ from django.contrib import admin
 from thebook.bookkeeping.models import CashBook, Category, Document, Transaction
 
 
+@admin.action(description="Mark selected transactions as donations")
+def make_donation(modeladmin, request, queryset):
+    DONATION = "Doação"
+    donation, _ = Category.objects.get_or_create(name=DONATION)
+    queryset.update(category=donation)
+
+
 @admin.register(CashBook)
 class CashBookAdmin(admin.ModelAdmin): ...
 
@@ -21,6 +28,7 @@ class DocumentInline(admin.TabularInline):
 
 @admin.register(Transaction)
 class TransactionAdmin(admin.ModelAdmin):
+    actions = [make_donation]
     list_display = [
         "ref",
         "date",
