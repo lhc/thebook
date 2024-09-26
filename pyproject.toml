@@ -1,0 +1,31 @@
+[tool.poetry]
+name = "thebook"
+version = "0.1.0"
+description = "The Book - Hackerspace Management System"
+authors = ["Renne Rocha <renne@rocha.dev.br>"]
+license = "AGPL-3.0"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+django = "^5.1.1"
+python-decouple = "^3.8"
+dj-database-url = "^2.2.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.3"
+pytest-django = "^4.9.0"
+taskipy = "^1.13.0"
+pre-commit = "^3.8.0"
+ipdb = "^0.13.13"
+ipython = "^8.27.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.taskipy.tasks]
+collectstatic = "python manage.py collectstatic"
+makemigrations = "python manage.py makemigrations"
+migrate = "python manage.py migrate"
+run = "python manage.py runserver"
