@@ -129,7 +129,7 @@ class Transaction(models.Model):
     objects = TransactionQuerySet.as_manager()
 
     class Meta:
-        ordering = ["date"]
+        ordering = ["date", "description"]
 
     def __str__(self):
         return f"{self.description} ({self.amount:.2f})"
