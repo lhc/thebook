@@ -19,6 +19,8 @@ taskipy = "^1.13.0"
 pre-commit = "^3.8.0"
 ipdb = "^0.13.13"
 ipython = "^8.27.0"
+pytest-cov = "^5.0.0"
+model-bakery = "^1.19.5"
 
 [build-system]
 requires = ["poetry-core"]
@@ -29,3 +31,7 @@ collectstatic = "python manage.py collectstatic"
 makemigrations = "python manage.py makemigrations"
 migrate = "python manage.py migrate"
 run = "python manage.py runserver"
+test = "pytest -s --cov=thebook"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "thebook.settings"

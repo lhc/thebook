@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "thebook.base",
+    "thebook.bookkeeping",
     "thebook.users",
 ]
 
