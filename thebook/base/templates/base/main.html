@@ -1,0 +1,23 @@
+{% extends "base/base.html" %}
+
+{% block content_wrapper %}
+
+  {% include "base/sidebar.html" %}
+
+  <!-- Content Wrapper -->
+  <div id="content-wrapper" class="d-flex flex-column">
+    <!-- Main Content -->
+    <div id="content">
+
+      {% include "base/navbar.html" %}
+
+      {% block content %}
+      {% endblock content %}
+    </div>
+    <!-- End of Main Content -->
+
+    {% include "base/footer.html" %}
+
+  </div>
+  <!-- End of Content Wrapper -->
+{% endblock content_wrapper %}
