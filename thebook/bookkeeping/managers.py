@@ -53,6 +53,10 @@ class CashBookQuerySet(models.QuerySet):
                 filter=Q(**balance_filter),
                 default=decimal.Decimal("0"),
             ),
+            overall_balance=Sum(
+                "transaction__amount",
+                default=decimal.Decimal("0"),
+            ),
             year=Value(year, output_field=IntegerField()),
             month=Value(month, output_field=IntegerField()),
         )

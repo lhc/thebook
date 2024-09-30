@@ -79,6 +79,7 @@ def test_cash_books_summary_with_transactions(
     assert cash_books[0].balance == Decimal("240.53")
     assert cash_books[0].year is None
     assert cash_books[0].month is None
+    assert cash_books[0].overall_balance == Decimal("240.53")
 
     assert cash_books[1].id == cash_book_2.id
     assert cash_books[1].withdraws == Decimal("-833.7")
@@ -86,6 +87,7 @@ def test_cash_books_summary_with_transactions(
     assert cash_books[1].balance == Decimal("256.72")
     assert cash_books[1].year is None
     assert cash_books[1].month is None
+    assert cash_books[1].overall_balance == Decimal("256.72")
 
 
 @pytest.mark.parametrize("year", [2020, 2024])
@@ -252,6 +254,42 @@ def test_cash_books_summary_for_year_and_month_with_transactions(
     assert cash_books[1].deposits == deposits_2
     assert cash_books[1].withdraws == withdraws_2
     assert cash_books[1].balance == balance_2
+
+
+def test_cash_books_summary_for_year_include_overall_balance(
+    db, transactions, cash_book_1, cash_book_2
+):
+    cash_books = CashBook.objects.summary(year=2020)
+
+    assert cash_books.count() == 2
+
+    assert cash_books[0].id == cash_book_1.id
+    assert cash_books[0].year == 2020
+    assert cash_books[0].month is None
+    assert cash_books[0].overall_balance == Decimal("240.53")
+
+    assert cash_books[1].id == cash_book_2.id
+    assert cash_books[1].year == 2020
+    assert cash_books[1].month is None
+    assert cash_books[1].overall_balance == Decimal("256.72")
+
+
+def test_cash_books_summary_for_year_and_month_include_overall_balance(
+    db, transactions, cash_book_1, cash_book_2
+):
+    cash_books = CashBook.objects.summary(year=2020, month=11)
+
+    assert cash_books.count() == 2
+
+    assert cash_books[0].id == cash_book_1.id
+    assert cash_books[0].year == 2020
+    assert cash_books[0].month == 11
+    assert cash_books[0].overall_balance == Decimal("240.53")
+
+    assert cash_books[1].id == cash_book_2.id
+    assert cash_books[1].year == 2020
+    assert cash_books[1].month == 11
+    assert cash_books[1].overall_balance == Decimal("256.72")
 
 
 @pytest.mark.parametrize("month", [0, -1, 13, 9999])
