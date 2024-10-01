@@ -6,17 +6,10 @@
 {% block content %}
   <!-- Begin Page Content -->
   <div class="container-fluid">
-    <!-- Page Heading -->
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-      <h1 class="h3 mb-0 text-gray-800">
-        {{ cash_book.name }}
-      </h1>
-    </div>
-
 
     <div class="card shadow mb-4">
-      <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">Transactions</h6>
+      <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+        <h4 class="m-0 font-weight-bold text-primary">{{ cash_book.name }} - {% translate "Transactions" %}</h4>
       </div>
       <div class="card-body">
         <div class="table-responsive">
@@ -25,6 +18,7 @@
               <tr>
                 <th>{% translate "#" %}</th>
                 <th>{% translate "Date" %}</th>
+                <th>{% translate "Amount" %}</th>
                 <th>{% translate "Description" %}</th>
                 <th>{% translate "Category" %}</th>
                 <th>{% translate "Balance" %}</th>
@@ -34,16 +28,20 @@
               <tr>
                 <th>{% translate "#" %}</th>
                 <th>{% translate "Date" %}</th>
+                <th>{% translate "Amount" %}</th>
                 <th>{% translate "Description" %}</th>
                 <th>{% translate "Category" %}</th>
-                <th class="balance-column">{% translate "Balance" %}</th>
+                <th>{% translate "Balance" %}</th>
               </tr>
             </tfoot>
             <tbody>
               {% for transaction in transactions %}
               <tr>
-                <td>{{ transaction.reference }}</td>
+                <td>{{ transaction.id }}</td>
                 <td>{{ transaction.date }}</td>
+                <td {% if transaction.amount < 0 %}class="text-danger"{% endif %}>
+                  {{ transaction.amount|money }}
+                </td>
                 <td>{{ transaction.description }}</td>
                 <td>{{ transaction.category }}</td>
                 <td>{{ transaction.balance }}</td>
@@ -62,10 +60,18 @@
 {% block js_scripts %}
   <script>
     $(document).ready(function() {
-      $('#transactions').DataTable(
+      $("#transactions").DataTable(
         {
           pageLength: 100,
-          columnDefs: [{ orderable: false, targets: 4 }],
+          columnDefs: [{ orderable: false, targets: 5 }],
+          columns: [
+            { width: "5%" },
+            { width: "10%" },
+            { width: "10%" },
+            { width: "45%" },
+            { width: "20%" },
+            { width: "10%" }
+          ],
         }
       );
     });
