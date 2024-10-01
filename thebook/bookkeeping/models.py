@@ -32,6 +32,11 @@ class CashBook(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        ordering = [
+            "name",
+        ]
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)

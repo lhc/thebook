@@ -59,7 +59,7 @@ class CashBookQuerySet(models.QuerySet):
             ),
             year=Value(year, output_field=IntegerField()),
             month=Value(month, output_field=IntegerField()),
-        )
+        ).order_by("name")
 
 
 class TransactionQuerySet(models.QuerySet):

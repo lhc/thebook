@@ -155,3 +155,15 @@ def test_cash_book_summary_with_transactions_filter_by_year_and_month(
         "month": month,
         "year": year,
     }
+
+
+def test_cash_book_default_fetch_order_by_name(db):
+    cash_book_1 = CashBook.objects.create(name="Cash Book C")
+    cash_book_2 = CashBook.objects.create(name="Cash Book A")
+    cash_book_3 = CashBook.objects.create(name="Cash Book B")
+
+    cash_books = CashBook.objects.all()
+
+    assert cash_books[0].name == cash_book_2.name
+    assert cash_books[1].name == cash_book_3.name
+    assert cash_books[2].name == cash_book_1.name

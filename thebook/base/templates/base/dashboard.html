@@ -92,6 +92,48 @@
       </div>
     </div>
 
+    <div class="row">
+      <div class="col-xl-6 col-md-2 mb-6">
+        <div class="card border-left-primary shadow h-100 py-2">
+          <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-primary">
+              {% translate "Cash Books (current month)" %}
+            </h6>
+          </div>
+          <div class="card-body">
+            <table class="table table-hover">
+              <thead>
+                <th>
+                  {% translate "Cash Book" %}
+                </th>
+                <th>
+                  {% translate "Balance (current month)" %}
+                </th>
+                <th>
+                  {% translate "Overall Balance" %}
+                </th>
+              </thead>
+              <tbody>
+                {% for cash_book_summary in cash_books_summary %}
+                  <tr>
+                    <td>
+                      <a href="">{{ cash_book_summary.name }}</a>
+                    </td>
+                    <td {% if cash_book_summary.balance_month < 0 %}class="text-danger"{% endif %}>
+                      {{ cash_book_summary.balance_month|money }}
+                    </td>
+                    <td {% if cash_book_summary.overall_balance < 0 %}class="text-danger"{% endif %}>
+                      {{ cash_book_summary.overall_balance|money }}
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
   <!-- /.container-fluid -->
 {% endblock content %}

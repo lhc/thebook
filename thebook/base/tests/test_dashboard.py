@@ -4,6 +4,7 @@ from http import HTTPStatus
 
 import pytest
 from model_bakery import baker
+from pytest_django.asserts import assertQuerySetEqual
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -50,9 +51,10 @@ def test_dashboard_context(db):
 
     context = _get_dashboard_context()
 
-    assert context == {
-        "deposits": Decimal("89.74"),
-        "withdraws": Decimal("-73.89"),
-        "balance": Decimal("15.85"),
-        "overall_balance": Decimal("213.96"),
-    }
+    assert context["deposits"] == Decimal("89.74")
+    assert context["withdraws"] == Decimal("-73.89")
+    assert context["balance"] == Decimal("15.85")
+    assert context["overall_balance"] == Decimal("213.96")
+    assertQuerySetEqual(
+        context["cash_books_summary"], CashBook.objects.summary(year=2024, month=9)
+    )
