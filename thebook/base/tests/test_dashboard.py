@@ -55,6 +55,7 @@ def test_dashboard_context(db):
     assert context["withdraws"] == Decimal("-73.89")
     assert context["balance"] == Decimal("15.85")
     assert context["overall_balance"] == Decimal("213.96")
+    assert context["today"] == datetime.date(2024, 9, 15)
     assertQuerySetEqual(
         context["cash_books_summary"], CashBook.objects.summary(year=2024, month=9)
     )

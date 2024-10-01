@@ -1,0 +1,73 @@
+{% extends "base/main.html" %}
+
+{% load currency %}
+{% load i18n %}
+
+{% block content %}
+  <!-- Begin Page Content -->
+  <div class="container-fluid">
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+      <h1 class="h3 mb-0 text-gray-800">
+        {{ cash_book.name }}
+      </h1>
+    </div>
+
+
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Transactions</h6>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-bordered" id="transactions" width="100%" cellspacing="0">
+            <thead>
+              <tr>
+                <th>{% translate "#" %}</th>
+                <th>{% translate "Date" %}</th>
+                <th>{% translate "Description" %}</th>
+                <th>{% translate "Category" %}</th>
+                <th>{% translate "Balance" %}</th>
+              </tr>
+            </thead>
+            <tfoot>
+              <tr>
+                <th>{% translate "#" %}</th>
+                <th>{% translate "Date" %}</th>
+                <th>{% translate "Description" %}</th>
+                <th>{% translate "Category" %}</th>
+                <th class="balance-column">{% translate "Balance" %}</th>
+              </tr>
+            </tfoot>
+            <tbody>
+              {% for transaction in transactions %}
+              <tr>
+                <td>{{ transaction.reference }}</td>
+                <td>{{ transaction.date }}</td>
+                <td>{{ transaction.description }}</td>
+                <td>{{ transaction.category }}</td>
+                <td>{{ transaction.balance }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <!-- /.container-fluid -->
+{% endblock content %}
+
+{% block js_scripts %}
+  <script>
+    $(document).ready(function() {
+      $('#transactions').DataTable(
+        {
+          pageLength: 100,
+          columnDefs: [{ orderable: false, targets: 4 }],
+        }
+      );
+    });
+  </script>
+{% endblock %}

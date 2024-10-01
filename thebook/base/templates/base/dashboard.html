@@ -117,7 +117,9 @@
                 {% for cash_book_summary in cash_books_summary %}
                   <tr>
                     <td>
-                      <a href="">{{ cash_book_summary.name }}</a>
+                      <a href="{% url 'bookkeeping:cash-book-transactions' cash_book_summary.slug %}?year={{ today.year }}&month={{ today.month }}">
+                        {{ cash_book_summary.name }}
+                      </a>
                     </td>
                     <td {% if cash_book_summary.balance_month < 0 %}class="text-danger"{% endif %}>
                       {{ cash_book_summary.balance_month|money }}

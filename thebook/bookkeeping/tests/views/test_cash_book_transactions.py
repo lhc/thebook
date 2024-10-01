@@ -1,16 +1,13 @@
-import datetime
-from decimal import Decimal
 from http import HTTPStatus
 
 import pytest
 from model_bakery import baker
-from pytest_django.asserts import assertQuerySetEqual
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 
-from thebook.base.views import _get_dashboard_context
+from thebook.bookkeeping.views import _get_cash_book_transactions_context
 from thebook.bookkeeping.models import CashBook, Transaction
 
 
@@ -56,3 +53,19 @@ def test_not_found_with_invalid_cash_book_slug(db, client):
     response = client.get(cash_book_transactions_url)
 
     assert response.status_code == HTTPStatus.NOT_FOUND
+
+
+def test_cash_book_transactions_context(db):
+    cash_book_1 = CashBook.objects.create(name="Cash Book 1")
+    cash_book_2 = CashBook.objects.create(name="Cash Book 2")
+
+    transaction_1 = baker.make(Transaction, cash_book=cash_book_1)
+    transaction_2 = baker.make(Transaction, cash_book=cash_book_1)
+    transaction_3 = baker.make(Transaction, cash_book=cash_book_2)
+
+    context = _get_cash_book_transactions_context(cash_book_1)
+
+    assert context["cash_book"] == cash_book_1
+    assert len(context["transactions"]) == 2
+    assert transaction_1 in context["transactions"]
+    assert transaction_2 in context["transactions"]

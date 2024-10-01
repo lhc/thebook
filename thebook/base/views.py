@@ -26,6 +26,7 @@ def _get_dashboard_context():
         "balance": balance.quantize(Decimal(".01"), rounding=ROUND_UP),
         "overall_balance": overall_balance.quantize(Decimal(".01"), rounding=ROUND_UP),
         "cash_books_summary": cash_books_summary,
+        "today": today,
     }
 
 
