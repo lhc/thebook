@@ -31,3 +31,15 @@ class User(AbstractBaseUser):
     def has_module_perms(self, app_label):
         # This method is required so we can use Django Admin without built-in Django permissions system
         return True
+
+    @property
+    def display_name(self):
+        if any([self.first_name, self.last_name]):
+            return " ".join(
+                (
+                    part.strip()
+                    for part in [self.first_name, self.last_name]
+                    if part is not None
+                )
+            )
+        return self.email
