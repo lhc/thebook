@@ -259,3 +259,16 @@ def test_cash_book_transactions_context_non_numeric_input_for_year_and_month(
         context = _get_cash_book_transactions_context(
             cash_book_1, year=year, month=month
         )
+
+
+def test_cb_transactions_with_format(db, client, user, cash_book_1):
+    client.force_login(user)
+
+    cash_book_transactions_url = reverse(
+        "bookkeeping:cash-book-transactions", args=(cash_book_1.slug,)
+    )
+
+    response = client.get(cash_book_transactions_url, query_params={"format": "csv"})
+
+    assert response.status_code == HTTPStatus.OK
+    assert response.headers["Content-Type"] == "text/csv"

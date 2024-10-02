@@ -20,7 +20,7 @@
             <div class="dropdown-header">{% translate "Export" %}</div>
             <a
               class="dropdown-item"
-              href="{% url 'bookkeeping:cash-book-transactions-export-csv' cash_book.slug %}">
+              href="{% url 'bookkeeping:cash-book-transactions' cash_book.slug %}?format=csv{% if year %}&year={{ year }}{% endif %}{% if month %}&month={{ month }}{% endif %}">
               {% translate "Download (CSV)" %}
             </a>
           </div>
