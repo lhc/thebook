@@ -3,7 +3,7 @@ import datetime
 import pytest
 from model_bakery import baker
 
-from thebook.bookkeeping.models import Transaction
+from thebook.bookkeeping.models import Document, Transaction
 
 
 @pytest.mark.django_db
@@ -44,3 +44,16 @@ def test_default_transaction_retrieval_order_by_date_and_by_description_asc():
     assert transactions[1] == transaction_2
     assert transactions[2] == transaction_3
     assert transactions[3] == transaction_1
+
+
+def test_transaction_without_linked_document(db):
+    transaction = baker.make(Transaction)
+
+    assert transaction.has_documents is False
+
+
+def test_transaction_with_linked_document(db):
+    transaction = baker.make(Transaction)
+    document = baker.make(Document, transaction=transaction)
+
+    assert transaction.has_documents is True

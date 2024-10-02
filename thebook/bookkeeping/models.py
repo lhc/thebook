@@ -138,3 +138,7 @@ class Transaction(models.Model):
 
     def __str__(self):
         return f"{self.description} ({self.amount:.2f})"
+
+    @property
+    def has_documents(self):
+        return self.documents.exists()

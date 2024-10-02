@@ -16,6 +16,7 @@
           <table class="table table-bordered" id="transactions" width="100%" cellspacing="0">
             <thead>
               <tr>
+                <th></th>
                 <th>{% translate "#" %}</th>
                 <th>{% translate "Date" %}</th>
                 <th>{% translate "Amount" %}</th>
@@ -26,6 +27,7 @@
             </thead>
             <tfoot>
               <tr>
+                <th></th>
                 <th>{% translate "#" %}</th>
                 <th>{% translate "Date" %}</th>
                 <th>{% translate "Amount" %}</th>
@@ -37,6 +39,13 @@
             <tbody>
               {% for transaction in transactions %}
               <tr>
+                <td>
+                  {% if transaction.has_documents %}
+                  <a href=""><i class="fas fa-download fa-sm fa-fw"></i></a>
+                  {% else %}
+                  <i class="fas fa-minus fa-sm fa-fw"></i>
+                  {% endif %}
+                </td>
                 <td>{{ transaction.id }}</td>
                 <td>{{ transaction.date }}</td>
                 <td {% if transaction.amount < 0 %}class="text-danger"{% endif %}>
@@ -63,9 +72,10 @@
       $("#transactions").DataTable(
         {
           pageLength: 100,
-          columnDefs: [{ orderable: false, targets: 5 }],
+          columnDefs: [{ orderable: false, targets: 6 }],
           columns: [
-            { width: "5%" },
+            { width: "1%" },
+            { width: "4%" },
             { width: "10%" },
             { width: "10%" },
             { width: "45%" },
