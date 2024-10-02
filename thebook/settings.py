@@ -134,6 +134,13 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+AWS_ADDRESSING_STYLE = "virtual"
+AWS_S3_ACCESS_KEY_ID = config("AWS_S3_ACCESS_KEY_ID", default="")
+AWS_S3_SECRET_ACCESS_KEY = config("AWS_S3_SECRET_ACCESS_KEY", default="")
+AWS_S3_REGION_NAME = config("AWS_S3_REGION_NAME", default="us-east-005")
+AWS_S3_ENDPOINT_URL = f"https://s3.{AWS_S3_REGION_NAME}.backblazeb2.com"
+AWS_STORAGE_BUCKET_NAME = "lhc-thebook-static"
+
 STORAGES = config(
     "STORAGES",
     default='{"default": {"BACKEND": "django.core.files.storage.FileSystemStorage"}, "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"}}',

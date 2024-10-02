@@ -11,6 +11,9 @@ python = "^3.11"
 django = "^5.1.1"
 python-decouple = "^3.8"
 dj-database-url = "^2.2.0"
+gunicorn = "^23.0.0"
+psycopg = {extras = ["binary"], version = "^3.2.3"}
+django-storages = {extras = ["s3"], version = "^1.14.4"}
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"

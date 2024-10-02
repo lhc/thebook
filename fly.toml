@@ -1,0 +1,33 @@
+app = 'thebook'
+primary_region = 'gru'
+console_command = '/code/manage.py shell'
+
+[build]
+
+[deploy]
+  release_command = 'python manage.py migrate --noinput && python manage.py collectstatic --noinput'
+
+[env]
+  ALLOWED_HOSTS = 'thebook.lhc.net.br,thebook.fly.dev'
+  CSRF_TRUSTED_ORIGINS = 'https://thebook.lhc.net.br,https://thebook.fly.dev'
+  DEBUG = '1'
+  PORT = '8000'
+  STORAGES = '{"default": {"BACKEND": "storages.backends.s3.S3Storage", "OPTIONS": {"bucket_name": "lhc-bookkeeping"}}, "staticfiles": {"BACKEND": "storages.backends.s3.S3Storage", "OPTIONS": {"bucket_name": "lhc-thebook-static"}}}'
+  STATIC_URL = 'https://lhc-thebook-static.s3.us-east-005.backblazeb2.com/'
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ['app']
+
+[[vm]]
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1
+
+[[statics]]
+  guest_path = '/code/static'
+  url_prefix = '/static/'
