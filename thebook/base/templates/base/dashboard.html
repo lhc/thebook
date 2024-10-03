@@ -4,138 +4,133 @@
 {% load i18n %}
 
 {% block content %}
-  <!-- Begin Page Content -->
-  <div class="container-fluid">
-    <!-- Page Heading -->
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-      <h1 class="h3 mb-0 text-gray-800">
-        {% translate "Dashboard" %}
-      </h1>
-    </div>
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+  <h1 class="h3 mb-0 text-gray-800">
+    {% translate "Dashboard" %}
+  </h1>
+</div>
 
-    <div class="row">
-      <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-left-success shadow h-100 py-2">
-          <div class="card-body">
-            <div class="row no-gutters align-items-center">
-              <div class="col mr-2">
-                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                  {% translate "Deposits (current month)" %}
-                </div>
-                <div class="h5 mb-0 font-weight-bold text-gray-800">
-                  {{ deposits|money }}
-                </div>
-              </div>
-              <div class="col-auto">
-                <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
-              </div>
+<div class="row">
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-success shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+              {% translate "Deposits (current month)" %}
+            </div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">
+              {{ deposits|money }}
             </div>
           </div>
-        </div>
-      </div>
-      <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-left-danger shadow h-100 py-2">
-          <div class="card-body">
-            <div class="row no-gutters align-items-center">
-              <div class="col mr-2">
-                <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
-                  {% translate "Withdraws (current month)" %}
-                </div>
-                <div class="h5 mb-0 font-weight-bold text-gray-800">
-                  {{ withdraws|money }}
-                </div>
-              </div>
-              <div class="col-auto">
-                <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-left-primary shadow h-100 py-2">
-          <div class="card-body">
-            <div class="row no-gutters align-items-center">
-              <div class="col mr-2">
-                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                  {% translate "Balance (current month)" %}
-                </div>
-                <div class="h5 mb-0 font-weight-bold text-gray-800">
-                  {{ balance|money }}
-                </div>
-              </div>
-              <div class="col-auto">
-                <i class="fas fa-university fa-2x text-gray-300"></i>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-left-primary shadow h-100 py-2">
-          <div class="card-body">
-            <div class="row no-gutters align-items-center">
-              <div class="col mr-2">
-                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                  {% translate "Overall Balance" %}
-                </div>
-                <div class="h5 mb-0 font-weight-bold text-gray-800">
-                  {{ overall_balance|money }}
-                </div>
-              </div>
-              <div class="col-auto">
-                <i class="fas fa-university fa-2x text-gray-300"></i>
-              </div>
-            </div>
+          <div class="col-auto">
+            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
           </div>
         </div>
       </div>
     </div>
-
-    <div class="row">
-      <div class="col-xl-6 col-md-2 mb-6">
-        <div class="card border-left-primary shadow h-100 py-2">
-          <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-            <h6 class="m-0 font-weight-bold text-primary">
-              {% translate "Cash Books (current month)" %}
-            </h6>
-          </div>
-          <div class="card-body">
-            <table class="table table-hover">
-              <thead>
-                <th>
-                  {% translate "Cash Book" %}
-                </th>
-                <th>
-                  {% translate "Balance (current month)" %}
-                </th>
-                <th>
-                  {% translate "Overall Balance" %}
-                </th>
-              </thead>
-              <tbody>
-                {% for cash_book_summary in cash_books_summary %}
-                  <tr>
-                    <td>
-                      <a href="{% url 'bookkeeping:cash-book-transactions' cash_book_summary.slug %}?year={{ today.year }}&month={{ today.month }}">
-                        {{ cash_book_summary.name }}
-                      </a>
-                    </td>
-                    <td {% if cash_book_summary.balance_month < 0 %}class="text-danger"{% endif %}>
-                      {{ cash_book_summary.balance_month|money }}
-                    </td>
-                    <td {% if cash_book_summary.overall_balance < 0 %}class="text-danger"{% endif %}>
-                      {{ cash_book_summary.overall_balance|money }}
-                    </td>
-                  </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
   </div>
-  <!-- /.container-fluid -->
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-danger shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+              {% translate "Withdraws (current month)" %}
+            </div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">
+              {{ withdraws|money }}
+            </div>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-primary shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+              {% translate "Balance (current month)" %}
+            </div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">
+              {{ balance|money }}
+            </div>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-university fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-primary shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+              {% translate "Overall Balance" %}
+            </div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">
+              {{ overall_balance|money }}
+            </div>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-university fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-xl-6 col-md-2 mb-6">
+    <div class="card border-left-primary shadow h-100 py-2">
+      <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">
+          {% translate "Cash Books (current month)" %}
+        </h6>
+      </div>
+      <div class="card-body">
+        <table class="table table-hover">
+          <thead>
+            <th>
+              {% translate "Cash Book" %}
+            </th>
+            <th>
+              {% translate "Balance (current month)" %}
+            </th>
+            <th>
+              {% translate "Overall Balance" %}
+            </th>
+          </thead>
+          <tbody>
+            {% for cash_book_summary in cash_books_summary %}
+              <tr>
+                <td>
+                  <a href="{% url 'bookkeeping:cash-book-transactions' cash_book_summary.slug %}?year={{ today.year }}&month={{ today.month }}">
+                    {{ cash_book_summary.name }}
+                  </a>
+                </td>
+                <td {% if cash_book_summary.balance_month < 0 %}class="text-danger"{% endif %}>
+                  {{ cash_book_summary.balance_month|money }}
+                </td>
+                <td {% if cash_book_summary.overall_balance < 0 %}class="text-danger"{% endif %}>
+                  {{ cash_book_summary.overall_balance|money }}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock content %}

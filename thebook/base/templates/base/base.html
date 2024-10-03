@@ -42,6 +42,11 @@
     <script src="{% static 'vendor/chart.js/Chart.min.js' %}"></script>
     <script src="{% static 'vendor/datatables/datatables.min.js' %}"></script>
     <!-- Page level custom scripts -->
+    <script type="text/javascript">
+      $(document).ready(function() {
+        $(".alert").alert()
+      })
+    </script>
     {% block js_scripts %}{% endblock js_scripts %}
   </body>
 </html>

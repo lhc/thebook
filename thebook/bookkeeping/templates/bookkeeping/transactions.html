@@ -4,97 +4,160 @@
 {% load i18n %}
 
 {% block content %}
-  <!-- Begin Page Content -->
-  <div class="container-fluid">
+<div class="card shadow mb-4">
+  <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+    <h4 class="m-0 font-weight-bold text-primary">
+      {{ cash_book.name }}
+    </h4>
 
-    <div class="card shadow mb-4">
-      <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-        <h4 class="m-0 font-weight-bold text-primary">
-          {{ cash_book.name }}
-        </h4>
+    <h5 class="m-0 font-weight-bold">
+    {% if year or month %}
+      <a href="{% url 'bookkeeping:cash-book-transactions' cash_book.slug %}?{{ previous_period }}">
+        <i class="fa fa-arrow-left" aria-hidden="true"></i>
+      </a>
+        {% translate "Transactions" %}
+        {% if month %}{{ month }} / {% endif %}{% if year %}{{ year }}{% endif %}
+      <a href="{% url 'bookkeeping:cash-book-transactions' cash_book.slug %}?{{ next_period }}">
+        <i class="fa fa-arrow-right" aria-hidden="true"></i>
+      </a>
+    {% else %}
+      {% translate "All Transactions" %}
+    {% endif %}
+    </h5>
 
-        <h5 class="m-0 font-weight-bold">
-        {% if year or month %}
-          <a href="{% url 'bookkeeping:cash-book-transactions' cash_book.slug %}?{{ previous_period }}">
-            <i class="fa fa-arrow-left" aria-hidden="true"></i>
-          </a>
-            {% translate "Transactions" %}
-            {% if month %}{{ month }} / {% endif %}{% if year %}{{ year }}{% endif %}
-          <a href="{% url 'bookkeeping:cash-book-transactions' cash_book.slug %}?{{ next_period }}">
-            <i class="fa fa-arrow-right" aria-hidden="true"></i>
-          </a>
-        {% else %}
-          {% translate "All Transactions" %}
-        {% endif %}
-        </h5>
-
-        <div class="dropdown no-arrow">
-          <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-          </a>
-          <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
-            <div class="dropdown-header">{% translate "Export" %}</div>
-            <a
-              class="dropdown-item"
-              href="{% url 'bookkeeping:cash-book-transactions' cash_book.slug %}?format=csv{% if year %}&year={{ year }}{% endif %}{% if month %}&month={{ month }}{% endif %}">
-              {% translate "Download (CSV)" %}
-            </a>
-          </div>
-        </div>
-      </div>
-      <div class="card-body">
-        <div class="table-responsive">
-          <table class="table table-bordered" id="transactions" width="100%" cellspacing="0">
-            <thead>
-              <tr>
-                <th></th>
-                <th>{% translate "#" %}</th>
-                <th>{% translate "Date" %}</th>
-                <th>{% translate "Amount" %}</th>
-                <th>{% translate "Description" %}</th>
-                <th>{% translate "Category" %}</th>
-                <th>{% translate "Balance" %}</th>
-              </tr>
-            </thead>
-            <tfoot>
-              <tr>
-                <th></th>
-                <th>{% translate "#" %}</th>
-                <th>{% translate "Date" %}</th>
-                <th>{% translate "Amount" %}</th>
-                <th>{% translate "Description" %}</th>
-                <th>{% translate "Category" %}</th>
-                <th>{% translate "Balance" %}</th>
-              </tr>
-            </tfoot>
-            <tbody>
-              {% for transaction in transactions %}
-              <tr>
-                <td>
-                  {% if transaction.has_documents %}
-                  <a href=""><i class="fas fa-download fa-sm fa-fw"></i></a>
-                  {% else %}
-                  <i class="fas fa-minus fa-sm fa-fw"></i>
-                  {% endif %}
-                </td>
-                <td>{{ transaction.id }}</td>
-                <td>{{ transaction.date }}</td>
-                <td {% if transaction.amount < 0 %}class="text-danger"{% endif %}>
-                  {{ transaction.amount|money }}
-                </td>
-                <td>{{ transaction.description }}</td>
-                <td>{{ transaction.category }}</td>
-                <td>{{ transaction.balance }}</td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
+    <div class="dropdown no-arrow">
+      <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+      </a>
+      <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+        <div class="dropdown-header">{% translate "Export" %}</div>
+        <a
+          class="dropdown-item"
+          href="{% url 'bookkeeping:cash-book-transactions' cash_book.slug %}?format=csv{% if year %}&year={{ year }}{% endif %}{% if month %}&month={{ month }}{% endif %}">
+          {% translate "Download (CSV)" %}
+        </a>
+        <div class="dropdown-header">{% translate "Import" %}</div>
+        <a class="dropdown-item btn" data-toggle="modal" data-target="#importOFXModal">
+          {% translate "Import OFX" %}
+        </a>
+        <a class="dropdown-item btn" data-toggle="modal" data-target="#importCSVModal">
+          {% translate "Import PayPal CSV" %}
+        </a>
       </div>
     </div>
-
   </div>
-  <!-- /.container-fluid -->
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-bordered" id="transactions" width="100%" cellspacing="0">
+        <thead>
+          <tr>
+            <th></th>
+            <th>{% translate "#" %}</th>
+            <th>{% translate "Date" %}</th>
+            <th>{% translate "Amount" %}</th>
+            <th>{% translate "Description" %}</th>
+            <th>{% translate "Category" %}</th>
+            <th>{% translate "Balance" %}</th>
+          </tr>
+        </thead>
+        <tfoot>
+          <tr>
+            <th></th>
+            <th>{% translate "#" %}</th>
+            <th>{% translate "Date" %}</th>
+            <th>{% translate "Amount" %}</th>
+            <th>{% translate "Description" %}</th>
+            <th>{% translate "Category" %}</th>
+            <th>{% translate "Balance" %}</th>
+          </tr>
+        </tfoot>
+        <tbody>
+          {% for transaction in transactions %}
+          <tr>
+            <td>
+              {% if transaction.has_documents %}
+              <a href=""><i class="fas fa-download fa-sm fa-fw"></i></a>
+              {% else %}
+              <i class="fas fa-minus fa-sm fa-fw"></i>
+              {% endif %}
+            </td>
+            <td>{{ transaction.id }}</td>
+            <td>{{ transaction.date }}</td>
+            <td {% if transaction.amount < 0 %}class="text-danger"{% endif %}>
+              {{ transaction.amount|money }}
+            </td>
+            <td>{{ transaction.description }}</td>
+            <td>{{ transaction.category }}</td>
+            <td>{{ transaction.balance }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="importOFXModal" tabindex="-1" aria-labelledby="importOFXModal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">{% translate "Import OFX" %}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form
+          method="post"
+          action="{% url 'bookkeeping:cash-book-import-transactions' cash_book.slug %}"
+          enctype="multipart/form-data">
+            <input type="file" id="ofx_file" name="transactions_file">
+
+            <input type="hidden" name="file_type" value="ofx" />
+            <input
+              type="hidden"
+              name="next_url"
+              value="{% url 'bookkeeping:cash-book-transactions' cash_book.slug %}?{% if year %}year={{ year }}{% endif %}{% if month %}&month={{ month }}{% endif %}">
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">{% translate "Close" %}</button>
+        <button type="button" class="btn btn-primary">{% translate "Import" %}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="importCSVModal" tabindex="-1" aria-labelledby="importCSVModal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">{% translate "Import PayPal CSV" %}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form
+          method="post"
+          action="{% url 'bookkeeping:cash-book-import-transactions' cash_book.slug %}"
+          enctype="multipart/form-data">
+            <input type="file" id="csv_file" name="transactions_file">
+
+            <input type="hidden" name="file_type" value="csv" />
+            <input
+              type="hidden"
+              name="next_url"
+              value="{% url 'bookkeeping:cash-book-transactions' cash_book.slug %}?{% if year %}year={{ year }}{% endif %}{% if month %}&month={{ month }}{% endif %}">
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">{% translate "Close" %}</button>
+        <button type="button" class="btn btn-primary">{% translate "Import" %}</button>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock content %}
 
 {% block js_scripts %}
@@ -115,6 +178,15 @@
           ],
         }
       );
+
+      $("#importOFXModal").on("shown.bs.modal", function () {
+        $("#ofx_file").trigger("focus")
+      })
+
+      $("#importCSVModal").on("shown.bs.modal", function () {
+        $("#csv_file").trigger("focus")
+      })
+
     });
   </script>
 {% endblock %}
