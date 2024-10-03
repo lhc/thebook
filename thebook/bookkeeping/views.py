@@ -1,9 +1,11 @@
 import csv
 import datetime
 
-from django.http import HttpResponse
+from django.contrib import messages
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 
+from thebook.bookkeeping.importers import import_transactions, ImportTransactionsError
 from thebook.bookkeeping.models import CashBook
 
 
@@ -110,3 +112,20 @@ def cash_book_transactions(request, cash_book_slug):
         "bookkeeping/transactions.html",
         context=response_context,
     )
+
+
+def cash_book_import_transactions(request, cash_book_slug):
+    cash_book = get_object_or_404(CashBook, slug=cash_book_slug)
+
+    try:
+        file_type = request.POST["file_type"]
+        transactions_file = None
+        if file_type == "ofx":
+            transactions_file = request.FILES["ofx_file"]
+        elif file_type == "csv":
+            transactions_file = request.FILES["csv_file"]
+        import_transactions(transactions_file, file_type, cash_book, request.user)
+    except ImportTransactionsError as err:
+        messages.add_message(request, messages.ERROR, str(err))
+
+    return HttpResponseRedirect(request.POST["next_url"])

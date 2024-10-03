@@ -10,4 +10,9 @@ urlpatterns = [
         views.cash_book_transactions,
         name="cash-book-transactions",
     ),
+    path(
+        "cb/<slug:cash_book_slug>/transactions/import",
+        views.cash_book_import_transactions,
+        name="cash-book-import-transactions",
+    ),
 ]
