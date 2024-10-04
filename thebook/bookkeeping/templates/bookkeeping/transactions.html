@@ -103,7 +103,8 @@
     <form
       method="post"
       action="{% url 'bookkeeping:cash-book-import-transactions' cash_book.slug %}"
-      enctype="multipart/form-data">
+      enctype="multipart/form-data"
+      id="ofx_import_form">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="exampleModalLabel">{% translate "Import OFX" %}</h5>
@@ -114,7 +115,7 @@
           <div class="modal-body">
             {% csrf_token %}
             <input type="file" id="ofx_file" name="ofx_file">
-            <input type="hidden" name="file_type" value="csv" />
+            <input type="hidden" name="file_type" value="ofx" />
             <input
               type="hidden"
               name="next_url"
@@ -134,7 +135,8 @@
     <form
       method="post"
       action="{% url 'bookkeeping:cash-book-import-transactions' cash_book.slug %}"
-      enctype="multipart/form-data">
+      enctype="multipart/form-data"
+      id="csv_import_form">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="exampleModalLabel">{% translate "Import PayPal CSV" %}</h5>
@@ -145,7 +147,7 @@
           <div class="modal-body">
             {% csrf_token %}
             <input type="file" id="csv_file" name="csv_file">
-            <input type="hidden" name="file_type" value="csv" />
+            <input type="hidden" name="file_type" value="ofx" />
             <input
               type="hidden"
               name="next_url"

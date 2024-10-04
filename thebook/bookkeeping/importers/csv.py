@@ -1,0 +1,6 @@
+class CSVImporter:
+    def __init__(self, transactions_file, cash_book, user):
+        ...
+
+    def run(self):
+        ...

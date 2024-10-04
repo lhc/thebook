@@ -157,3 +157,5 @@ STORAGES = config(
 )
 
 STATIC_URL = config("STATIC_URL", default="static/")
+
+BOOKKEEPING_UNCATEGORIZED = "Uncategorized"
