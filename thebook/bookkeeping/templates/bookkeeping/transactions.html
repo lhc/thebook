@@ -10,20 +10,32 @@
       {{ cash_book.name }}
     </h4>
 
-    <h5 class="m-0 font-weight-bold">
-    {% if year or month %}
-      <a href="{% url 'bookkeeping:cash-book-transactions' cash_book.slug %}?{{ previous_period }}">
-        <i class="fa fa-arrow-left" aria-hidden="true"></i>
-      </a>
-        {% translate "Transactions" %}
-        {% if month %}{{ month }} / {% endif %}{% if year %}{{ year }}{% endif %}
-      <a href="{% url 'bookkeeping:cash-book-transactions' cash_book.slug %}?{{ next_period }}">
-        <i class="fa fa-arrow-right" aria-hidden="true"></i>
-      </a>
-    {% else %}
-      {% translate "All Transactions" %}
-    {% endif %}
-    </h5>
+    <div>
+      <h5 class="m-0 font-weight-bold">
+      {% if year or month %}
+        <a href="{% url 'bookkeeping:cash-book-transactions' cash_book.slug %}?{{ previous_period }}">
+          <i class="fa fa-arrow-left" aria-hidden="true"></i>
+        </a>
+          {% translate "Transactions" %}
+          {% if month %}{{ month }} / {% endif %}{% if year %}{{ year }}{% endif %}
+        <a href="{% url 'bookkeeping:cash-book-transactions' cash_book.slug %}?{{ next_period }}">
+          <i class="fa fa-arrow-right" aria-hidden="true"></i>
+        </a>
+      {% else %}
+        {% translate "All Transactions" %}
+      {% endif %}
+      </h5>
+
+      <div>
+        <center>
+          <form method="get" action="{% url 'bookkeeping:cash-book-transactions' cash_book.slug %}">
+            <input class="span2" size="2" maxlength="2" type="text" name="month">
+            <input class="span2" size="4" maxlength="4" type="text" name="year">
+            <button type="submit" class="btn btn-link"><i class="fa fa-search"></i></button>
+          </form>
+        </center>
+      </div>
+    </div>
 
     <div class="dropdown no-arrow">
       <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
