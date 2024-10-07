@@ -145,9 +145,11 @@
             </button>
           </div>
           <div class="modal-body">
+            <p>{% trans "This importer only works with CSV files exported from PayPal. " %}<a href="https://www.paypal.com/reports/statements/monthly">{% trans "Download it here." %}</a></p>
+
             {% csrf_token %}
             <input type="file" id="csv_file" name="csv_file">
-            <input type="hidden" name="file_type" value="ofx" />
+            <input type="hidden" name="file_type" value="csv" />
             <input
               type="hidden"
               name="next_url"

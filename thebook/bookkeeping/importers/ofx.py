@@ -6,6 +6,7 @@ from django.conf import settings
 from django.db import IntegrityError
 
 from ofxparse import OfxParser
+from thebook.bookkeeping.importers.constants import UNCATEGORIZED
 from thebook.bookkeeping.models import Category, Transaction
 from ofxtools.Parser import OFXTree
 
@@ -32,7 +33,7 @@ class OFXImporter:
 
     def __init__(self, transactions_file, cash_book, user):
         self.uncategorized, _ = Category.objects.get_or_create(
-            name=settings.BOOKKEEPING_UNCATEGORIZED
+            name=UNCATEGORIZED
         )
 
         self.transactions_file = transactions_file

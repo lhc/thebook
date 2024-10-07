@@ -20,7 +20,7 @@ def import_transactions(transactions_file, file_type, cash_book, user):
     importer = importers.get(file_type) or None
     if importer is None:
         raise ImportTransactionsError(
-            _("Unable to find suitable filoe importer for this file.")
+            _("Unable to find a suitable file importer for this file.")
         )
 
     try:
