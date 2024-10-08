@@ -15,4 +15,9 @@ urlpatterns = [
         views.cash_book_import_transactions,
         name="cash-book-import-transactions",
     ),
+    path(
+        "transaction/upload",
+        views.transaction_upload_document,
+        name="transaction-upload-document",
+    ),
 ]

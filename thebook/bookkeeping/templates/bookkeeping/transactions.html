@@ -86,9 +86,15 @@
         <tbody>
           {% for transaction in transactions %}
           <tr>
-            <td>
+            <td style="display: block; text-align: center;">
+              <a
+                style="cursor: pointer"
+                data-toggle="modal"
+                data-target="#uploadDocument"
+                data-transactionid="{{ transaction.id }}"
+                title="{% translate 'Upload Document' %}"><i class="fas fa-upload fa-sm fa-fw"></i></a>
               {% if transaction.has_documents %}
-              <a href=""><i class="fas fa-download fa-sm fa-fw"></i></a>
+              <a href="" title="{% translate 'Download Documents' %}"><i class="fas fa-download fa-sm fa-fw"></i></a>
               {% else %}
               <i class="fas fa-minus fa-sm fa-fw"></i>
               {% endif %}
@@ -157,7 +163,7 @@
             </button>
           </div>
           <div class="modal-body">
-            <p>{% trans "This importer only works with CSV files exported from PayPal. " %}<a href="https://www.paypal.com/reports/statements/monthly">{% trans "Download it here." %}</a></p>
+            <p>{% translate "This importer only works with CSV files exported from PayPal. " %}<a href="https://www.paypal.com/reports/statements/monthly">{% translate "Download it here." %}</a></p>
 
             {% csrf_token %}
             <input type="file" id="csv_file" name="csv_file">
@@ -175,22 +181,67 @@
     </form>
   </div>
 </div>
+
+<div class="modal fade" id="uploadDocument" tabindex="-1" aria-labelledby="uploadDocument" aria-hidden="true">
+  <div class="modal-dialog">
+    <form
+      method="post"
+      action="{% url 'bookkeeping:transaction-upload-document' %}"
+      enctype="multipart/form-data"
+      id="upload_document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">{% translate "Upload Document" %}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            {% csrf_token %}
+            <input type="hidden" id="transaction_id" name="transaction_id" />
+            <input
+              type="hidden"
+              name="next_url"
+              value="{% url 'bookkeeping:cash-book-transactions' cash_book.slug %}?{% if year %}year={{ year }}{% endif %}{% if month %}&month={{ month }}{% endif %}">
+
+            <div class="form-group">
+              <label for="transaction_document">{% translate "Document File" %}</label>
+              <input type="file" class="form-control" id="transaction_document" name="transaction_document">
+            </div>
+
+            <div class="form-group">
+              <label for="notes">{% translate "Notes" %}</label>
+              <input type="text" class="form-control" id="notes" name="notes">
+              <small id="notes_help" class="form-text text-muted">
+                {% translate "Add a description explaining the content of the document" %}
+              </small>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">{% translate "Close" %}</button>
+            <button type="submit" class="btn btn-primary">{% translate "Import" %}</button>
+          </div>
+        </div>
+    </form>
+  </div>
+</div>
 {% endblock content %}
 
 {% block js_scripts %}
   <script>
     $(document).ready(function() {
+
       $("#transactions").DataTable(
         {
           pageLength: 100,
           columnDefs: [{ orderable: false, targets: 6 }],
           columns: [
-            { width: "1%" },
-            { width: "4%" },
+            { width: "5%" },
+            { width: "5%" },
             { width: "10%" },
             { width: "10%" },
-            { width: "45%" },
-            { width: "20%" },
+            { width: "40%" },
+            { width: "15%" },
             { width: "10%" }
           ],
         }
@@ -198,10 +249,15 @@
 
       $("#importOFXModal").on("shown.bs.modal", function () {
         $("#ofx_file").trigger("focus")
-      })
+      });
 
       $("#importCSVModal").on("shown.bs.modal", function () {
         $("#csv_file").trigger("focus")
+      });
+
+      $("#uploadDocument").on("show.bs.modal", function (event) {
+        let transactionId = $(event.relatedTarget).data('transactionid');
+        $("#transaction_id").val(transactionId);
       })
 
     });

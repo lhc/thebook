@@ -4,9 +4,10 @@ import datetime
 from django.contrib import messages
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
+from django.utils.translation import gettext as _
 
 from thebook.bookkeeping.importers import import_transactions, ImportTransactionsError
-from thebook.bookkeeping.models import CashBook
+from thebook.bookkeeping.models import CashBook, Document, Transaction
 
 
 def _csv_cash_book_transactions(context):
@@ -127,5 +128,18 @@ def cash_book_import_transactions(request, cash_book_slug):
         import_transactions(transactions_file, file_type, cash_book, request.user)
     except ImportTransactionsError as err:
         messages.add_message(request, messages.ERROR, str(err))
+
+    return HttpResponseRedirect(request.POST["next_url"])
+
+
+def transaction_upload_document(request):
+    transaction = get_object_or_404(Transaction, id=request.POST["transaction_id"])
+
+    document = Document.objects.create(
+        transaction=transaction,
+        document_file=request.FILES['transaction_document'],
+        notes=request.POST["notes"],
+    )
+    messages.add_message(request, messages.SUCCESS, _("File successfully uploaded."))
 
     return HttpResponseRedirect(request.POST["next_url"])
