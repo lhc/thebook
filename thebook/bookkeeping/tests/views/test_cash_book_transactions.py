@@ -14,7 +14,7 @@ from thebook.bookkeeping.views import (
     _get_cash_book_transactions_context,
     cash_book_transactions,
 )
-from thebook.bookkeeping.models import CashBook, Category, Transaction
+from thebook.bookkeeping.models import CashBook, Category, Document, Transaction
 
 
 @pytest.fixture
@@ -307,11 +307,17 @@ def test_return_transactions_does_not_execute_excessive_amount_of_queries(
         category=baker.make(Category),
         _quantity=20,
     )
+    baker.make(
+        Document,
+        transaction__cash_book=cash_book_1,
+        _quantity=20,
+        _create_files=True,
+    )
 
     cash_book_transactions_url = reverse(
         "bookkeeping:cash-book-transactions", args=(cash_book_1.slug,)
     )
     request = RequestFactory().get(cash_book_transactions_url)
 
-    with django_assert_num_queries(2) as captured:
+    with django_assert_num_queries(3) as captured:
         response = cash_book_transactions(request, cash_book_1.slug)

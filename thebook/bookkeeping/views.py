@@ -75,7 +75,9 @@ def _get_cash_book_transactions_context(cash_book, *, year=None, month=None):
     if month is not None:
         month = int(month)
 
-    transactions = cash_book.transaction_set.select_related("category")
+    transactions = cash_book.transaction_set.select_related(
+        "category"
+    ).prefetch_related("documents")
     if year:
         transactions = transactions.filter(date__year=year)
         if month in range(1, 13):
@@ -137,7 +139,7 @@ def transaction_upload_document(request):
 
     document = Document.objects.create(
         transaction=transaction,
-        document_file=request.FILES['transaction_document'],
+        document_file=request.FILES["transaction_document"],
         notes=request.POST["notes"],
     )
     messages.add_message(request, messages.SUCCESS, _("File successfully uploaded."))

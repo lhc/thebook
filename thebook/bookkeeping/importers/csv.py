@@ -126,7 +126,7 @@ class CSVImporter:
                 )
                 self.new_transactions.append(
                     Transaction(
-                        reference=transaction_reference,
+                        reference=f"{transaction_reference}T",
                         date=transaction_date,
                         description=f"Taxa Intermediação - Doação Recebida de {transaction_name}",
                         amount=transaction_tax,
