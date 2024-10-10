@@ -10,7 +10,7 @@ console_command = '/code/manage.py shell'
 [env]
   ALLOWED_HOSTS = 'thebook.lhc.net.br,thebook.fly.dev'
   CSRF_TRUSTED_ORIGINS = 'https://thebook.lhc.net.br,https://thebook.fly.dev'
-  DEBUG = '1'
+  DEBUG = '0'
   PORT = '8000'
   STORAGES = '{"default": {"BACKEND": "storages.backends.s3.S3Storage", "OPTIONS": {"bucket_name": "lhc-bookkeeping"}}, "staticfiles": {"BACKEND": "storages.backends.s3.S3Storage", "OPTIONS": {"bucket_name": "lhc-thebook-static"}}}'
   STATIC_URL = 'https://lhc-thebook-static.s3.us-east-005.backblazeb2.com/'
