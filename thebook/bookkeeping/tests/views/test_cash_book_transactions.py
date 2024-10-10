@@ -2,14 +2,19 @@ import datetime
 from http import HTTPStatus
 
 import pytest
+
 from model_bakery import baker
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.test import RequestFactory
 from django.urls import reverse
 
-from thebook.bookkeeping.views import _get_cash_book_transactions_context
-from thebook.bookkeeping.models import CashBook, Transaction
+from thebook.bookkeeping.views import (
+    _get_cash_book_transactions_context,
+    cash_book_transactions,
+)
+from thebook.bookkeeping.models import CashBook, Category, Transaction
 
 
 @pytest.fixture
@@ -291,3 +296,22 @@ def test_cb_transactions_next_and_previous_period_query_params_in_context(
 
     assert context["previous_period"] == previous_period
     assert context["next_period"] == next_period
+
+
+def test_return_transactions_does_not_execute_excessive_amount_of_queries(
+    db, django_assert_num_queries, client, user, cash_book_1
+):
+    baker.make(
+        Transaction,
+        cash_book=cash_book_1,
+        category=baker.make(Category),
+        _quantity=20,
+    )
+
+    cash_book_transactions_url = reverse(
+        "bookkeeping:cash-book-transactions", args=(cash_book_1.slug,)
+    )
+    request = RequestFactory().get(cash_book_transactions_url)
+
+    with django_assert_num_queries(2) as captured:
+        response = cash_book_transactions(request, cash_book_1.slug)
