@@ -1,6 +1,9 @@
 FROM python:3.11-slim
 ENV POETRY_VIRTUALENVS_CREATE=false
 
+RUN apt-get update \
+    && apt-get install --yes --no-install-recommends vim
+
 WORKDIR code/
 COPY . .
 
