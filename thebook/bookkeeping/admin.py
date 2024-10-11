@@ -59,6 +59,10 @@ class TransactionAdmin(admin.ModelAdmin):
         "category",
         "date",
     ]
+    list_select_related = [
+        "cash_book",
+        "category",
+    ]
     inlines = [
         DocumentInline,
     ]
