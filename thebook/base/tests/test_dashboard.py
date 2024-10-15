@@ -59,3 +59,19 @@ def test_dashboard_context(db):
     assertQuerySetEqual(
         context["cash_books_summary"], CashBook.objects.summary(year=2024, month=9)
     )
+
+
+def test_dashboard_list_only_active_cash_books(db):
+    cash_book_1 = CashBook.objects.create(name="Cash Book 1", active=True)
+    cash_book_2 = CashBook.objects.create(name="Cash Book 2", active=False)
+    cash_book_3 = CashBook.objects.create(name="Cash Book 3", active=True)
+    cash_book_4 = CashBook.objects.create(name="Cash Book 4", active=False)
+
+    context = _get_dashboard_context()
+
+    assert len(context["cash_books_summary"]) == 2
+
+    assert cash_book_1 in context["cash_books_summary"]
+    assert cash_book_2 not in context["cash_books_summary"]
+    assert cash_book_3 in context["cash_books_summary"]
+    assert cash_book_4 not in context["cash_books_summary"]

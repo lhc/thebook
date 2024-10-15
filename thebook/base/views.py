@@ -13,7 +13,9 @@ def _get_dashboard_context():
     overall_balance = Decimal("0")
 
     today = datetime.date.today()
-    cash_books_summary = CashBook.objects.summary(year=today.year, month=today.month)
+    cash_books_summary = CashBook.objects.filter(active=True).summary(
+        year=today.year, month=today.month
+    )
     for cash_book in cash_books_summary:
         deposits += cash_book.deposits
         withdraws += cash_book.withdraws

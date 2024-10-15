@@ -26,6 +26,7 @@ class CashBook(models.Model):
     name = models.CharField(max_length=64, unique=True)
     slug = models.SlugField(max_length=64, unique=True)
     description = models.TextField(blank=True)
+    active = models.BooleanField(default=True)
 
     objects = CashBookQuerySet.as_manager()
 
