@@ -43,7 +43,7 @@ class CashBook(models.Model):
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
 
-    def summary(self, *, month=None, year=None):
+    def with_summary(self, *, month=None, year=None):
         def _valid_year_and_month(month, year):
             if month is not None:
                 return all(
@@ -75,16 +75,13 @@ class CashBook(models.Model):
             .get("withdraws")
         ) or Decimal("0")
 
-        return {
-            "id": self.id,
-            "name": self.name,
-            "slug": self.slug,
-            "withdraws": withdraws,
-            "deposits": deposits,
-            "balance": deposits + withdraws,
-            "year": year,
-            "month": month,
-        }
+        self.withdraws = withdraws
+        self.deposits = deposits
+        self.balance = deposits + withdraws
+        self.year = year
+        self.month = month
+
+        return self
 
 
 class Category(models.Model):

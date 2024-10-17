@@ -91,7 +91,7 @@ def _get_cash_book_transactions_context(cash_book, *, year=None, month=None):
     previous_period, next_period = _get_periods(year, month)
 
     return {
-        "cash_book": cash_book,
+        "cash_book": cash_book.with_summary(year=year, month=month),
         "transactions": transactions,
         "year": year,
         "month": month,

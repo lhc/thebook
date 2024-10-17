@@ -139,7 +139,7 @@ def test_cash_book_transactions_context(db, cash_book_1):
 
     context = _get_cash_book_transactions_context(cash_book_1)
 
-    assert context["cash_book"] == cash_book_1
+    assert context["cash_book"] == cash_book_1.with_summary()
     assert len(context["transactions"]) == 2
     assert transaction_1 in context["transactions"]
     assert transaction_2 in context["transactions"]
@@ -158,7 +158,7 @@ def test_cash_book_transactions_context_with_year(db, cash_book_1):
 
     context = _get_cash_book_transactions_context(cash_book_1, year=2024)
 
-    assert context["cash_book"] == cash_book_1
+    assert context["cash_book"] == cash_book_1.with_summary(year=2024)
     assert len(context["transactions"]) == 2
     assert transaction_1 in context["transactions"]
     assert transaction_2 not in context["transactions"]
@@ -178,7 +178,7 @@ def test_cash_book_transactions_context_with_year_and_month(db, cash_book_1):
 
     context = _get_cash_book_transactions_context(cash_book_1, year=2024, month=1)
 
-    assert context["cash_book"] == cash_book_1
+    assert context["cash_book"] == cash_book_1.with_summary(year=2024, month=1)
     assert len(context["transactions"]) == 1
     assert transaction_1 in context["transactions"]
     assert transaction_2 not in context["transactions"]
@@ -198,7 +198,7 @@ def test_cash_book_transactions_context_with_year_and_invalid_month(db, cash_boo
 
     context = _get_cash_book_transactions_context(cash_book_1, year=2024, month=13)
 
-    assert context["cash_book"] == cash_book_1
+    assert context["cash_book"] == cash_book_1.with_summary(year=2024)
     assert len(context["transactions"]) == 2
     assert transaction_1 in context["transactions"]
     assert transaction_2 not in context["transactions"]
@@ -218,7 +218,7 @@ def test_cash_book_transactions_context_without_year_and_valid_month(db, cash_bo
 
     context = _get_cash_book_transactions_context(cash_book_1, month=1)
 
-    assert context["cash_book"] == cash_book_1
+    assert context["cash_book"] == cash_book_1.with_summary()
     assert len(context["transactions"]) == 3
     assert transaction_1 in context["transactions"]
     assert transaction_2 in context["transactions"]
@@ -283,10 +283,10 @@ def test_cb_transactions_with_format(db, client, user, cash_book_1):
     "year,month,previous_period,next_period",
     [
         ("2024", None, "year=2023", "year=2025"),
-        # ("2020", None, "year=2019", "year=2021"),
-        # ("2024", "1", "year=2023&month=12", "year=2024&month=2"),
-        # ("2023", "12", "year=2023&month=11", "year=2024&month=1"),
-        # ("2024", "6", "year=2024&month=5", "year=2024&month=7"),
+        ("2020", None, "year=2019", "year=2021"),
+        ("2024", "1", "year=2023&month=12", "year=2024&month=2"),
+        ("2023", "12", "year=2023&month=11", "year=2024&month=1"),
+        ("2024", "6", "year=2024&month=5", "year=2024&month=7"),
     ],
 )
 def test_cb_transactions_next_and_previous_period_query_params_in_context(
@@ -319,5 +319,5 @@ def test_return_transactions_does_not_execute_excessive_amount_of_queries(
     )
     request = RequestFactory().get(cash_book_transactions_url)
 
-    with django_assert_num_queries(3) as captured:
+    with django_assert_num_queries(5) as captured:
         response = cash_book_transactions(request, cash_book_1.slug)
