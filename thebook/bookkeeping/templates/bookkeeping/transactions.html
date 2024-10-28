@@ -212,7 +212,15 @@
           </div>
           <div class="modal-body">
             {% csrf_token %}
-            <input type="file" id="ofx_file" name="ofx_file">
+            <label for="ofx_file" class="form-label">{% translate "Document File" %}</label>
+            <input type="file" id="ofx_file" name="ofx_file" class="form-control">
+
+            <label for="start_date" class="form-label">{% translate "Start Date" %}</label>
+            <input type="text" id="start_date" name="start_date" class="form-control">
+
+            <label for="end_date" class="form-label">{% translate "End Date" %}</label>
+            <input type="text" id="end_date" name="end_date" class="form-control">
+
             <input type="hidden" name="file_type" value="ofx" />
             <input
               type="hidden"

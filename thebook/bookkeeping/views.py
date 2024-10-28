@@ -120,6 +120,14 @@ def cash_book_transactions(request, cash_book_slug):
 def cash_book_import_transactions(request, cash_book_slug):
     cash_book = get_object_or_404(CashBook, slug=cash_book_slug)
 
+    start_date = request.POST.get("start_date") or None
+    if start_date is not None:
+        start_date = datetime.datetime.strptime(start_date, "%d/%m/%Y").date()
+
+    end_date = request.POST.get("end_date") or None
+    if end_date is not None:
+        end_date = datetime.datetime.strptime(start_date, "%d/%m/%Y").date()
+
     try:
         file_type = request.POST["file_type"]
         transactions_file = None
@@ -127,7 +135,10 @@ def cash_book_import_transactions(request, cash_book_slug):
             transactions_file = request.FILES["ofx_file"]
         elif file_type == "csv":
             transactions_file = request.FILES["csv_file"]
-        import_transactions(transactions_file, file_type, cash_book, request.user)
+
+        import_transactions(
+            transactions_file, file_type, cash_book, request.user, start_date, end_date
+        )
     except ImportTransactionsError as err:
         messages.add_message(request, messages.ERROR, str(err))
 

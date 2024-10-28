@@ -12,7 +12,16 @@ class ImportTransactionsError(Exception):
     ...
 
 
-def import_transactions(transactions_file, file_type, cash_book, user):
+class InvalidOFXFile(Exception):
+    default_message = "Not a valid OFX File"
+
+    def __init__(self, message=None):
+        super().__init__(message or self.default_message)
+
+
+def import_transactions(
+    transactions_file, file_type, cash_book, user, start_date, end_date
+):
     importers = {
         "csv": CSVImporter,
         "ofx": OFXImporter,
@@ -24,7 +33,7 @@ def import_transactions(transactions_file, file_type, cash_book, user):
         )
 
     try:
-        importer(transactions_file, cash_book, user).run()
+        importer(transactions_file, cash_book, user).run(start_date, end_date)
     except Exception as err:
         logger.exception(err)
-        raise ImportTransactionsError(_('Something wrong happened during file import.'))
+        raise ImportTransactionsError(_("Something wrong happened during file import."))
