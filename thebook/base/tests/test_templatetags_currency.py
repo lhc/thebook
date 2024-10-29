@@ -35,4 +35,3 @@ def test_format_values_as_money(value, expected):
         Context({"value": value})
     )
     assert output == expected
-

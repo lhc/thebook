@@ -62,5 +62,4 @@ class CashBookQuerySet(models.QuerySet):
         ).order_by("name")
 
 
-class TransactionQuerySet(models.QuerySet):
-    ...
+class TransactionQuerySet(models.QuerySet): ...

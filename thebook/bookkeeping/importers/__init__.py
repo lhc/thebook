@@ -8,8 +8,7 @@ from thebook.bookkeeping.importers.ofx import OFXImporter
 logger = logging.getLogger(__name__)
 
 
-class ImportTransactionsError(Exception):
-    ...
+class ImportTransactionsError(Exception): ...
 
 
 class InvalidOFXFile(Exception):

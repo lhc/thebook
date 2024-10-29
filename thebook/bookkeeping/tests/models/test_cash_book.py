@@ -149,7 +149,9 @@ def test_cash_book_summary_with_transactions_filter_by_year(
 def test_cash_book_summary_with_transactions_filter_by_year_and_month(
     db, cash_book_with_transactions, year, month, deposits, withdraws, balance
 ):
-    cash_book_with_summary = cash_book_with_transactions.with_summary(year=year, month=month)
+    cash_book_with_summary = cash_book_with_transactions.with_summary(
+        year=year, month=month
+    )
 
     assert cash_book_with_summary.name == cash_book_with_transactions.name
     assert cash_book_with_summary.slug == cash_book_with_transactions.slug

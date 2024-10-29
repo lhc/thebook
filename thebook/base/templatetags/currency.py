@@ -12,10 +12,9 @@ def money(value):
 
     integer_value = str(abs(int(value)))
     integer_part = ".".join(
-        [
-            integer_value[::-1][i : i + 3][::-1]
-            for i in range(0, len(integer_value), 3)
-        ][::-1]
+        [integer_value[::-1][i : i + 3][::-1] for i in range(0, len(integer_value), 3)][
+            ::-1
+        ]
     )
     decimal_part = int((abs(value) % 1) * 100)
 
