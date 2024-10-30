@@ -318,10 +318,41 @@
   <script>
     $(document).ready(function() {
 
+      $.extend($.fn.dataTable.ext.type.order, {
+        "custom-brl-sort-asc": function (value_1, value_2) {
+          return moneyStrToNumber(value_1) > moneyStrToNumber(value_2);
+        },
+
+        "custom-brl-sort-desc": function (value_1, value_2) {
+          return moneyStrToNumber(value_1) < moneyStrToNumber(value_2);
+        }
+      });
+
+      moneyStrToNumber = function(value) {
+        const negativeRegex = /\(R\$ ([\d.]+),(\d{2})\)/;
+        const negativeFound = value.match(negativeRegex);
+        if(negativeFound !== null) {
+          const integerValue = negativeFound[1].replaceAll(".", "")
+          const decimalValue = negativeFound[2];
+          return -1 * parseFloat(`${integerValue}.${decimalValue}`);
+        }
+
+        const positiveRegex = /R\$ ([\d.]+),(\d{2})/;
+        const positiveFound = value.match(positiveRegex);
+        if(positiveFound !== null) {
+          const integerValue = positiveFound[1].replaceAll(".", "")
+          const decimalValue = positiveFound[2];
+          return parseFloat(`${integerValue}.${decimalValue}`);
+        }
+      };
+
       $("#transactions").DataTable(
         {
           pageLength: 100,
-          columnDefs: [{ orderable: false, targets: 6 }],
+          columnDefs: [
+            { type: "custom-brl-sort", targets: 3 },
+            { orderable: false, targets: 6 }
+          ],
           columns: [
             { width: "5%" },
             { width: "5%" },
