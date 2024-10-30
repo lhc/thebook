@@ -319,5 +319,5 @@ def test_return_transactions_does_not_execute_excessive_amount_of_queries(
     )
     request = RequestFactory().get(cash_book_transactions_url)
 
-    with django_assert_num_queries(5) as captured:
+    with django_assert_num_queries(6) as captured:
         response = cash_book_transactions(request, cash_book_1.slug)

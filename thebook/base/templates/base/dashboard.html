@@ -19,7 +19,7 @@
             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
               {% translate "Deposits (current month)" %}
             </div>
-            <div class="h5 mb-0 font-weight-bold text-gray-800">
+            <div class="h5 mb-0 font-weight-bold {% if deposits < 0 %}text-danger{% else %}text-gray-800{% endif %}">
               {{ deposits|money }}
             </div>
           </div>
@@ -38,7 +38,7 @@
             <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
               {% translate "Withdraws (current month)" %}
             </div>
-            <div class="h5 mb-0 font-weight-bold text-gray-800">
+            <div class="h5 mb-0 font-weight-bold {% if withdraws < 0 %}text-danger{% else %}text-gray-800{% endif %}">
               {{ withdraws|money }}
             </div>
           </div>
@@ -57,7 +57,7 @@
             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
               {% translate "Balance (current month)" %}
             </div>
-            <div class="h5 mb-0 font-weight-bold text-gray-800">
+            <div class="h5 mb-0 font-weight-bold {% if balance < 0 %}text-danger{% else %}text-gray-800{% endif %}">
               {{ balance|money }}
             </div>
           </div>
@@ -76,7 +76,7 @@
             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
               {% translate "Overall Balance" %}
             </div>
-            <div class="h5 mb-0 font-weight-bold text-gray-800">
+            <div class="h5 mb-0 font-weight-bold {% if overall_balance < 0 %}text-danger{% else %}text-gray-800{% endif %}">
               {{ overall_balance|money }}
             </div>
           </div>

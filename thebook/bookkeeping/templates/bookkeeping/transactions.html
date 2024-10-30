@@ -12,7 +12,7 @@
             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
               {% translate "Deposits (selected period)" %}
             </div>
-            <div class="h5 mb-0 font-weight-bold text-gray-800">
+            <div class="h5 mb-0 font-weight-bold {% if cash_book.deposits < 0 %}text-danger{% else %}text-gray-800{% endif %}">
               {{ cash_book.deposits|money }}
             </div>
           </div>
@@ -31,7 +31,7 @@
             <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
               {% translate "Withdraws (selected period)" %}
             </div>
-            <div class="h5 mb-0 font-weight-bold text-gray-800">
+            <div class="h5 mb-0 font-weight-bold {% if cash_book.withdraws < 0 %}text-danger{% else %}text-gray-800{% endif %}">
               {{ cash_book.withdraws|money }}
             </div>
           </div>
@@ -50,7 +50,7 @@
             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
               {% translate "Balance (selected_period)" %}
             </div>
-            <div class="h5 mb-0 font-weight-bold text-gray-800">
+            <div class="h5 mb-0 font-weight-bold {% if cash_book.balance < 0 %}text-danger{% else %}text-gray-800{% endif %}">
               {{ cash_book.balance|money }}
             </div>
           </div>
@@ -69,8 +69,8 @@
             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
               {% translate "Overall Balance" %}
             </div>
-            <div class="h5 mb-0 font-weight-bold text-gray-800">
-              N/A
+            <div class="h5 mb-0 font-weight-bold {% if cash_book.overall_balance < 0 %}text-danger{% else %}text-gray-800{% endif %}">
+              {{ cash_book.overall_balance|money }}
             </div>
           </div>
           <div class="col-auto">

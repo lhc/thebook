@@ -58,6 +58,11 @@ class CashBook(models.Model):
             raise ValueError("Invalid 'month' and 'year' arguments")
 
         transactions = self.transaction_set.all()
+
+        overall_balance = (
+            transactions.aggregate(overall_balance=Sum("amount")).get("overall_balance")
+        ) or Decimal("0")
+
         if year is not None:
             transactions = transactions.filter(date__year=year)
         if month is not None:
@@ -78,6 +83,7 @@ class CashBook(models.Model):
         self.withdraws = withdraws
         self.deposits = deposits
         self.balance = deposits + withdraws
+        self.overall_balance = overall_balance
         self.year = year
         self.month = month
 

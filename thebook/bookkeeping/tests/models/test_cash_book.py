@@ -47,6 +47,7 @@ def test_cash_book_summary(db, cash_book):
     assert cash_book_with_summary.withdraws == Decimal("0")
     assert cash_book_with_summary.deposits == Decimal("0")
     assert cash_book_with_summary.balance == Decimal("0")
+    assert cash_book_with_summary.overall_balance == Decimal("0")
     assert cash_book_with_summary.year is None
     assert cash_book_with_summary.month is None
 
@@ -63,6 +64,7 @@ def test_cash_book_summary_for_year(db, cash_book, year):
     assert cash_book_with_summary.withdraws == Decimal("0")
     assert cash_book_with_summary.deposits == Decimal("0")
     assert cash_book_with_summary.balance == Decimal("0")
+    assert cash_book_with_summary.overall_balance == Decimal("0")
     assert cash_book_with_summary.year == year
     assert cash_book_with_summary.month is None
 
@@ -79,6 +81,7 @@ def test_cash_book_summary_for_year_and_month(db, cash_book, year, month):
     assert cash_book_with_summary.withdraws == Decimal("0")
     assert cash_book_with_summary.deposits == Decimal("0")
     assert cash_book_with_summary.balance == Decimal("0")
+    assert cash_book_with_summary.overall_balance == Decimal("0")
     assert cash_book_with_summary.year == year
     assert cash_book_with_summary.month == month
 
@@ -108,6 +111,7 @@ def test_cash_book_summary_with_transactions(db, cash_book_with_transactions):
     assert cash_book_with_summary.withdraws == Decimal("-143.60")
     assert cash_book_with_summary.deposits == Decimal("341.26")
     assert cash_book_with_summary.balance == Decimal("197.66")
+    assert cash_book_with_summary.overall_balance == Decimal("197.66")
     assert cash_book_with_summary.year is None
     assert cash_book_with_summary.month is None
 
@@ -133,6 +137,7 @@ def test_cash_book_summary_with_transactions_filter_by_year(
     assert cash_book_with_summary.withdraws == withdraws
     assert cash_book_with_summary.deposits == deposits
     assert cash_book_with_summary.balance == balance
+    assert cash_book_with_summary.overall_balance == Decimal("197.66")
     assert cash_book_with_summary.year == year
     assert cash_book_with_summary.month is None
 
@@ -161,6 +166,7 @@ def test_cash_book_summary_with_transactions_filter_by_year_and_month(
     assert cash_book_with_summary.withdraws == withdraws
     assert cash_book_with_summary.deposits == deposits
     assert cash_book_with_summary.balance == balance
+    assert cash_book_with_summary.overall_balance == Decimal("197.66")
     assert cash_book_with_summary.year == year
     assert cash_book_with_summary.month == month
 
