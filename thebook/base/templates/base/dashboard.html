@@ -118,8 +118,8 @@
                     {{ cash_book_summary.name }}
                   </a>
                 </td>
-                <td {% if cash_book_summary.balance_month < 0 %}class="text-danger"{% endif %}>
-                  {{ cash_book_summary.balance_month|money }}
+                <td {% if cash_book_summary.balance < 0 %}class="text-danger"{% endif %}>
+                  {{ cash_book_summary.balance|money }}
                 </td>
                 <td {% if cash_book_summary.overall_balance < 0 %}class="text-danger"{% endif %}>
                   {{ cash_book_summary.overall_balance|money }}
