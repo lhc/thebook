@@ -309,3 +309,16 @@ def test_use_default_list_of_ignored_descriptions_if_not_provided(
 
         references = sorted([transaction.reference for transaction in transactions])
         assert references == sorted(expected_references)
+
+
+@pytest.mark.xfail(
+    reason="current version of ofxparser does not process UTF-8 characters correctly"
+)
+def test_utf_8_transactions_content(db, request, cash_book, user):
+    ofx_file_path = request.path.parent / "data" / "ofx-utf-8.ofx"
+    with open(ofx_file_path, "r") as ofx_file:
+        ofx_importer = OFXImporter(ofx_file, cash_book, user)
+
+        transactions = ofx_importer.run()
+
+        assert len(transactions) == 1
