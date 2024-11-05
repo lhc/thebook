@@ -685,14 +685,19 @@ version = "0.21"
 description = "Tools for working with the OFX (Open Financial Exchange) file format"
 optional = false
 python-versions = "*"
-files = [
-    {file = "ofxparse-0.21.tar.gz", hash = "sha256:057ab68d31270dece4d1a47662096aa76341968aaee145ffc711cb44cbd5c4a7"},
-]
+files = []
+develop = false
 
 [package.dependencies]
 beautifulsoup4 = "*"
 lxml = "*"
 six = "*"
+
+[package.source]
+type = "git"
+url = "https://github.com/rennerocha/ofxparse.git"
+reference = "master"
+resolved_reference = "d392394a53b585327ed13527a41e80a0501eaea2"
 
 [[package]]
 name = "ofxtools"
@@ -1335,4 +1340,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "3bb29069dd504c13659b493fb117d7e2e358f2b7c0da12b1d19b84a44857aa59"
+content-hash = "e8cd4bd582215ba1d6c093d2a8259ea4fae7fb321e235875489d6b5521f534a7"
