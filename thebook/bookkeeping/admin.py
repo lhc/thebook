@@ -24,6 +24,12 @@ def make_cash_book_transfer(modeladmin, request, queryset):
     queryset.update(category=cash_book_transfer)
 
 
+@admin.action(description="Automatically categorize transactions")
+def categorize_transactions(modeladmin, request, queryset):
+    for transaction in queryset:
+        transaction.categorize()
+
+
 @admin.register(CashBook)
 class CashBookAdmin(admin.ModelAdmin): ...
 
@@ -42,7 +48,12 @@ class DocumentInline(admin.TabularInline):
 
 @admin.register(Transaction)
 class TransactionAdmin(admin.ModelAdmin):
-    actions = [make_donation, make_membership_fee, make_cash_book_transfer]
+    actions = [
+        make_donation,
+        make_membership_fee,
+        make_cash_book_transfer,
+        categorize_transactions,
+    ]
     list_display = [
         "ref",
         "date",

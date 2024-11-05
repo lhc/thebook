@@ -11,6 +11,43 @@ from django.utils.translation import gettext as _
 from thebook.bookkeeping.managers import CashBookQuerySet, TransactionQuerySet
 
 
+def get_categorize_rules():
+    DONATION = "Doação"
+    RECURRING_DONATION = "Doação Recorrente"
+    BANK_FEES = "Tarifas Bancárias"
+    BANK_INCOME = "Investimentos"
+    RECURRING = "Recorrente"
+    MEMBERSHIP_FEE = "Mensalidade"
+    CASH_BOOK_TRANSFER = "Transferência entre contas"
+    ACCOUNTANT = "Contabilidade"
+    TAXES = "Impostos"
+    UNCATEGORIZED = "Uncategorized"
+
+    uncategorized, _ = Category.objects.get_or_create(name=UNCATEGORIZED)
+    donation, _ = Category.objects.get_or_create(name=DONATION)
+    recurring_donation, _ = Category.objects.get_or_create(name=RECURRING_DONATION)
+    bank_fees, _ = Category.objects.get_or_create(name=BANK_FEES)
+    bank_income, _ = Category.objects.get_or_create(name=BANK_INCOME)
+    recurring, _ = Category.objects.get_or_create(name=RECURRING)
+    cash_book_transfer, _ = Category.objects.get_or_create(name=CASH_BOOK_TRANSFER)
+    accountant, _ = Category.objects.get_or_create(name=ACCOUNTANT)
+    taxes, _ = Category.objects.get_or_create(name=TAXES)
+    membership_fee, _ = Category.objects.get_or_create(name=MEMBERSHIP_FEE)
+
+    return {
+        "TARIFA BANCARIA": bank_fees,
+        "CONTA DE TELEFONE": recurring,
+        "CONTA DE AGUA": recurring,
+        "CONTA DE LUZ": recurring,
+        "COBRANCA ALUGUEL": recurring,
+        "RENTAB.INVEST FACILCRED": bank_income,
+        "SYSTEN CONSULTORIA": accountant,
+        "CONTADOR": accountant,
+        "PAYPAL DO BRASIL": cash_book_transfer,
+        "PAGTO ELETRONICO TRIBUTO INTERNET --P.M CAMPINAS/SP": taxes,
+    }
+
+
 def document_upload_path(instance, filename):
     cash_book_slug = instance.transaction.cash_book.slug
 
@@ -146,3 +183,13 @@ class Transaction(models.Model):
     @property
     def has_documents(self):
         return self.documents.exists()
+
+    def categorize(self, rules=None):
+        if rules is None:
+            rules = get_categorize_rules()
+
+        for description, category in rules.items():
+            if description.lower() in self.description.lower():
+                self.category = category
+                self.save()
+                break
