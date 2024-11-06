@@ -56,7 +56,7 @@ class CSVImporter:
         self.cash_book = cash_book
         self.user = user
 
-    def run(self):
+    def run(self, start_date=None, end_date=None, ignored_memos=None):
         csv_content = self.transactions_file.read().decode()
 
         # PayPal export adds this character in the beginning of the exported file
