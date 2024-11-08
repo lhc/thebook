@@ -4,6 +4,7 @@ from decimal import Decimal, ROUND_UP
 from django.shortcuts import render
 
 from thebook.bookkeeping.models import CashBook
+from thebook.members.models import Membership
 
 
 def _get_dashboard_context():
@@ -29,6 +30,7 @@ def _get_dashboard_context():
         "overall_balance": overall_balance.quantize(Decimal(".01"), rounding=ROUND_UP),
         "cash_books_summary": cash_books_summary,
         "today": today,
+        "active_memberships": Membership.objects.filter(active=True).count(),
     }
 
 

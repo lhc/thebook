@@ -12,6 +12,7 @@ from django.urls import reverse
 
 from thebook.base.views import _get_dashboard_context
 from thebook.bookkeeping.models import CashBook, Transaction
+from thebook.members.models import Membership
 
 
 def test_unauthenticated_access_to_dashboard_redirect_to_login_page(db, client):
@@ -75,3 +76,12 @@ def test_dashboard_list_only_active_cash_books(db):
     assert cash_book_2 not in context["cash_books_summary"]
     assert cash_book_3 in context["cash_books_summary"]
     assert cash_book_4 not in context["cash_books_summary"]
+
+
+def test_dashboard_context_has_number_of_active_memberships(db):
+    baker.make(Membership, active=True, _quantity=4)
+    baker.make(Membership, active=False, _quantity=10)
+
+    context = _get_dashboard_context()
+
+    assert context["active_memberships"] == 4
