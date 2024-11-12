@@ -16,6 +16,7 @@ from pathlib import Path
 import dj_database_url
 from decouple import config
 from django.contrib.messages import constants as messages
+from django.urls import reverse_lazy
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -120,6 +121,8 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 AUTH_USER_MODEL = "users.User"
+
+LOGIN_REDIRECT_URL = reverse_lazy("dashboard")
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
