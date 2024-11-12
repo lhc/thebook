@@ -1,12 +1,18 @@
+import calendar
+import datetime
+
 from django.db import models
 from django.utils.functional import classproperty
 from django.utils.translation import gettext as _
+
+from thebook.members.managers import ReceivableFeeManager
+from django.db.models import UniqueConstraint
 
 
 class FeeIntervals:
     MONTHLY = 1
     QUARTERLY = 3
-    BIANNUAL = 6
+    BIANNUALLY = 6
     ANNUALLY = 12
 
     @classproperty
@@ -14,7 +20,7 @@ class FeeIntervals:
         return (
             (cls.MONTHLY, _("Monthly")),
             (cls.QUARTERLY, _("Quarterly")),
-            (cls.BIANNUAL, _("Biannually")),
+            (cls.BIANNUALLY, _("Biannually")),
             (cls.ANNUALLY, _("Annually")),
         )
 
@@ -42,13 +48,13 @@ class Membership(models.Model):
 
     start_date = models.DateField(verbose_name=_("Start Membership"))
     end_date = models.DateField(verbose_name=_("End Membership"), null=True, blank=True)
-    amount = models.DecimalField(
+    membership_fee_amount = models.DecimalField(
         max_digits=8,
         decimal_places=2,
         verbose_name=_("Membership Fee"),
         help_text=_("The amount to be paid in the chosen interval"),
     )
-    interval = models.IntegerField(
+    payment_interval = models.IntegerField(
         choices=FeeIntervals.choices,
         verbose_name=_("Payment Interval"),
         help_text=_("How often does the member pay their fees?"),
@@ -60,6 +66,28 @@ class Membership(models.Model):
             "Indicates is we are expecting to be receiving fees from this membership"
         ),
     )
+
+    @property
+    def next_membership_fee_payment_date(self):
+        allowed_months = [month for month in range(1, 13, self.payment_interval)]
+
+        today = datetime.date.today()
+        for month in range(today.month + 1, 13):
+            if month in allowed_months:
+                next_payment_year = today.year
+                next_payment_month = month
+                break
+        else:
+            next_payment_year = today.year + 1
+            next_payment_month = allowed_months[0]
+
+        _, last_day_of_next_payment_month = calendar.monthrange(
+            next_payment_year, next_payment_month
+        )
+
+        next_payment_day = min([self.start_date.day, last_day_of_next_payment_month])
+
+        return datetime.date(next_payment_year, next_payment_month, next_payment_day)
 
 
 class Member(models.Model):
@@ -92,5 +120,16 @@ class ReceivableFee(models.Model):
     )
     status = models.IntegerField(
         choices=FeePaymentStatus.choices,
+        default=FeePaymentStatus.UNPAID,
         verbose_name=_("Payment Status"),
     )
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=["membership", "start_date"],
+                name="unique_receivable_fee_in_month",
+            )
+        ]
+
+    objects = ReceivableFeeManager()
