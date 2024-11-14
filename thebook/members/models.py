@@ -1,5 +1,6 @@
 import calendar
 import datetime
+import itertools
 
 from django.db import models
 from django.utils.functional import classproperty
@@ -69,7 +70,20 @@ class Membership(models.Model):
 
     @property
     def next_membership_fee_payment_date(self):
-        allowed_months = [month for month in range(1, 13, self.payment_interval)]
+        allowed_months = sorted(
+            [
+                month
+                for month in itertools.islice(
+                    [
+                        _month
+                        for _month in itertools.islice(
+                            itertools.cycle(range(1, 13)), self.start_date.month - 1, 25
+                        )
+                    ],
+                    12,
+                )
+            ][:: self.payment_interval]
+        )
 
         today = datetime.date.today()
         for month in range(today.month + 1, 13):
