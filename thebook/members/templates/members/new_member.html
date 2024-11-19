@@ -1,0 +1,68 @@
+{% extends "base/base.html" %}
+
+{% load i18n static %}
+
+{% block content_wrapper %}
+<div id="content-wrapper" class="d-flex flex-column">
+  <!-- Main Content -->
+  <div id="content">
+    <!-- Begin Page Content -->
+    <div class="container-fluid">
+      <div class="row justify-content-center">
+        <div class="col-lg-7">
+          <div class="card o-hidden border-0 shadow-lg my-5">
+            <div class="card-body p-0">
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="p-5">
+                    <div class="text-center">
+                      <h1 class="h4 text-gray-900 mb-4">Laboratório Hacker de Campinas</h1>
+                    </div>
+                    <p>Estamos realizando um cadastro das <strong>Pessoas Associadas</strong> ao LHC. Pedimos que preencham esse formulário o mais rapidamente possível.</p>
+                    <p>Esse cadastro é necessário para:</p>
+                    <ul>
+                      <li>Ter uma informação precisa de quem são as Pessoas Associadas Efetivas (definidas em nosso Estatuto);</li>
+                      <li>Ter informações para entrar em contato com todas as Pessoas Associadas do LHC;</li>
+                      <li>Dar acesso as informações financeiras do LHC a todas as pessoas associadas;</li>
+                      <li>Melhorar o controle de quem possui a chave de acesso a casa;</li>
+                      <li>Facilitar o planejamento financeiro;</li>
+                    </ul>
+                    <p>Após o cadastro e validação dos dados, você terá acesso ao <a href="https://thebook.lhc.net.br/"><i>The Book</i></a>, o nosso sistema de controle administrativo do LHC.</p>
+                    <p>Esses dados não estarão disponíveis publicamente sendo de acesso restrito a Diretoria do LHC.</p>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="p-5">
+                    <form method="post" action="">
+                      {% csrf_token %}
+
+                      {% for error in form.non_field_errors %}
+                        <strong style="color: #FF0000">{{ error }}</strong>
+                      {% endfor %}
+
+                      {% for field in form %}
+                      <div>
+                        {% for error in field.errors %}
+                          <strong style="color: #FF0000">{{ error }}</strong>
+                        {% endfor %}
+                        {% if field.errors %}<br>{% endif %}
+                        <strong>{{ field.label_tag }}</strong><br>
+                        {{ field }}
+                      </div>
+                      {% endfor %}
+
+                      <hr>
+                      <button type="submit" class="btn btn-primary">Cadastrar</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- End of Main Content -->
+</div>
+{% endblock content_wrapper %}
