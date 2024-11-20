@@ -68,6 +68,10 @@ class Membership(models.Model):
         ),
     )
 
+    def __str__(self):
+        active_status = "Active" if self.active else "Inactive"
+        return f"{active_status} membership of {self.member.name}"
+
     @property
     def next_membership_fee_payment_date(self):
         allowed_months = sorted(
