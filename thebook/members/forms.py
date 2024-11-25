@@ -66,17 +66,18 @@ class NewMemberForm(forms.Form):
         return value
 
     def save(self):
-        member = Member.objects.create(
-            name=self.cleaned_data["name"],
-            email=self.cleaned_data["email"],
-            has_key=self.cleaned_data["has_key"],
-            phone_number=self.cleaned_data["phone_number"],
-        )
         user = get_user_model().objects.create_user(
             email=self.cleaned_data["email"],
             password=self.cleaned_data["password"],
             first_name=self.cleaned_data["first_name"],
             last_name=self.cleaned_data["last_name"],
+        )
+        member = Member.objects.create(
+            name=self.cleaned_data["name"],
+            user=user,
+            email=self.cleaned_data["email"],
+            has_key=self.cleaned_data["has_key"],
+            phone_number=self.cleaned_data["phone_number"],
         )
 
         membership_fee_amount = Decimal(self.cleaned_data["membership_fee"])

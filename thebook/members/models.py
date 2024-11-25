@@ -2,6 +2,7 @@ import calendar
 import datetime
 import itertools
 
+from django.conf import settings
 from django.db import models
 from django.utils.functional import classproperty
 from django.utils.translation import gettext as _
@@ -114,6 +115,10 @@ class Member(models.Model):
     has_key = models.BooleanField(default=False, verbose_name=_("Has physical key?"))
     phone_number = models.CharField(
         max_length=16, blank=True, verbose_name=_("Phone number")
+    )
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True
     )
 
     def __str__(self):
