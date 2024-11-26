@@ -29,7 +29,7 @@ def test_create_receivable_fee_for_next_month(db):
 
     assert receivable_fee.membership == membership
     assert receivable_fee.start_date == datetime.date(2024, 12, 1)
-    assert receivable_fee.due_date == datetime.date(2024, 12, 1)
+    assert receivable_fee.due_date == datetime.date(2024, 12, 31)
     assert receivable_fee.amount == Decimal("85")
     assert receivable_fee.status == FeePaymentStatus.UNPAID
 
@@ -178,3 +178,37 @@ def test_create_receivable_fee_for_annually_payment_interval(
         receivable_fees = ReceivableFee.objects.create_for_next_month()
 
         assert len(receivable_fees) == expected_receivable_fee
+
+
+@pytest.mark.parametrize(
+    ["current_date", "expected_due_date"],
+    [
+        ("2024-01-10", datetime.date(2024, 2, 29)),
+        ("2024-02-10", datetime.date(2024, 3, 31)),
+        ("2024-03-11", datetime.date(2024, 4, 30)),
+        ("2024-04-12", datetime.date(2024, 5, 31)),
+        ("2024-05-13", datetime.date(2024, 6, 30)),
+        ("2024-06-14", datetime.date(2024, 7, 31)),
+        ("2024-07-15", datetime.date(2024, 8, 31)),
+        ("2024-08-16", datetime.date(2024, 9, 30)),
+        ("2024-09-17", datetime.date(2024, 10, 31)),
+        ("2024-10-18", datetime.date(2024, 11, 30)),
+        ("2024-11-19", datetime.date(2024, 12, 31)),
+        ("2024-12-20", datetime.date(2025, 1, 31)),
+        ("2025-01-21", datetime.date(2025, 2, 28)),
+    ],
+)
+def test_due_date_last_day_of_next_month(db, current_date, expected_due_date):
+    membership = baker.make(
+        Membership,
+        start_date=datetime.date(2024, 1, 1),
+        membership_fee_amount=Decimal("85"),
+        payment_interval=FeeIntervals.MONTHLY,
+    )
+    with freeze_time(current_date):
+        receivable_fees = ReceivableFee.objects.create_for_next_month()
+
+        assert len(receivable_fees) == 1
+        receivable_fee = receivable_fees[0]
+
+        assert receivable_fee.due_date == expected_due_date

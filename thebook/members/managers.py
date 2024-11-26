@@ -1,3 +1,4 @@
+import calendar
 import datetime
 
 from django.db import models
@@ -16,7 +17,16 @@ class ReceivableFeeManager(models.Manager):
 
         memberships = Membership.objects.all()
         for membership in memberships:
-            due_date = membership.next_membership_fee_payment_date
+            _, last_day_of_next_payment_month = calendar.monthrange(
+                membership.next_membership_fee_payment_date.year,
+                membership.next_membership_fee_payment_date.month,
+            )
+            due_date = datetime.date(
+                membership.next_membership_fee_payment_date.year,
+                membership.next_membership_fee_payment_date.month,
+                last_day_of_next_payment_month,
+            )
+
             if (due_date.year, due_date.month) != (next_year, next_month):
                 continue
 
