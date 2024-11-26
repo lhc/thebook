@@ -28,9 +28,12 @@ def _csv_cash_book_transactions(context):
             "notes",
             "category",
             "has_documents",
+            "tags",
         ]
     )
+
     for transaction in context["transactions"]:
+        transaction_tags = ",".join(tag.name for tag in transaction.tags.all())
         writer.writerow(
             [
                 transaction.id,
@@ -41,6 +44,7 @@ def _csv_cash_book_transactions(context):
                 transaction.notes,
                 transaction.category.name,
                 transaction.has_documents,
+                transaction_tags,
             ]
         )
 
