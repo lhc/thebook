@@ -6,7 +6,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.utils.translation import gettext as _
 
-from thebook.bookkeeping.importers import import_transactions, ImportTransactionsError
+from thebook.bookkeeping.importers import ImportTransactionsError, import_transactions
 from thebook.bookkeeping.models import CashBook, Document, Transaction
 
 

@@ -4,11 +4,11 @@ import itertools
 
 from django.conf import settings
 from django.db import models
+from django.db.models import UniqueConstraint
 from django.utils.functional import classproperty
 from django.utils.translation import gettext as _
 
 from thebook.members.managers import ReceivableFeeManager
-from django.db.models import UniqueConstraint
 
 
 class FeeIntervals:

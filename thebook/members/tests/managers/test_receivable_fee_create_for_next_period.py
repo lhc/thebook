@@ -2,14 +2,14 @@ import datetime
 from decimal import Decimal
 
 import pytest
-
-from model_bakery import baker
 from freezegun import freeze_time
+from model_bakery import baker
+
 from thebook.members.models import (
-    Membership,
-    ReceivableFee,
     FeeIntervals,
     FeePaymentStatus,
+    Membership,
+    ReceivableFee,
 )
 
 

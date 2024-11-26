@@ -1,15 +1,18 @@
 from datetime import date
 from decimal import Decimal
+
+import pytest
+from freezegun import freeze_time
+from model_bakery import baker
+
+from django.db.utils import IntegrityError
+
 from thebook.members.models import (
-    Membership,
-    ReceivableFee,
     FeeIntervals,
     FeePaymentStatus,
+    Membership,
+    ReceivableFee,
 )
-from model_bakery import baker
-import pytest
-from django.db.utils import IntegrityError
-from freezegun import freeze_time
 
 
 def test_not_allow_receivable_fee_for_same_membership_and_month(db):

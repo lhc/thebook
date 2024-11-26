@@ -3,7 +3,7 @@ import decimal
 from dataclasses import dataclass
 
 from django.db import models
-from django.db.models import Q, Sum, Value, IntegerField
+from django.db.models import IntegerField, Q, Sum, Value
 
 
 class CashBookQuerySet(models.QuerySet):

@@ -6,7 +6,7 @@ from django.db import models
 
 class ReceivableFeeManager(models.Manager):
     def create_for_next_month(self):
-        from thebook.members.models import Membership, FeePaymentStatus
+        from thebook.members.models import FeePaymentStatus, Membership
 
         today = datetime.date.today()
 

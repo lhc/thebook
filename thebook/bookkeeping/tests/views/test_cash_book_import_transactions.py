@@ -12,9 +12,9 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.urls import reverse
 from django.utils.functional import SimpleLazyObject
 
-from thebook.bookkeeping.views import _get_cash_book_transactions_context
-from thebook.bookkeeping.models import CashBook, Transaction
 from thebook.bookkeeping.importers import ImportTransactionsError
+from thebook.bookkeeping.models import CashBook, Transaction
+from thebook.bookkeeping.views import _get_cash_book_transactions_context
 
 
 @pytest.fixture

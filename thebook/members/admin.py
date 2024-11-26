@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from thebook.members.models import Membership, Member, ReceivableFee
+from thebook.members.models import Member, Membership, ReceivableFee
 
 
 @admin.register(Membership)

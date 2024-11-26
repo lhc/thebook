@@ -2,7 +2,6 @@ import datetime
 from http import HTTPStatus
 
 import pytest
-
 from model_bakery import baker
 
 from django.conf import settings
@@ -10,11 +9,11 @@ from django.contrib.auth import get_user_model
 from django.test import RequestFactory
 from django.urls import reverse
 
+from thebook.bookkeeping.models import CashBook, Category, Document, Transaction
 from thebook.bookkeeping.views import (
     _get_cash_book_transactions_context,
     cash_book_transactions,
 )
-from thebook.bookkeeping.models import CashBook, Category, Document, Transaction
 
 
 @pytest.fixture

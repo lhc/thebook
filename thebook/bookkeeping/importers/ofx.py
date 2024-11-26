@@ -1,15 +1,14 @@
 from datetime import date, datetime
 from decimal import Decimal
 
-from django.conf import settings
-from django.db import IntegrityError
-
 from ofxparse import OfxParser
 from ofxtools.Parser import OFXTree
 
+from django.conf import settings
+from django.db import IntegrityError
+
 from thebook.bookkeeping.importers.constants import UNCATEGORIZED
 from thebook.bookkeeping.models import Category, Transaction
-
 
 # Default List of transactions descriptions that we
 # can ignore and not insert into the system

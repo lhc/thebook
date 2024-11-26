@@ -1,6 +1,6 @@
 import pytest
-
 from model_bakery import baker
+
 from thebook.bookkeeping.models import Category, Transaction
 
 

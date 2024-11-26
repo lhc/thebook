@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_not_required
-from django.shortcuts import render
 from django.http.response import HttpResponseRedirect
+from django.shortcuts import render
 from django.urls import reverse
 
 from thebook.members.forms import NewMemberForm

@@ -1,6 +1,6 @@
-import pytest
-
 from decimal import Decimal
+
+import pytest
 
 from django.template import Context, Template, TemplateSyntaxError
 

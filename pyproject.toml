@@ -43,3 +43,10 @@ test = "pytest -s --cov=thebook"
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "thebook.settings"
+
+[tool.isort]
+known_django = ["django"]
+known_first_party = ["thebook"]
+known_third_party = ["django", "model_bakery", "pytest"]
+profile = "black"
+sections = ["FUTURE", "STDLIB", "THIRDPARTY", "DJANGO", "FIRSTPARTY", "LOCALFOLDER"]

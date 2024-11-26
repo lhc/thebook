@@ -3,10 +3,10 @@ from decimal import Decimal
 
 from django import forms
 from django.contrib.auth import get_user_model
-from django.utils.translation import gettext as _
 from django.core.exceptions import ValidationError
+from django.utils.translation import gettext as _
 
-from thebook.members.models import Membership, Member, FeeIntervals
+from thebook.members.models import FeeIntervals, Member, Membership
 
 
 class NewMemberForm(forms.Form):

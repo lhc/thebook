@@ -1,5 +1,5 @@
 import datetime
-from decimal import Decimal, ROUND_UP
+from decimal import ROUND_UP, Decimal
 
 from django.shortcuts import render
 

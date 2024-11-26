@@ -2,16 +2,15 @@ import datetime
 import decimal
 import io
 
-
 import pytest
 from model_bakery import baker
 
 from django.contrib.auth import get_user_model
 
-from thebook.bookkeeping.importers.constants import UNCATEGORIZED
-from thebook.bookkeeping.models import CashBook, Category, Transaction
 from thebook.bookkeeping.importers import InvalidOFXFile
+from thebook.bookkeeping.importers.constants import UNCATEGORIZED
 from thebook.bookkeeping.importers.ofx import OFXImporter
+from thebook.bookkeeping.models import CashBook, Category, Transaction
 
 
 @pytest.fixture
