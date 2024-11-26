@@ -16,6 +16,7 @@ psycopg = {extras = ["binary"], version = "^3.2.3"}
 django-storages = {extras = ["s3"], version = "^1.14.4"}
 ofxtools = "^0.9.5"
 ofxparse = {git = "https://github.com/rennerocha/ofxparse.git", rev = "master"}
+django-taggit = "^6.1.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"

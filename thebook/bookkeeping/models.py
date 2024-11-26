@@ -2,6 +2,8 @@ import uuid
 from decimal import Decimal
 from pathlib import Path
 
+from taggit.managers import TaggableManager
+
 from django.conf import settings
 from django.db import models
 from django.db.models import Sum
@@ -171,6 +173,8 @@ class Transaction(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
     )
+
+    tags = TaggableManager()
 
     objects = TransactionQuerySet.as_manager()
 

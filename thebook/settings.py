@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "taggit",
     "thebook.base",
     "thebook.bookkeeping",
     "thebook.members",
@@ -166,3 +167,5 @@ STORAGES = config(
     default='{"default": {"BACKEND": "django.core.files.storage.FileSystemStorage"}, "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"}}',
     cast=lambda x: json.loads(x),
 )
+
+TAGGIT_CASE_INSENSITIVE = True

@@ -61,6 +61,7 @@ class TransactionAdmin(admin.ModelAdmin):
         "amount",
         "category",
         "cash_book",
+        "tag_list",
     ]
     list_filter = [
         "cash_book",
@@ -77,3 +78,9 @@ class TransactionAdmin(admin.ModelAdmin):
 
     def ref(self, obj):
         return obj.reference.split("-").pop()
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).prefetch_related("tags")
+
+    def tag_list(self, obj):
+        return ", ".join(o.name for o in obj.tags.all())
