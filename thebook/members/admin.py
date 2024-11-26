@@ -20,12 +20,13 @@ class MembershipAdmin(admin.ModelAdmin):
 class MemberAdmin(admin.ModelAdmin):
     list_display = [
         "name",
-        "email",
+        "user__email",
         "has_key",
         "membership__active",
     ]
     list_select_related = [
         "membership",
+        "user",
     ]
 
 
