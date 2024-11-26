@@ -35,6 +35,27 @@ def test_create_receivable_fee_for_next_month(db):
 
 
 @pytest.mark.freeze_time("2024-11-10")
+def test_create_receivable_fee_only_for_active_membership(db):
+    active_membership = baker.make(
+        Membership,
+        payment_interval=FeeIntervals.MONTHLY,
+        active=True,
+    )
+    inactive_membership = baker.make(
+        Membership,
+        payment_interval=FeeIntervals.MONTHLY,
+        active=False,
+    )
+
+    receivable_fees = ReceivableFee.objects.create_for_next_month()
+
+    assert len(receivable_fees) == 1
+    receivable_fee = receivable_fees[0]
+
+    assert receivable_fee.membership == active_membership
+
+
+@pytest.mark.freeze_time("2024-11-10")
 def test_do_not_duplicate_receivable_fees_for_same_membership(db):
     membership = baker.make(
         Membership,

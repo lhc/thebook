@@ -15,7 +15,7 @@ class ReceivableFeeManager(models.Manager):
 
         receivable_fees = []
 
-        memberships = Membership.objects.all()
+        memberships = Membership.objects.filter(active=True)
         for membership in memberships:
             _, last_day_of_next_payment_month = calendar.monthrange(
                 membership.next_membership_fee_payment_date.year,
