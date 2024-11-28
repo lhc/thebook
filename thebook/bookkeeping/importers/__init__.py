@@ -2,7 +2,7 @@ import logging
 
 from django.utils.translation import gettext as _
 
-from thebook.bookkeeping.importers.csv import CSVImporter
+from thebook.bookkeeping.importers.csv import CSVCoraCreditCardImporter, CSVImporter
 from thebook.bookkeeping.importers.ofx import OFXImporter
 
 logger = logging.getLogger(__name__)
@@ -23,6 +23,7 @@ def import_transactions(
 ):
     importers = {
         "csv": CSVImporter,
+        "csv_cora_credit_card": CSVCoraCreditCardImporter,
         "ofx": OFXImporter,
     }
     importer = importers.get(file_type) or None

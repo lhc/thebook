@@ -139,6 +139,8 @@ def cash_book_import_transactions(request, cash_book_slug):
             transactions_file = request.FILES["ofx_file"]
         elif file_type == "csv":
             transactions_file = request.FILES["csv_file"]
+        elif file_type == "csv_cora_credit_card":
+            transactions_file = request.FILES["csv_cora_credit_card_file"]
 
         import_transactions(
             transactions_file, file_type, cash_book, request.user, start_date, end_date

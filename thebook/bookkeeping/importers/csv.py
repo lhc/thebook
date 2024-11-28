@@ -2,6 +2,7 @@ import csv
 import datetime
 import decimal
 import io
+import uuid
 
 from django.db import IntegrityError
 
@@ -180,3 +181,53 @@ class CSVImporter:
             update_fields=["description", "amount"],
             unique_fields=["reference"],
         )
+
+
+class CSVCoraCreditCardImporter:
+    def __init__(self, transactions_file, cash_book, user):
+        self.categories = get_categories()
+        self.new_transactions = []
+
+        self.transactions_file = transactions_file
+        self.cash_book = cash_book
+        self.user = user
+
+    def run(self, start_date=None, end_date=None, ignored_memos=None):
+        csv_content = self.transactions_file.read().decode()
+
+        reader = csv.DictReader(io.StringIO(csv_content))
+        for transaction in reader:
+            transaction_date = datetime.datetime.strptime(
+                transaction["Data"], "%d/%m/%Y"
+            ).date()
+            transaction_amount = -1 * decimal.Decimal(
+                transaction["Valor"].replace(".", "").replace(",", ".")
+            )
+            transaction_notes = "".join(
+                [
+                    transaction["Moeda"],
+                    transaction["Valor Moeda Local"],
+                ]
+            )
+
+            self.new_transactions.append(
+                Transaction(
+                    reference=uuid.uuid4(),
+                    date=transaction_date,
+                    description=transaction["Descrição"].strip(),
+                    amount=transaction_amount,
+                    notes=transaction_notes,
+                    cash_book=self.cash_book,
+                    category=self.categories[UNCATEGORIZED],
+                    created_by=self.user,
+                )
+            )
+
+        transactions = Transaction.objects.bulk_create(
+            self.new_transactions,
+            update_conflicts=True,
+            update_fields=["description", "amount"],
+            unique_fields=["reference"],
+        )
+
+        return transactions

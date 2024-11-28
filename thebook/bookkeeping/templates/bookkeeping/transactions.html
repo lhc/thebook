@@ -134,6 +134,9 @@
         <a class="dropdown-item btn" data-toggle="modal" data-target="#importCSVModal">
           {% translate "Import PayPal CSV" %}
         </a>
+        <a class="dropdown-item btn" data-toggle="modal" data-target="#importCSVCoraCreditCardModal">
+          {% translate "Import Cora Credit Card CSV" %}
+        </a>
       </div>
     </div>
   </div>
@@ -269,6 +272,41 @@
   </div>
 </div>
 
+
+<div class="modal fade" id="importCSVCoraCreditCardModal" tabindex="-1" aria-labelledby="importCSVCoraCreditCardModal" aria-hidden="true">
+  <div class="modal-dialog">
+    <form
+      method="post"
+      action="{% url 'bookkeeping:cash-book-import-transactions' cash_book.slug %}"
+      enctype="multipart/form-data"
+      id="csv_cora_credit_card_import_form">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">{% translate "Import Cora Credit Card CSV" %}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>{% translate "This importer only works with CSV files exported from Cora Credit Card." %}</p>
+
+            {% csrf_token %}
+            <input type="file" id="csv_cora_credit_card_file" name="csv_cora_credit_card_file">
+            <input type="hidden" name="file_type" value="csv_cora_credit_card" />
+            <input
+              type="hidden"
+              name="next_url"
+              value="{% url 'bookkeeping:cash-book-transactions' cash_book.slug %}?{% if year %}year={{ year }}{% endif %}{% if month %}&month={{ month }}{% endif %}">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">{% translate "Close" %}</button>
+            <button type="submit" class="btn btn-primary">{% translate "Import" %}</button>
+          </div>
+        </div>
+    </form>
+  </div>
+</div>
+
 <div class="modal fade" id="uploadDocument" tabindex="-1" aria-labelledby="uploadDocument" aria-hidden="true">
   <div class="modal-dialog">
     <form
@@ -371,6 +409,10 @@
 
       $("#importCSVModal").on("shown.bs.modal", function () {
         $("#csv_file").trigger("focus")
+      });
+
+      $("#importCSVCoraCreditCardModal").on("shown.bs.modal", function () {
+        $("#csv_cora_credit_card_file").trigger("focus")
       });
 
       $("#uploadDocument").on("show.bs.modal", function (event) {
