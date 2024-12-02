@@ -174,7 +174,7 @@ class Transaction(models.Model):
         on_delete=models.PROTECT,
     )
 
-    tags = TaggableManager()
+    tags = TaggableManager(blank=True)
 
     objects = TransactionQuerySet.as_manager()
 
