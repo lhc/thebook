@@ -113,7 +113,7 @@ class Member(models.Model):
     name = models.CharField(max_length=100, verbose_name=_("Name"))
     has_key = models.BooleanField(default=False, verbose_name=_("Has physical key?"))
     phone_number = models.CharField(
-        max_length=16, blank=True, verbose_name=_("Phone number")
+        max_length=32, blank=True, verbose_name=_("Phone number")
     )
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
