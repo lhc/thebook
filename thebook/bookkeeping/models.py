@@ -16,6 +16,7 @@ DONATION = "Doação"
 RECURRING_DONATION = "Doação Recorrente"
 BANK_FEES = "Tarifas Bancárias"
 BANK_INCOME = "Investimentos"
+CREDIT_CARD_BILL = "Fatura Cartão de Crédito"
 RECURRING = "Recorrente"
 MEMBERSHIP_FEE = "Mensalidade"
 CASH_BOOK_TRANSFER = "Transferência entre contas"
@@ -30,6 +31,7 @@ def get_categorize_rules():
     recurring_donation, _ = Category.objects.get_or_create(name=RECURRING_DONATION)
     bank_fees, _ = Category.objects.get_or_create(name=BANK_FEES)
     bank_income, _ = Category.objects.get_or_create(name=BANK_INCOME)
+    credit_card_bill, _ = Category.objects.get_or_create(name=CREDIT_CARD_BILL)
     recurring, _ = Category.objects.get_or_create(name=RECURRING)
     cash_book_transfer, _ = Category.objects.get_or_create(name=CASH_BOOK_TRANSFER)
     accountant, _ = Category.objects.get_or_create(name=ACCOUNTANT)
@@ -47,6 +49,7 @@ def get_categorize_rules():
         "CONTADOR": accountant,
         "PAYPAL DO BRASIL": cash_book_transfer,
         "PAGTO ELETRONICO TRIBUTO INTERNET --P.M CAMPINAS/SP": taxes,
+        "PAGAMENTO DA FATURA": credit_card_bill,
     }
 
 
