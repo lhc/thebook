@@ -12,19 +12,19 @@ from django.utils.translation import gettext as _
 
 from thebook.bookkeeping.managers import CashBookQuerySet, TransactionQuerySet
 
+DONATION = "Doação"
+RECURRING_DONATION = "Doação Recorrente"
+BANK_FEES = "Tarifas Bancárias"
+BANK_INCOME = "Investimentos"
+RECURRING = "Recorrente"
+MEMBERSHIP_FEE = "Mensalidade"
+CASH_BOOK_TRANSFER = "Transferência entre contas"
+ACCOUNTANT = "Contabilidade"
+TAXES = "Impostos"
+UNCATEGORIZED = "Uncategorized"
+
 
 def get_categorize_rules():
-    DONATION = "Doação"
-    RECURRING_DONATION = "Doação Recorrente"
-    BANK_FEES = "Tarifas Bancárias"
-    BANK_INCOME = "Investimentos"
-    RECURRING = "Recorrente"
-    MEMBERSHIP_FEE = "Mensalidade"
-    CASH_BOOK_TRANSFER = "Transferência entre contas"
-    ACCOUNTANT = "Contabilidade"
-    TAXES = "Impostos"
-    UNCATEGORIZED = "Uncategorized"
-
     uncategorized, _ = Category.objects.get_or_create(name=UNCATEGORIZED)
     donation, _ = Category.objects.get_or_create(name=DONATION)
     recurring_donation, _ = Category.objects.get_or_create(name=RECURRING_DONATION)
@@ -196,4 +196,10 @@ class Transaction(models.Model):
             if description.lower() in self.description.lower():
                 self.category = category
                 self.save()
-                break
+                return
+
+        if Decimal("0") <= self.amount <= settings.DONATION_THRESHOLD:
+            donation, _ = Category.objects.get_or_create(name=DONATION)
+            self.category = donation
+            self.save()
+            return

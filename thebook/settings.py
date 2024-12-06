@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 import json
+from decimal import Decimal
 from pathlib import Path
 
 import dj_database_url
@@ -169,3 +170,7 @@ STORAGES = config(
 )
 
 TAGGIT_CASE_INSENSITIVE = True
+
+# Uncategorized transactions below this positive value will be categorized
+# as donations
+DONATION_THRESHOLD = Decimal("84.99")
