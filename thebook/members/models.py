@@ -41,6 +41,18 @@ class FeePaymentStatus:
         )
 
 
+class PaymentMethod:
+    PAYPAL = 1
+    PIX = 2
+
+    @classproperty
+    def choices(cls):
+        return (
+            (cls.PAYPAL, _("PayPal")),
+            (cls.PIX, _("Pix")),
+        )
+
+
 class Membership(models.Model):
     member = models.OneToOneField(
         "members.Member",
@@ -60,6 +72,12 @@ class Membership(models.Model):
         choices=FeeIntervals.choices,
         verbose_name=_("Payment Interval"),
         help_text=_("How often does the member pay their fees?"),
+    )
+    payment_method = models.IntegerField(
+        choices=PaymentMethod.choices,
+        default=PaymentMethod.PAYPAL,
+        verbose_name=_("Payment Method"),
+        help_text=_("How fees are paid?"),
     )
     active = models.BooleanField(
         default=True,
