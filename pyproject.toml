@@ -7,7 +7,7 @@ license = "AGPL-3.0"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.12"
 django = "^5.1.1"
 python-decouple = "^3.8"
 dj-database-url = "^2.2.0"
