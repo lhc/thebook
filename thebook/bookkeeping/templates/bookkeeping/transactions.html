@@ -145,27 +145,34 @@
       <table class="table table-bordered" id="transactions" width="100%" cellspacing="0">
         <thead>
           <tr>
-            <th></th>
             <th>{% translate "#" %}</th>
             <th>{% translate "Date" %}</th>
             <th>{% translate "Amount" %}</th>
             <th>{% translate "Description" %}</th>
             <th>{% translate "Category" %}</th>
+            <th></th>
           </tr>
         </thead>
         <tfoot>
           <tr>
-            <th></th>
             <th>{% translate "#" %}</th>
             <th>{% translate "Date" %}</th>
             <th>{% translate "Amount" %}</th>
             <th>{% translate "Description" %}</th>
             <th>{% translate "Category" %}</th>
+            <th></th>
           </tr>
         </tfoot>
         <tbody>
           {% for transaction in transactions %}
           <tr>
+            <td>{{ transaction.id }}</td>
+            <td>{{ transaction.date }}</td>
+            <td {% if transaction.amount < 0 %}class="text-danger"{% endif %}>
+              {{ transaction.amount|money }}
+            </td>
+            <td>{{ transaction.description }}</td>
+            <td>{{ transaction.category }}</td>
             <td style="display: block; text-align: center;">
               <a
                 style="cursor: pointer"
@@ -179,13 +186,6 @@
               <i class="fas fa-minus fa-sm fa-fw"></i>
               {% endif %}
             </td>
-            <td>{{ transaction.id }}</td>
-            <td>{{ transaction.date }}</td>
-            <td {% if transaction.amount < 0 %}class="text-danger"{% endif %}>
-              {{ transaction.amount|money }}
-            </td>
-            <td>{{ transaction.description }}</td>
-            <td>{{ transaction.category }}</td>
           </tr>
           {% endfor %}
         </tbody>
@@ -385,16 +385,16 @@
         {
           pageLength: 150,
           columnDefs: [
-            { type: "custom-brl-sort", targets: 3 },
-            { orderable: false, targets: 0 }
+            { type: "custom-brl-sort", targets: 2 },
+            { orderable: false, targets: 5 }
           ],
           columns: [
-            { width: "5%" },
             { width: "5%" },
             { width: "10%" },
             { width: "10%" },
             { width: "50%" },
             { width: "15%" },
+            { width: "5%" },
           ],
         }
       );
