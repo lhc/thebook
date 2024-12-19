@@ -151,7 +151,6 @@
             <th>{% translate "Amount" %}</th>
             <th>{% translate "Description" %}</th>
             <th>{% translate "Category" %}</th>
-            <th>{% translate "Balance" %}</th>
           </tr>
         </thead>
         <tfoot>
@@ -162,7 +161,6 @@
             <th>{% translate "Amount" %}</th>
             <th>{% translate "Description" %}</th>
             <th>{% translate "Category" %}</th>
-            <th>{% translate "Balance" %}</th>
           </tr>
         </tfoot>
         <tbody>
@@ -188,7 +186,6 @@
             </td>
             <td>{{ transaction.description }}</td>
             <td>{{ transaction.category }}</td>
-            <td>{{ transaction.balance }}</td>
           </tr>
           {% endfor %}
         </tbody>
@@ -386,19 +383,18 @@
 
       $("#transactions").DataTable(
         {
-          pageLength: 100,
+          pageLength: 150,
           columnDefs: [
             { type: "custom-brl-sort", targets: 3 },
-            { orderable: false, targets: 6 }
+            { orderable: false, targets: 0 }
           ],
           columns: [
             { width: "5%" },
             { width: "5%" },
             { width: "10%" },
             { width: "10%" },
-            { width: "40%" },
+            { width: "50%" },
             { width: "15%" },
-            { width: "10%" }
           ],
         }
       );
