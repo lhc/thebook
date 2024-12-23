@@ -150,7 +150,7 @@ class Document(models.Model):
         "bookkeeping.Transaction", on_delete=models.CASCADE, related_name="documents"
     )
     document_file = models.FileField(upload_to=document_upload_path)
-    notes = models.CharField(max_length=64, blank=True)
+    notes = models.CharField(max_length=128)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
