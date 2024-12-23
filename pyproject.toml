@@ -17,6 +17,7 @@ django-storages = {extras = ["s3"], version = "^1.14.4"}
 ofxtools = "^0.9.5"
 ofxparse = {git = "https://github.com/rennerocha/ofxparse.git", rev = "master"}
 django-taggit = "^6.1.0"
+setuptools = "^75.6.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"
