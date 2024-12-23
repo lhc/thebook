@@ -166,7 +166,9 @@
         <tbody>
           {% for transaction in transactions %}
           <tr>
-            <td>{{ transaction.id }}</td>
+            <td class="dt-control" data-transaction-details-url="{% url 'bookkeeping:partial-transaction-details' transaction.id %}">
+              {{ transaction.id }}
+            </td>
             <td>{{ transaction.date }}</td>
             <td {% if transaction.amount < 0 %}class="text-danger"{% endif %}>
               {{ transaction.amount|money }}
@@ -381,7 +383,7 @@
         }
       };
 
-      $("#transactions").DataTable(
+      let table = $("#transactions").DataTable(
         {
           pageLength: 150,
           columnDefs: [
@@ -397,7 +399,23 @@
             { width: "5%" },
           ],
         }
-      );
+      )
+
+      table.on("click", "td.dt-control", function (e) {
+        let tr = e.target.closest("tr");
+        let row = table.row(tr);
+
+        if (row.child.isShown()) {
+          row.child.hide();
+          return;
+        }
+
+        let transactionDetailsUrl = e.target.dataset.transactionDetailsUrl;
+
+        $.get(transactionDetailsUrl, function(data) {
+          row.child(data).show();
+        });
+      });
 
       $("#importOFXModal").on("shown.bs.modal", function () {
         $("#ofx_file").trigger("focus")

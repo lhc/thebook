@@ -162,3 +162,13 @@ def transaction_upload_document(request):
     messages.add_message(request, messages.SUCCESS, _("File successfully uploaded."))
 
     return HttpResponseRedirect(request.POST["next_url"])
+
+
+def partial_transaction_details(request, transaction_id):
+    transaction = get_object_or_404(Transaction, id=transaction_id)
+
+    return render(
+        request,
+        "bookkeeping/partial/transaction_details.html",
+        context={"transaction": transaction},
+    )

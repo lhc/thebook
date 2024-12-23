@@ -1,0 +1,57 @@
+{% load currency i18n %}
+
+<table class="table table-striped table-sm">
+  <tbody>
+    <tr>
+      <td><strong>{% translate "Date:" %}</strong></td>
+      <td>{{ transaction.date }}</td>
+    </tr>
+    <tr>
+      <td><strong>{% translate "Description:" %}</strong></td>
+      <td>{{ transaction.description }}</td>
+    </tr>
+    <tr>
+      <td><strong>{% translate "Amount:" %}</strong></td>
+      <td {% if transaction.amount < 0 %}class="text-danger"{% endif %}>
+        {{ transaction.amount|money }}
+      </td>
+    </tr>
+    <tr>
+      <td><strong>{% translate "Notes:" %}</strong></td>
+      <td>{{ transaction.notes }}</td>
+    </tr>
+    <tr>
+      <td><strong>{% translate "Category:" %}</strong></td>
+      <td>{{ transaction.category }}</td>
+    </tr>
+    <tr>
+      <td><strong>{% translate "Tags:" %}</strong></td>
+      <td>
+        {% for tag in transaction.tags.all %}
+          {{ tag }}
+        {% empty %}
+          -
+        {% endfor %}
+      </td>
+    </tr>
+    <tr>
+      <td><strong>{% translate "Documents:" %}</strong></td>
+      <td>
+        <table>
+          <tbody>
+          {% for document in transaction.documents.all %}
+            <tr>
+              <td>
+                <a href="{{ document.document_file.url }}" title="{% translate 'Download Document' %}"><i class="fas fa-download fa-sm fa-fw"></i></a>
+              </td>
+              <td>{{ document.notes }}</td>
+            </tr>
+          {% empty %}
+            -
+          {% endfor %}
+          </tbody>
+        </table>
+      </td>
+    </tr>
+  </tbody>
+</table>

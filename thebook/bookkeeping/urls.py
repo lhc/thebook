@@ -20,4 +20,9 @@ urlpatterns = [
         views.transaction_upload_document,
         name="transaction-upload-document",
     ),
+    path(
+        "partial/transaction/<int:transaction_id>",
+        views.partial_transaction_details,
+        name="partial-transaction-details",
+    ),
 ]
