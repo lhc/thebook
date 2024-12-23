@@ -42,7 +42,7 @@
           {% for document in transaction.documents.all %}
             <tr>
               <td>
-                <a href="{{ document.document_file.url }}" title="{% translate 'Download Document' %}"><i class="fas fa-download fa-sm fa-fw"></i></a>
+                <a href="{{ document.document_file.url }}" title="{% translate 'Download Document' %}" target="blank"><i class="fas fa-download fa-sm fa-fw"></i></a>
               </td>
               <td>{{ document.notes }}</td>
             </tr>
