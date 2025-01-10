@@ -182,6 +182,9 @@ class Transaction(models.Model):
     objects = TransactionQuerySet.as_manager()
 
     class Meta:
+        indexes = [
+            models.Index("date", name="transaction_date_idx"),
+        ]
         ordering = ["date", "description"]
 
     def __str__(self):
