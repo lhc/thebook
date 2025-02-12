@@ -54,14 +54,14 @@ def get_categorize_rules():
 
 
 def document_upload_path(instance, filename):
-    cash_book_slug = instance.transaction.cash_book.slug
-
     filepath = Path(filename)
     extension = filepath.suffix
-
     new_filename = "".join([uuid.uuid4().hex, extension])
 
-    return Path(cash_book_slug, new_filename)
+    if instance.transaction is None:
+        return Path(new_filename)
+
+    return Path(instance.transaction.cash_book.slug, new_filename)
 
 
 class CashBook(models.Model):
@@ -147,8 +147,12 @@ class Category(models.Model):
 
 class Document(models.Model):
     transaction = models.ForeignKey(
-        "bookkeeping.Transaction", on_delete=models.CASCADE, related_name="documents"
+        "bookkeeping.Transaction",
+        on_delete=models.CASCADE,
+        related_name="documents",
+        null=True,
     )
+    document_date = models.DateField()
     document_file = models.FileField(upload_to=document_upload_path)
     notes = models.CharField(max_length=128)
 
