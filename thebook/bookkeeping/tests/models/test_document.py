@@ -80,7 +80,7 @@ def test_document_representation_with_empty_notes(notes):
         document_date=datetime.date(2025, 2, 13),
         notes=notes,
     )
-    assert str(document) == "<Document> (2025-02-13)"
+    assert str(document) == "<Document without notes>"
 
 
 def test_document_representation_with_empty_notes_and_transaction(db):
@@ -92,7 +92,7 @@ def test_document_representation_with_empty_notes_and_transaction(db):
         document_date=datetime.date(2025, 2, 13),
         transaction=transaction,
     )
-    assert str(document) == "<Transaction Description> (2025-02-13)"
+    assert str(document) == "<Transaction Description>"
 
 
 def test_document_representation():
@@ -100,4 +100,4 @@ def test_document_representation():
         document_date=datetime.date(2023, 2, 13),
         notes="Document Notes",
     )
-    assert str(document) == "<Document Notes> (2023-02-13)"
+    assert str(document) == "<Document Notes>"

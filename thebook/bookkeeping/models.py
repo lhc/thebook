@@ -163,9 +163,11 @@ class Document(models.Model):
         document_notes = self.notes
         if not self.notes:
             document_notes = (
-                self.transaction.description if self.transaction else "Document"
+                self.transaction.description
+                if self.transaction
+                else "Document without notes"
             )
-        return f"<{document_notes}> ({self.document_date})"
+        return f"<{document_notes}>"
 
     def save(self, **kwargs):
         if not self.document_date and self.transaction:

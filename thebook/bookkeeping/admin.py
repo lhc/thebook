@@ -39,7 +39,14 @@ class CategoryAdmin(admin.ModelAdmin): ...
 
 
 @admin.register(Document)
-class DocumentAdmin(admin.ModelAdmin): ...
+class DocumentAdmin(admin.ModelAdmin):
+    list_display = [
+        "__str__",
+        "document_date",
+    ]
+    list_filter = [
+        "document_date",
+    ]
 
 
 class DocumentInline(admin.TabularInline):
