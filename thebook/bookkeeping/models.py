@@ -159,6 +159,14 @@ class Document(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        document_notes = self.notes
+        if not self.notes:
+            document_notes = (
+                self.transaction.description if self.transaction else "Document"
+            )
+        return f"<{document_notes}> ({self.document_date})"
+
     def save(self, **kwargs):
         if not self.document_date and self.transaction:
             self.document_date = self.transaction.date

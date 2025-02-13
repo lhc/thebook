@@ -72,3 +72,32 @@ def test_document_without_date_gets_transaction_date_by_default(db):
     document.save()
 
     assert document.document_date == transaction.date
+
+
+@pytest.mark.parametrize("notes", ["", None])
+def test_document_representation_with_empty_notes(notes):
+    document = Document(
+        document_date=datetime.date(2025, 2, 13),
+        notes=notes,
+    )
+    assert str(document) == "<Document> (2025-02-13)"
+
+
+def test_document_representation_with_empty_notes_and_transaction(db):
+    transaction = baker.make(
+        Transaction,
+        description="Transaction Description",
+    )
+    document = Document(
+        document_date=datetime.date(2025, 2, 13),
+        transaction=transaction,
+    )
+    assert str(document) == "<Transaction Description> (2025-02-13)"
+
+
+def test_document_representation():
+    document = Document(
+        document_date=datetime.date(2023, 2, 13),
+        notes="Document Notes",
+    )
+    assert str(document) == "<Document Notes> (2023-02-13)"
