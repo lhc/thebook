@@ -159,6 +159,11 @@ class Document(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def save(self, **kwargs):
+        if not self.document_date and self.transaction:
+            self.document_date = self.transaction.date
+        super().save(**kwargs)
+
 
 class Transaction(models.Model):
     reference = models.CharField(max_length=36, unique=True)

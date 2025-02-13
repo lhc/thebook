@@ -1,6 +1,8 @@
+import datetime
 import re
 
 import pytest
+from model_bakery import baker
 
 from thebook.bookkeeping.models import (
     CashBook,
@@ -61,3 +63,12 @@ def test_document_upload_path_keep_file_extension(document, file_extension):
     upload_path = document_upload_path(document, filename)
 
     assert re.match(UUID_PATTERN_WITH_FILE_EXTENSION, upload_path.name)
+
+
+def test_document_without_date_gets_transaction_date_by_default(db):
+    transaction = baker.make(Transaction, date=datetime.date(2023, 2, 13))
+    document = Document(transaction=transaction)
+
+    document.save()
+
+    assert document.document_date == transaction.date
