@@ -174,6 +174,35 @@ class CSVImporter:
                         created_by=self.user,
                     )
                 )
+            else:
+                if transaction_currency == "USD":
+                    # We don't process USD recurring here
+                    continue
+
+                category = self.categories[UNCATEGORIZED]
+
+                self.new_transactions.append(
+                    Transaction(
+                        reference=transaction_reference,
+                        date=transaction_date,
+                        description=f"{transaction_type} - {transaction_name}",
+                        amount=transaction_amount,
+                        cash_book=self.cash_book,
+                        category=category,
+                        created_by=self.user,
+                    )
+                )
+                self.new_transactions.append(
+                    Transaction(
+                        reference=f"{transaction_reference}T",
+                        date=transaction_date,
+                        description=f"Taxa Intermediação - {transaction_type} - {transaction_name}",
+                        amount=transaction_tax,
+                        cash_book=self.cash_book,
+                        category=self.categories[BANK_FEES],
+                        created_by=self.user,
+                    )
+                )
 
         Transaction.objects.bulk_create(
             self.new_transactions,
