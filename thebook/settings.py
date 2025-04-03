@@ -76,6 +76,7 @@ INSTALLED_APPS = [
     "thebook.base",
     "thebook.bookkeeping",
     "thebook.members",
+    "thebook.reimbursements",
     "thebook.users",
 ]
 
@@ -193,3 +194,8 @@ TAGGIT_CASE_INSENSITIVE = True
 # Uncategorized transactions below this positive value will be categorized
 # as donations
 DONATION_THRESHOLD = Decimal("84.99")
+
+REIMBURSEMENT_REQUEST_EMAILS = config(
+    "REIMBURSEMENT_REQUEST_EMAILS",
+    cast=lambda v: [s.strip() for s in v.split(",")],
+)
