@@ -42,6 +42,7 @@ collectstatic = "python manage.py collectstatic"
 makemigrations = "python manage.py makemigrations"
 migrate = "python manage.py migrate"
 run = "python manage.py runserver"
+shell = "python manage.py shell"
 test = "pytest -s --cov=thebook"
 
 [tool.pytest.ini_options]
