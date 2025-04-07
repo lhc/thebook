@@ -149,13 +149,22 @@ LOGIN_REDIRECT_URL = reverse_lazy("base:dashboard")
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "pt-BR"
 
 TIME_ZONE = "UTC"
 
 USE_I18N = True
 
 USE_TZ = True
+
+DATE_FORMAT = "d/m/Y"
+
+SHORT_DATE_FORMAT = DATE_FORMAT
+
+DATE_INPUT_FORMATS = [
+    "%Y-%m-%d",
+    "%d/%m/%Y",
+]
 
 MESSAGE_TAGS = {
     messages.DEBUG: "alert-secondary",

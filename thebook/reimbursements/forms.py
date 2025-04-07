@@ -12,7 +12,10 @@ class CreateReimbursementRequestForm(forms.ModelForm):
     value = forms.DecimalField(
         label="Valor", help_text="Precisa ser igual ao valor dos comprovantes anexados"
     )
-    date = forms.DateField(label="Data", help_text="Data da despesa")
+    date = forms.DateField(
+        label="Data",
+        help_text="Data da despesa (DD/MM/YYYY ou YYYY-MM-DD)",
+    )
     description = forms.CharField(label="Descrição", help_text="Descreva a sua despesa")
     payment_info = forms.CharField(
         label="Informações de pagamento",

@@ -11,6 +11,20 @@
     <link rel="stylesheet" href="https://unpkg.com/terminal.css@0.7.4/dist/terminal.min.css" />
 
     <style>
+      :root {
+        --success-color: #28A745;
+      }
+
+      .terminal-alert-success {
+        color: var(--success-color);
+        border-color: var(--success-color);
+        font-weight: 900;
+      }
+
+      .errorlist {
+        margin: 0px;
+        color: var(--error-color);
+      }
 
       .helptext {
         font-size: 75%;
@@ -29,12 +43,17 @@
       <article>
         <h2>Formulário de solicitação de reembolso</h2>
 
+        {% if success_message %}
+        <div class="terminal-alert terminal-alert-success">
+          {{ success_message }}
+        </div>
+        {% endif %}
+
         <a href="#reimbursement-rules">
           <button class="btn btn-primary btn-block">Veja as regras para solicitação de reembolso</button>
         </a><br/>
 
-        <form id="reimbursements-request-form" action="{% url 'reimbursements:reimbursements-create' %}" method="post">
-
+        <form id="reimbursements-request-form" action="{% url 'reimbursements:reimbursements-create' %}" method="post" enctype="multipart/form-data">
           {% csrf_token %}
           <fieldset>
             <legend>Solicitação de reembolso</legend>
