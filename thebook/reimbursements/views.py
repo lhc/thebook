@@ -1,8 +1,10 @@
+from django.contrib.auth.decorators import login_not_required
 from django.shortcuts import render
 
 from thebook.reimbursements.forms import CreateReimbursementRequestForm
 
 
+@login_not_required
 def create_reimbursement(request):
     if request.method == "POST":
         form = CreateReimbursementRequestForm(request.POST, request.FILES)
