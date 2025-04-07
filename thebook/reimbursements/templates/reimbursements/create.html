@@ -1,0 +1,954 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <title>LHC - Solicitação de Reembolso</title>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <meta name="description" content="Formulário de solicitação de reembolso financeiro do LHC" />
+
+    <link rel="stylesheet" href="https://unpkg.com/terminal.css@0.7.4/dist/terminal.min.css" />
+
+    <style>
+
+      .helptext {
+        font-size: 75%;
+      }
+
+      fieldset > div {
+        margin-bottom: 10px;
+      }
+
+    </style>
+
+  </head>
+
+  <body class="terminal">
+    <div class="container">
+      <article>
+        <h2>Formulário de solicitação de reembolso</h2>
+
+        <a href="#reimbursement-rules">
+          <button class="btn btn-primary btn-block">Veja as regras para solicitação de reembolso</button>
+        </a><br/>
+
+        <form id="reimbursements-request-form" action="{% url 'reimbursements:reimbursements-create' %}" method="post">
+
+          {% csrf_token %}
+          <fieldset>
+            <legend>Solicitação de reembolso</legend>
+            {{ form }}
+            <br/>
+            <button class="btn btn-default" type="submit" role="button" name="submit" id="submit">Enviar solicitação</button>
+          </fieldset>
+        </form>
+      </article>
+
+      <hr/>
+
+      <article id="reimbursement-rules">
+        <h1>Reembolso de despesas</h1>
+
+        <a href="#reimbursements-request-form">
+          <button class="btn btn-primary btn-block">Formulário de solicitação de reembolso</button>
+        </a><br/>
+
+        <p>O <strong>LHC</strong> é mantido com doações financeira das pessoas associadas e da comunidade que frequenta o hackerspace. Estas doações são utilizadas para o pagamento de serviços recorrentes (como aluguel, energia, água, internet, etc.) e compras de produtos (materiais de higiene e limpeza, ferramentas, insumos eletrônicos, bebidas e alimentos, etc.) e contratação de serviços (reformas, consertos, pinturas, cortes de mato, etc.)</p>
+
+        <p>Estas despesas devem ser pagas <strong>preferencialmente</strong> pelas pessoas responsáveis financeiramente pelo LHC (Presidência e/ou Diretoria Financeira). Porém essas pessoas nem sempre estão disponíveis, por isso, qualquer pessoa associada ou não pode efetuar um pagamento para o LHC e solicitar um reembolso.</p>
+
+        <p>Para a solicitação de reembolso ser aceita <strong>É OBRIGATÓRIO SEGUIR AS REGRAS DESCRITAS A SEGUIR!</strong></p>
+
+        <h2>Quero fazer uma despesa mas não quero reembolso</h2>
+
+        <p>Se você quer fazer uma compra ou pagar um serviço e <strong>NÃO</strong> solicitar o reembolso, o LHC agradece! Dependendo do item que estiver sendo comprado ou o serviço contratado, é interessante que você avise que pretende fazer este gasto. Mas com bom senso, provavelmente você pode efetuar o gasto sem problemas.</p>
+
+        <p>Se este for o seu caso, <strong>NOTAS FISCAIS E RECIBOS NÃO DEVEM ESTAR NO NOME DO LHC!</strong></p>
+
+        <h2>Sou uma pessoa associada e quero um reembolso</h2>
+
+        <ol>
+          <li>Itens de consumo regular do LHC (produtos de higiene e de limpeza, sacos de lixo, lâmpadas, água etc.) com valor de até <strong>R$ 50,00</strong>, a pessoa pode efetuar a compra sem solicitar autorização prévia e solicitar o reembolso <a href="#reimbursements-request-form">preenchendo o formulário nesta página</a>;</li>
+
+          <li>Itens de consumo regular do LHC (como os citados no item 1) com valor total de até <strong>R$ 100,00</strong>, é necessário enviar solicitar autorização de alguma pessoa da diretoria do LHC. Entre em contato através de contato@lhc.net.br ou pessoalmente. Esta despesa poderá ser aprovada, de acordo com a disponibilidade de caixa, ou, dependendo do tipo de despesa, ser solicitado que ela seja discutida entre as pessoas associadas. Após efetuar a despesa, solicite o reembolso <a href="#reimbursements-request-form">preenchendo o formulário</a>;</li>
+
+          <li>Qualquer compra com valor total acima de <strong>R$ 100,00</strong> ou para itens que não sejam de consumo regular (materiais de reforma ou para melhorias no espaço, equipamentos e ferramentas, etc.), <strong>é necessário</strong> solicitar aprovação das pessoas associadas que decidirão sobre a efetivação ou não da despesa.</li>
+        </ol>
+
+        <h2>Sou uma pessoas não associada e quero um reembolso</h2>
+
+        <ol>
+          <li>Qualquer despesa realizada por uma pessoa <strong>NÃO ASSOCIADA</strong> ao LHC de qualquer valor precisa ser previamente autorizada por alguma pessoa da diretoria ou pelo grupo de pessoas associadas do LHC. Entre em contato através de contato@lhc.net.br ou pessoalmente. Após efetuar a despesa, solicite o reembolso <a href="#reimbursements-request-form">preenchendo o formulário</a> abaixo.</li>
+        </ol>
+      </article>
+
+      <article>
+        <h2>Instruções para efetuar a despesa</h2>
+
+        <ul>
+          <li>Qualquer compra ou serviço precisa ter uma <strong>NOTA FISCAL</strong> emitida em nome do Laboratório Hacker de Campinas. Sem esta Nota Fiscal, <strong>NÃO SERÁ POSSÍVEL</strong> efetuar o reembolso. Isto é necessário para que em nossa contabilidade tenhamos justificado a transferência do valor do reembolso.</li>
+        </ul>
+
+        <h3 id="lhc-info">Dados para emissão de Notas Fiscais</h3>
+
+        <address>
+          <strong>Razão Social:</strong> Laboratório Hacker de Campinas<br/>
+          <strong>CNPJ:</strong> 35.215.073/0001-85<br/>
+          <strong>Inscrição Estadual:</strong> Isento<br/>
+          <strong>Inscrição Municipal:</strong> 575270-1<br/>
+          <strong>E-mail:</strong> contato@lhc.net.br<br/>
+          <strong>Endereço:</strong> Rua Arariboia, 121 - Ponte Preta - 13041-350 - Campinas-SP<br/>
+        </address><br/>
+
+        <p>Eventualmente, para pequenos serviços como limpeza e corte de mato, a pessoa não consegue emitir uma Nota Fiscal. Nestes casos, podemos aceitar um recibo simples assinado pela pessoa. <strong>Isto deve ser uma exceção e evitado se possível</strong>.</p>
+
+        <p>No laboratório de eletrônica você irá encontrar uma caixa de <strong>Papelaria</strong>. Dentro dela existe um bloco de recibos que você poderá preencher seguindo os seguintes passos:
+
+        <ul>
+          <li>Pegar o bloco de notas que fica na caixa Papelaria;</li>
+          <li>Preencher os dados da pessoa que pretou o serviço (nome e CPF) no campo <em>Recebemos de</em>, valor do serviço pago e descrição do serviço realizado;</li>
+          <li>Preencher a data do dia do serviço realizado;</li>
+          <li>Preencher os dados do LHC no campo <em>Emitente</em>;</li>
+          <li>Pedir para o profissional assinar no campo <em>Assinatura</em>.</li>
+        </ul>
+      </article>
+
+    </div>
+  </body>
+
+<!--     <div class="terminal-banner">
+    <div class="container-fluid">
+        <p style="margin: 0; padding: 0"><strong>✨ColorClue✨</strong> - My fun side project about colors! Explore a vast color DB with a simple API. <a style="color: var(--invert-font-color)" href="https://colorclue.shuttleapp.rs/?utm_campaign=checkout+colorclue&utm_source=terminalcss&utm_medium=banner" target="_blank" title="Visit ColorClue website">Try it now!</a></p>
+    </div>
+</div>
+    <div class="container">
+  <div class="terminal-nav">
+    <header class="terminal-logo">
+      <div class="logo terminal-prompt"><a href="/" class="no-style">Terminal CSS</a></div>
+    </header>
+    <nav class="terminal-menu">
+      <ul vocab="https://schema.org/" typeof="BreadcrumbList">
+        <li><a href="/" class="menu-item"><span>Light</span></a><meta property="position"></li>
+        <li property="itemListElement" typeof="ListItem"><a href="/dark/" property="item" typeof="WebPage" class="menu-item"><span property="name">Dark</span></a><meta property="position" content="1"></li>
+        <li property="itemListElement" typeof="ListItem"><a href="/sans-serif/" property="item" typeof="WebPage" class="menu-item"><span property="name">Sans</span></a><meta property="position" content="2"></li>
+        <li property="itemListElement" typeof="ListItem"><a href="/sans-serif-dark/" property="item" typeof="WebPage" class="menu-item"><span property="name">Sans Dark</span></a><meta property="position" content="3"></li>
+        <li style="height: 28px;"><a class="github-button" href="https://github.com/Gioni06/terminal.css" data-size="large" data-show-count="true" aria-label="Star Gioni06/terminal.css on GitHub">Star</a></li>
+      </ul>
+    </nav>
+  </div>
+</div>
+<div class="container">
+  <p>A modern and minimal CSS framework for terminal lovers.</p>
+</div>
+
+    <div class="container">
+        <h2>Project Goals</h2>
+
+<p>Terminal CSS has no overhead and is lightweight <strong>(~ 3k gzip)</strong>.
+The source is written in <strong>pure css</strong> to be accessible for everybody and easy to contribute.</p>
+
+<h2>AI Assisted Documentation</h2>
+
+<p>You can use a <strong>🤖 CustomGPT</strong> trained on the documentation and source code of Terminal CSS. It's available for ChatGPT <a href="https://chat.openai.com/g/g-iVVi4mrUf-terminal-css-guide">Terminal CSS Guide</a>. Check it out!</p>
+
+<h2>Markdown ❤️ Terminal CSS</h2>
+
+<p>It's perfect for your <em>personal website</em>, <em>blog</em>, or <em>side project</em>.</p>
+
+<h2>How to use</h2>
+
+<p>When using something like Webpack just install with <code>npm i terminal.css</code>.</p>
+
+<pre><code class="language-js">import 'terminal.css'
+</code></pre>
+
+<p>Terminal CSS is also available via <a href="https://unpkg.com/terminal.css@0.7.2/dist/terminal.min.css">CDN</a></p>
+
+<pre><code class="language-html">&lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/terminal.css@0.7.4/dist/terminal.min.css&quot; /&gt;
+</code></pre>
+
+<h2>Themes</h2>
+
+<p>To create your own theme just open the dev-tools and edit the CSS Variables. Copy and paste it to your website. Done!</p>
+
+<p><br></p>
+
+<h2>Contributors</h2>
+
+<ul>
+<li><a href="https://othyn.com/">Ben</a></li>
+<li><a href="https://matiaskorhonen.fi/">Matias Korhonen</a></li>
+<li><a href="https://github.com/nektro">Meghan</a></li>
+<li><a href="https://ccat3z.xyz">Lingfeng Zhang</a></li>
+<li><a href="https://github.com/herrbischoff">herrbischoff</a></li>
+<li><a href="https://github.com/plastic041">Byeon Jaewoo</a></li>
+</ul>
+
+<p><br></p>
+
+<p>With ❤️ by <a href="https://jduri.com">Jonas D.</a></p>
+
+        <div class="components components-grid">
+            <div>
+  <aside id="menu">
+    <h2>Components</h2>
+    <nav>
+      <ul>
+        <li><a href="#GridSystem">Grid System</a></li>
+        <li><a href="#Navigation">Navigation</a></li>
+        <li><a href="#NavigationList">Navigation List</a></li>
+        <li><a href="#Lists">Lists</a></li>
+        <li><a href="#Typography">Typography</a></li>
+        <li><a href="#Tables">Tables</a></li>
+        <li>
+          <a href="#SpecialElements">Special Elements</a>
+          <ul>
+            <li><a href="#Blockquote">Blockquote</a></li>
+            <li><a href="#Misc">Misc</a></li>
+          </ul>
+        </li>
+        <li><a href="#Forms">Forms</a></li>
+        <li><a href="#Progress">Progress Bar</a></li>
+        <li><a href="#Buttons">Buttons</a></li>
+        <li><a href="#Cards">Cards</a></li>
+        <li><a href="#Timeline">Timeline</a></li>
+        <li><a href="#Alerts">Alerts</a></li>
+        <li><a href="#Media">Media</a></li>
+        <li><a href="#Figure">Image with caption</a></li>
+        <li><a href="#highlightjs">Supports Highlight.js</a></li>
+      </ul>
+    </nav>
+
+    <h2>Documentation</h2>
+    <nav>
+      <ul>
+        <li><a href="#DocVariables">Variables</a></li>
+        <li><a href="#DocTypography">Typography</a></li>
+      </ul>
+    </nav>
+  </aside>
+</div>
+
+            <main>
+                <section>
+<header>
+  <h2 id="GridSystem">Grid System</h2>
+  <p>
+  Terminal CSS has no build-in grid system. However, you can roll your own with Flexbox or CSS Grid.
+  </p>
+</header>
+<div class="image-grid">
+  <a href="https://picsum.photos" style="border: none;"
+    ><img
+      src="https://picsum.photos/200/300?random&1"
+      width="auto"
+      height="auto"
+      alt="random image"
+  /></a>
+  <a href="https://picsum.photos" style="border: none;"
+    ><img
+      src="https://picsum.photos/200/300?random&2"
+      width="auto"
+      height="auto"
+      alt="random image"
+  /></a>
+  <a href="https://picsum.photos" style="border: none;"
+    ><img
+      src="https://picsum.photos/200/300?random&3"
+      width="auto"
+      height="auto"
+      alt="random image"
+  /></a>
+  <a href="https://picsum.photos" style="border: none;"
+    ><img
+      src="https://picsum.photos/200/300?random&4"
+      width="auto"
+      height="auto"
+      alt="random image"
+  /></a>
+  <a href="https://picsum.photos" style="border: none;"
+    ><img
+      src="https://picsum.photos/200/300?random&5"
+      width="auto"
+      height="auto"
+      alt="random image"
+  /></a>
+  <a href="https://picsum.photos" style="border: none;"
+    ><img
+      src="https://picsum.photos/200/300?random&6"
+      width="auto"
+      height="auto"
+      alt="random image"
+  /></a>
+  <a href="https://picsum.photos" style="border: none;"
+    ><img
+      src="https://picsum.photos/200/300?random&7"
+      width="auto"
+      height="auto"
+      alt="random image"
+  /></a>
+</div>
+</section>
+                <hr />
+                <section>
+  <header><h2 id="Navigation">Navigation</h2></header>
+  <div class="terminal-nav">
+    <div class="terminal-logo">
+      <div class="logo terminal-prompt"><a href="#" class="no-style">Logo</a></div>
+    </div>
+    <nav class="terminal-menu">
+      <ul>
+        <li><a class="menu-item" href="#">Item #1</a></li>
+        <li><a class="menu-item active" href="#">Active Item #2</a></li>
+        <li><a class="menu-item" href="#">Item #3</a></li>
+      </ul>
+    </nav>
+  </div>
+</section>
+
+                <hr />
+                <section>
+  <header><h2 id="NavigationList">Navigation Lists</h2></header>
+  <nav>
+    <ul>
+      <li><a href="#NavigationList">Dashboard</a></li>
+      <li><a href="#NavigationList">Members</a></li>
+      <li><a href="#NavigationList">Settings</a></li>
+      <li>
+        <a href="#NavigationList">Profile</a>
+        <ul>
+          <li><a href="#NavigationList">Account</a></li>
+          <li><a href="#NavigationList">Billing</a></li>
+          <li><a href="#NavigationList">Logout</a></li>
+        </ul>
+        </li>
+    </ul>
+  </nav>
+</section>
+
+                <hr />
+                <section>
+  <header><h2 id="Lists">Lists</h2></header>
+  <ul>
+    <li>This is a list item</li>
+    <li>So is this - there could be more</li>
+    <li>
+      Make sure to style list items to:
+      <ul>
+        <li>Not forgetting child list items</li>
+        <li>Not forgetting child list items</li>
+        <li>Not forgetting child list items</li>
+        <li>Not forgetting child list items</li>
+      </ul>
+    </li>
+    <li>A couple more</li>
+    <li>Top-level list items</li>
+  </ul>
+  <p>Don't forget <strong>Ordered lists</strong>:</p>
+  <ol>
+    <li>Lorem ipsum dolor sit amet, consectetuer adipiscing elit.</li>
+    <li>
+     Aliquam tincidunt mauris eu risus
+      <ol>
+        <li>Lorem ipsum dolor sit amet, consectetuer adipiscing elit.</li>
+        <li>Aliquam tincidunt mauris eu risus.</li>
+      </ol>
+    </li>
+    <li>Lorem ipsum dolor sit amet, consectetuer adipiscing elit.</li>
+    <li>Aliquam tincidunt mauris eu risus.</li>
+  </ol>
+  <p><strong>Description lists </strong>are also included.</p>
+  <dl>
+    <dt>Description list title 01</dt>
+    <dd>Description list description 01</dd>
+    <dt>Description list title 02</dt>
+    <dd>Description list description 02</dd>
+    <dd>Description list description 03</dd>
+  </dl>
+  <p>A <strong>Table of content</strong>, which can be used as an index for a blog archive.</p>
+  <p>Unlike regular lists, the TOC component <em>only supports a single depth level.</em></p>
+  <ol class="terminal-toc">
+    <li><a href="#">Lorem ipsum dolor sit amet, consectetuer adipiscing elit.</a></li>
+    <li><a href="#">Lorem ipsum dolor sit amet, consectetuer adipiscing elit.</a></li>
+     <li><a href="#">Aliquam tincidunt mauris eu risus.</a></li>
+    <li><a href="#">Lorem ipsum dolor sit amet, consectetuer adipiscing elit.</a></li>
+    <li><a href="#">Aliquam tincidunt mauris eu risus.</a></li>
+  </ol>
+</section>
+
+                <hr />
+                <section>
+  <header>
+    <h2 id="Typography">Typography</h2>
+    <h1>Level 1 Heading</h1>
+    <p>
+      Pellentesque habitant morbi tristique senectus et netus et malesuada fames
+      ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget,
+      tempor sit amet, ante.
+    </p>
+    <h2>Level 2 Heading</h2>
+    <p>
+      Pellentesque habitant morbi tristique senectus et netus et malesuada fames
+      ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget,
+      tempor sit amet, ante.
+    </p>
+    <h3>Level 3 Heading</h3>
+    <p>
+      Pellentesque habitant morbi tristique senectus et netus et malesuada fames
+      ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget,
+      tempor sit amet, ante.
+    </p>
+    <h4>Level 4 Heading</h4>
+    <h5>Level 5 Heading</h5>
+    <h6>Level 6 Heading</h6>
+  </header>
+</section>
+
+                <hr />
+                <section>
+    <header>
+        <h2 id="Tables">Tables</h2>
+    </header>
+    <table>
+        <caption>
+            Traditional colors of Japan
+        </caption>
+        <tfoot>
+        <tr>
+            <th colspan="5"><a href="https://en.wikipedia.org/wiki/Traditional_colors_of_Japan" target="_blank">Source: Wikipedia</a></th>
+        </tr>
+        </tfoot>
+        <tbody>
+        <thead>
+            <tr>
+                <th>Japanese name</th>
+                <th>Romanized</th>
+                <th>English translation</th>
+                <th>RGB</th>
+                <th>Hex triplet</th>
+            </tr>
+        </thead>
+        <tr>
+            <td>一斤染</td>
+            <td>Ikkonzome</td>
+            <td>One kin (0.6&nbsp;kg (1.3&nbsp;lb)) dye</td>
+            <td>240,143,144</td>
+            <td>#F08F90</td>
+        </tr>
+        <tr>
+            <td>紅梅色</td>
+            <td>Kōbai-iro</td>
+            <td>Red plum colored</td>
+            <td>219,90,107</td>
+            <td>#DB5A6B</td>
+        </tr>
+        <tr>
+            <td>桜色</td>
+            <td>Sakura-iro</td>
+            <td>Cherry blossom color</td>
+            <td>252,201,185</td>
+            <td>#FCC9B9</td>
+        </tr>
+        <tr>
+            <td>薄紅</td>
+            <td>Usubeni</td>
+            <td>Pale crimson (dye)</td>
+            <td>242,102,108</td>
+            <td>#F2666C</td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+                <hr />
+                <section>
+  <header><h2 id="SpecialElements">Special Elements</h2></header>
+  <p>Terminal CSS also supports a range of special elements.</p>
+
+  <h3 id="Blockquote">Blockquote</h3>
+  <blockquote>
+    <p>
+      <em>This is a properly formatted blockquote, btw.</em> Measuring
+      programming progress by lines of code is like measuring aircraft building
+      progress by weight.
+    </p>
+    <footer>
+      <cite><a href="https://www.gatesnotes.com/">Bill Gates</a></cite>
+    </footer>
+  </blockquote>
+
+  <blockquote>
+    <p>
+      <em>This is a properly formatted blockquote, btw.</em> Measuring
+      programming progress by lines of code is like measuring aircraft building
+      progress by weight.
+    </p>
+  </blockquote>
+  <h3 id="Misc">Misc</h3>
+  <h5 class="terminal-prompt">Terminal Prompt</h5>
+  <p>
+    I am <a href="?abc123">the a tag</a> example<br />
+    I am <abbr title="test">the abbr tag</abbr> example<br />
+    I am <b>the b tag</b> example<br />
+    I am <cite>the cite tag</cite> example<br />
+    I am <code>the code tag</code> example<br />
+    I am <del>the del tag</del> example<br />
+    I am <dfn>the dfn tag</dfn> example<br />
+    I am <em>the em tag</em> example<br />
+    I am <i>the i tag</i> example<br />
+    I am <ins>the ins tag</ins> example<br />
+    I am <kbd>the kbd tag</kbd> example<br />
+    I am <q>the q tag</q> example<br />
+    I am <samp>the samp tag</samp> example<br />
+    I am <small>the small tag</small> example<br />
+    I am <span>the span tag</span> example<br />
+    I am <strong>the strong tag</strong> example<br />
+    I am <sub>the sub tag</sub> example<br />
+    I am <sup>the sup tag</sup> example<br />
+    I am <var>the var tag</var> example<br />
+  </p>
+
+  <h4 id="Address">Address</h4>
+  <address>
+    Mozilla Foundation<br />
+    1981 Landings Drive<br />
+    Building K<br />
+    Mountain View, CA 94043-0801<br />
+    USA
+  </address>
+  <br />
+</section>
+
+                <hr />
+                <section>
+  <header><h2 id="Forms">Forms</h2></header>
+  <form action="#">
+    <fieldset>
+      <legend>Form legend</legend>
+      <div class="form-group">
+        <label for="email">Email input:</label>
+        <input id="email" name="email" type="email" required minlength="5" placeholder="test"/>
+      </div>
+      <div class="form-group">
+        <label for="text">Text input:</label>
+        <input id="text" name="text" type="text" required minlength="5" placeholder="test"/>
+      </div>
+      <div class="form-group">
+        <label for="itext">Invalid input (min-length 10):</label>
+        <input id="itext" name="itext" type="text" minlength="10"/>
+      </div>
+      <div class="form-group">
+        <label for="pw">Password input:</label>
+        <input type="password" id="pw" name="pw" value="password" />
+      </div>
+      <div class="form-group">
+        <label for="radio">Radio input:</label>
+        <input name="radio" type="radio" id="radio" />
+      </div>
+      <div class="form-group">
+        <label for="check">Checkbox input:</label>
+        <input type="checkbox" id="check" />
+      </div>
+      <div class="form-group">
+        <label for="select">Select field:</label>
+        <select id="select" name="select">
+          <option> Option 01 </option>
+          <option> Option 02 </option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="event-date">Event date:</label>
+        <input type="date" id="event-date" name="event-date">
+      </div>
+      <div class="form-group">
+        <label for="event-time">Event time:</label>
+        <input type="time" id="event-time" name="event-time">
+      </div>
+      <div class="form-group">
+        <label for="textarea">Textarea:</label>
+        <textarea id="textarea" cols="30" rows="5" name=="textarea">Textarea text</textarea>
+      </div>
+      <div class="form-group">
+        <label for="submit">Input Button:</label>
+        <button class="btn btn-default" type="submit" role="button" name="submit" id="submit">Submit</button>
+      </div>
+    </fieldset>
+  </form>
+</section>
+                <hr />
+                <section>
+  <header><h2 id="Progress">Progress Bar</h2></header>
+  <br />
+  <p>With only an arrow</p>
+  <div class="progress-bar">
+    <div class="progress-bar-filled" style="width: 40%"></div>
+  </div>
+  <p>With a percentage showing above the arrow</p>
+  <div class="progress-bar progress-bar-show-percent">
+    <div
+      class="progress-bar-filled"
+      style="width: 30%"
+      data-filled="Loading 30%"
+    ></div>
+  </div>
+  <p>Without arrow</p>
+  <div class="progress-bar progress-bar-no-arrow">
+    <div
+      class="progress-bar-filled"
+      style="width: 60%"
+      data-filled="Loading 60%"
+    ></div>
+  </div>
+  <br />
+</section>
+
+                <hr />
+                <section>
+  <header><h2 id="Buttons">Buttons</h2></header>
+  <button class="btn btn-default">Default</button><br /><br />
+  <button class="btn btn-primary">Primary</button><br /><br />
+  <button class="btn btn-error">Error</button><br /><br />
+  <button class="btn btn-default btn-ghost">Ghost Button</button><br /><br />
+  <button class="btn btn-primary btn-ghost">Ghost Button</button><br /><br />
+  <button class="btn btn-error btn-ghost">Ghost Button</button><br /><br />
+  <button class="btn btn-primary btn-block">Block Level Button</button
+  ><br /><br />
+  <p>Button Group</p>
+  <div class="btn-group">
+    <button class="btn btn-default btn-ghost">Left</button>
+    <button class="btn btn-default btn-ghost">Middle</button>
+    <button class="btn btn-default btn-ghost">Right</button>
+  </div>
+  <br />
+</section>
+
+                <hr />
+                <section>
+  <header><h2 id="Cards">Cards</h2></header>
+  <div class="terminal-card">
+    <header>Card Title</header>
+    <div>
+      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Expedita, quas
+      ex vero enim in doloribus officiis ullam vel nam esse sapiente velit
+      incidunt. Eaque quod et, aut maiores excepturi sint.
+    </div>
+  </div>
+  <br />
+</section>
+
+                <hr />
+                <section>
+  <header><h2 id="Timeline">Timeline</h2></header>
+  <div class="terminal-timeline">
+    <div class="terminal-card">
+      <header>Card Title</header>
+      <div>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Expedita, quas
+        ex vero enim in doloribus officiis ullam vel nam esse sapiente velit
+        incidunt. Eaque quod et, aut maiores excepturi sint.
+      </div>
+    </div>
+    <div class="terminal-card">
+      <header>Card Title</header>
+      <div>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Expedita, quas
+        ex vero enim in doloribus officiis ullam vel nam esse sapiente velit
+        incidunt. Eaque quod et, aut maiores excepturi sint.
+      </div>
+    </div>
+  </div>
+  <br />
+</section>
+
+                <hr />
+                <section>
+  <header><h2 id="Alerts">Alerts</h2></header>
+    <div class="terminal-alert">Default message</div>
+    <div class="terminal-alert terminal-alert-primary">Primary message</div>
+    <div class="terminal-alert terminal-alert-error">Error message</div>
+</section>
+                <hr />
+                <h2 id="Media">Media</h2>
+<div class="terminal-media">
+    <div class="terminal-media-left">
+        <div class="terminal-avatarholder"><img width="50" height="50" src="https://picsum.photos/50/50?random&mediaLeft" alt="Picsum"></div>
+    </div>
+    <div class="terminal-media-body">
+        <div class="terminal-media-heading">Media Left Element</div>
+        <div class="terminal-media-content">This is the media content</div>
+    </div>
+</div>
+<div class="terminal-media">
+    <div class="terminal-media-body">
+        <div class="terminal-media-heading">Media Right Element</div>
+        <div class="terminal-media-content">This is the media content</div>
+    </div>
+    <div class="terminal-media-right">
+        <div class="terminal-avatarholder"><img width="50" height="50" src="https://picsum.photos/50/50?random&mediaRight" alt="Picsum"></div>
+    </div>
+</div>
+                <hr />
+                <section>
+  <header><h2 id="Figure">Image with caption</h2></header>
+  <figure>
+    <img
+      src="https://picsum.photos/1000/600?random&imageWithCaption"
+      alt="Image with caption"
+      title="Image with caption"
+    />
+    <figcaption>Image with caption</figcaption>
+  </figure>
+</section>
+
+                <hr />
+                <section>
+    <header>
+        <h2 id="highlightjs">Supports Highlight.js</h2>
+        <p>Terminal CSS comes with a build in theme for <a href="https://highlightjs.org/" target="_black" rel="noopener noreferrer">Highlight.js</a></p>
+    </header>
+<pre>
+<code>
+.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 0.5em;
+  background: var(--block-background-color);
+  color: var(--font-color);
+}
+
+.hljs-comment,
+.hljs-quote {
+  color: var(--secondary-color);
+}
+
+.hljs-variable {
+    color: var(--font-color);
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-built_in,
+.hljs-name,
+.hljs-tag {
+  color: var(--primary-color);
+}
+
+.hljs-string,
+.hljs-title,
+.hljs-section,
+.hljs-attribute,
+.hljs-literal,
+.hljs-template-tag,
+.hljs-template-variable,
+.hljs-type,
+.hljs-addition {
+  color: var(--secondary-color);
+}
+
+.hljs-string {
+    color: var(--secondary-color);
+}
+
+.hljs-deletion,
+.hljs-selector-attr,
+.hljs-selector-pseudo,
+.hljs-meta {
+  color: var(--primary-color);
+}
+
+.hljs-doctag {
+  color: var(--secondary-color);
+}
+
+.hljs-attr {
+  color: var(--primary-color);
+}
+
+.hljs-symbol,
+.hljs-bullet,
+.hljs-link {
+  color: var(--primary-color);
+}
+
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: bold;
+}
+</code>
+</pre>
+</section>
+                <hr />
+                <section>
+    <header><h2>Documentation</h2></header>
+    <p>Most of the documentation is still at an early stage. For more details, please have a look at the source of this website.</p>
+    <section>
+        <header>
+            <h2 id="DocVariables">Variables</h2>
+        </header>
+        <p>Customizing the style of Terminal CSS with CSS Variables is easy.</p>
+
+        <dl class="custom-dl">
+            <style>
+                .custom-dl dt {
+                    font-weight: 600;
+                }
+
+                .custom-dl dd.italic{
+                    font-style: italic;
+                }
+
+                .custom-dl .color-preview {
+                    width: 12px;
+                    height: 12px;
+                    display: inline-block;
+                    outline: #000 solid 1px;
+                    margin-right: 4px;
+                }
+            </style>
+
+            <dt>--global-font-size</dt>
+            <dd>The Base font size</dd>
+            <dd class="italic">(Default: <code id="css-global-font-size">15px</code>)</dd>
+
+            <dt>--global-line-height</dt>
+            <dd>The baseline height. Modify this to achieve the best readability.</dd>
+            <dd class="italic">(Default: <code id="css-global-line-height">1.4em</code>)</dd>
+
+            <dt>--global-space</dt>
+            <dd>A global spacer used to consistently space things</dd>
+            <dd class="italic">(Default: <code id="css-global-space">10px</code>)</dd>
+
+            <dt>--font-stack</dt>
+            <dd>The fonts for the website.</dd>
+            <dd>Use <code>@font-face</code> or any other font provider to include your custom fonts.</dd>
+            <dd class="italic">(Default: <code id="css-font-stack">"Menlo", "Monaco", "Lucida Console", "Liberation Mono", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Courier New", serif</code>)</dd>
+
+            <dt>--mono-font-stack</dt>
+            <dd>Same as above but for <code>code</code>.</dd>
+            <dd class="italic">(Default: <code id="css-mono-font-stack">"Menlo", "Monaco", "Lucida Console", "Liberation Mono", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Courier New", serif</code>)</dd>
+
+            <dt>--background-color</dt>
+            <dd>The page background color</dd>
+            <dd class="italic">(Default: <code id="css-background-color"><span class="color-preview" style="background-color: var(--background-color);"></span>#fff</code>)</dd>
+
+            <dt>--font-color</dt>
+            <dd>The base font color for text, headlines, blockquotes, lists, etc.</dd>
+            <dd class="italic">(Default: <code id="css-font-color"><span class="color-preview" style="background-color: var(--font-color);"></span>#151515</code>)</dd>
+
+            <dt>--invert-font-color</dt>
+            <dd>Sometimes text appears on a colored background. Adjust this color to improve readability.</dd>
+            <dd class="italic">(Default: <code id="css-invert-font-color"><span class="color-preview" style="background-color: var(--invert-font-color);"></span>#fff</code>)</dd>
+
+            <dt>--primary-color</dt>
+            <dd>The primary color is used for links and buttons.</dd>
+            <dd class="italic">(Default: <code id="css-primary-color"><span class="color-preview" style="background-color: var(--primary-color);"></span>#1a95e0</code>)</dd>
+
+            <dt>--secondary-color</dt>
+            <dd>The secondary color is more subtle than the primary color. It's used for code highlighting and image captions.</dd>
+            <dd class="italic">(Default: <code id="css-secondary-color"><span class="color-preview" style="background-color: var(--secondary-color);"></span>#727578</code>)</dd>
+
+            <dt>--error-color</dt>
+            <dd>Used for error alerts and form validation.</dd>
+            <dd class="italic">(Default: <code id="css-error-color"><span class="color-preview" style="background-color: var(--error-color);"></span>#d20962</code>)</dd>
+
+            <dt>--progress-bar-background</dt>
+            <dd>The background color of progress bars.</dd>
+            <dd class="italic">(Default: <code id="css-progress-bar-background"><span class="color-preview" style="background-color: var(--progress-bar-background);"></span>#727578</code>)</dd>
+
+            <dt>--progress-bar-fill</dt>
+            <dd>The fill color, indicating the progress in progress bars.</dd>
+            <dd class="italic">(Default: <code id="css-progress-bar-fill"><span class="color-preview" style="background-color: var(--progress-bar-fill);"></span>#151515</code>)</dd>
+
+            <dt>--code-bg-color</dt>
+            <dd>The background color of <code>&lt;code&gt;</code> elements.</dd>
+            <dd class="italic">(Default: <code id="css-code-bg-color"><span class="color-preview" style="background-color: var(--code-bg-color);"></span>#e8eff2</code>)</dd>
+
+            <dt>--block-background-color</dt>
+            <dd>The background color of <code>&lt;pre&gt;</code> elements. Also applies to <code>&lt;code&gt;</code> elements inside a <code>&lt;pre&gt;</code
+        </dl>
+    </section>
+    <hr>
+    <section>
+        <header>
+            <h2 id="DocTypography">Typography</h2>
+        </header>
+        <p>Terminal CSS uses a single font size for almost all elements. However, there is a way to use browser default font sizes if you wish.</p>
+        <dl class="custom-dl">
+            <dt>Single font size</dt>
+            <dd>Use <code>&lt;body class=&quot;terminal&quot;&gt;</code>. If you leave that option, it will fall back to browser defaults. See <a href="/sans-serif/">here</a>.</dd>
+        </dl>
+    </section>
+</section>
+                <hr />
+                <footer>
+    <p>
+        This project is inspired by
+        <a href="https://egoist.sh/" target="_blank" rel="noopener noreferer"
+        >@egoist's</a
+        >
+        work -
+        <a href="https://github.com/egoist/hack" rel="noopener noreferer">hack.css</a>
+    </p>
+    <p>
+        With ♥️ by <a href="http://jduri.com" target="_blank">Jonas Duri</a>
+    </p>
+</footer>
+
+                <hr />
+                <section>
+    <header></header>
+    <p>Version: v0.7.5 <a href="#menu">Top</a></p>
+</section>
+            </main>
+        </div>
+    </div>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll("pre code").forEach(block => {
+            window.hljs.highlightBlock(block);
+        });
+
+        // Get the computed style of the root element (usually :root in CSS)
+        const rootStyle = getComputedStyle(document.documentElement);
+
+        // Function to update the display element with the CSS variable value, preserving inner span
+        function updateDisplayElementPreservingSpan(cssVariable, displayElementId) {
+            const value = rootStyle.getPropertyValue(cssVariable).trim();
+            const displayElement = document.getElementById(displayElementId);
+            if (displayElement) {
+                // Preserve the inner span if it exists
+                const spanElement = displayElement.querySelector('.color-preview');
+                if (spanElement) {
+                    displayElement.innerHTML = `<span class="color-preview" style="background-color: ${value};"></span>${value}`;
+                } else {
+                    displayElement.textContent = value;
+                }
+            }
+        }
+        // Update each display element with its corresponding CSS variable value
+        updateDisplayElementPreservingSpan('--global-font-size', 'css-global-font-size');
+        updateDisplayElementPreservingSpan('--global-line-height', 'css-global-line-height');
+        updateDisplayElementPreservingSpan('--global-space', 'css-global-space');
+        updateDisplayElementPreservingSpan('--font-stack', 'css-font-stack');
+        updateDisplayElementPreservingSpan('--mono-font-stack', 'css-mono-font-stack');
+        updateDisplayElementPreservingSpan('--background-color', 'css-background-color');
+        updateDisplayElementPreservingSpan('--font-color', 'css-font-color');
+        updateDisplayElementPreservingSpan('--invert-font-color', 'css-invert-font-color');
+        updateDisplayElementPreservingSpan('--primary-color', 'css-primary-color');
+        updateDisplayElementPreservingSpan('--secondary-color', 'css-secondary-color');
+        updateDisplayElementPreservingSpan('--error-color', 'css-error-color');
+        updateDisplayElementPreservingSpan('--progress-bar-background', 'css-progress-bar-background');
+        updateDisplayElementPreservingSpan('--progress-bar-fill', 'css-progress-bar-fill');
+        updateDisplayElementPreservingSpan('--code-bg-color', 'css-code-bg-color');
+        updateDisplayElementPreservingSpan('--block-background-color', 'css-block-background-color');
+        updateDisplayElementPreservingSpan('--input-style', 'css-input-style');
+        updateDisplayElementPreservingSpan('--display-h1-decoration', 'css-display-h1-decoration');
+    });
+</script> -->
+</html>
