@@ -11,6 +11,7 @@ class ReimbursementRequestAdmin(admin.ModelAdmin):
         "date",
         "description",
         "status",
+        "created_at",
     ]
     list_filter = [
         "status",
