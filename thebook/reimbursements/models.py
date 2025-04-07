@@ -32,6 +32,9 @@ class ReimbursementRequest(models.Model):
         default=RequestStatus.RECEIVED,
     )
 
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
     @classmethod
     def from_db(cls, db, field_names, values):
         new = super().from_db(db, field_names, values)
