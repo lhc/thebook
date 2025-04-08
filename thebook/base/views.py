@@ -1,6 +1,7 @@
 import datetime
 from decimal import ROUND_UP, Decimal
 
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
 from thebook.bookkeeping.models import CashBook
@@ -34,6 +35,7 @@ def _get_dashboard_context():
     }
 
 
+@login_required
 def dashboard(request):
     return render(
         request,
