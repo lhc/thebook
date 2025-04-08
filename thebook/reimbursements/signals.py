@@ -1,5 +1,8 @@
+from django.conf import settings
+from django.core.mail import send_mail
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
+from django.template.loader import render_to_string
 from django.utils.translation import gettext as _
 
 from thebook.reimbursements.models import ReimbursementRequest, RequestStatus
@@ -14,7 +17,29 @@ def _complete_request(reimbursement_request): ...
 def _reject_request(reimbursement_request): ...
 
 
-def _received_request(reimbursement_request): ...
+def _received_request(reimbursement_request):
+    send_mail(
+        "[thebook] Solicitação de reembolso enviada",
+        render_to_string(
+            "emails/reimbursement_request_sent.txt",
+            context={"reimbursement_request": reimbursement_request},
+        ),
+        "reembolso@lhc.net.br",
+        [
+            reimbursement_request.email,
+        ],
+        fail_silently=False,
+    )
+    send_mail(
+        "[thebook] Solicitação de reembolso recebida",
+        render_to_string(
+            "emails/reimbursement_request_received.txt",
+            context={"reimbursement_request": reimbursement_request},
+        ),
+        "reembolso@lhc.net.br",
+        settings.REIMBURSEMENT_REQUEST_EMAILS,
+        fail_silently=False,
+    )
 
 
 STATUS_TRANSITIONS = {

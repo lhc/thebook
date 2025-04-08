@@ -208,3 +208,7 @@ REIMBURSEMENT_REQUEST_EMAILS = config(
     "REIMBURSEMENT_REQUEST_EMAILS",
     cast=lambda v: [s.strip() for s in v.split(",")],
 )
+
+EMAIL_BACKEND = config(
+    "EMAIL_BACKEND", default="django.core.mail.backends.console.EmailBackend"
+)

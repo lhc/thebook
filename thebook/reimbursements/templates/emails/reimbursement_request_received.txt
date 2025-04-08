@@ -1,0 +1,27 @@
+Olá,
+
+Uma nova solicitação de reembolso foi enviada.
+
+Detalhes da solicitação
+-----------------------
+
+Nome:
+{{reimbursement_request.name}}
+
+E-mail:
+{{reimbursement_request.email}}
+
+Valor:
+{{reimbursement_request.value}}
+
+Data:
+{{reimbursement_request.date}}
+
+Descrição:
+{{reimbursement_request.description}}
+
+Informações de pagamento:
+{{reimbursement_request.payment_info}}
+
+Atenciosamente,
+Laboratório Hacker de Campinas

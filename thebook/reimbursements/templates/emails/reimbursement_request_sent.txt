@@ -1,0 +1,29 @@
+Olá {{ reimbursement_request.name }},
+
+Sua solicitação de reembolso foi enviada e em breve você receberá
+uma atualização através deste e-mail. Caso tenha alguma dúvida
+responda este e-mail.
+
+Detalhes da solicitação
+-----------------------
+
+Nome:
+{{ reimbursement_request.name }}
+
+E-mail:
+{{ reimbursement_request.email }}
+
+Valor:
+{{ reimbursement_request.value }}
+
+Data:
+{{ reimbursement_request.date }}
+
+Descrição:
+{{ reimbursement_request.description }}
+
+Informações de pagamento:
+{{ reimbursement_request.payment_info }}
+
+Atenciosamente,
+Laboratório Hacker de Campinas
