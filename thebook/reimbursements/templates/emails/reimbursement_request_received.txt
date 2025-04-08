@@ -1,27 +1,28 @@
 Olá,
 
-Uma nova solicitação de reembolso foi enviada.
+{{ reimbursement_request.name }} acabou de enviar uma nova
+solicitação de reembolso. Veja os detalhes abaixo.
 
 Detalhes da solicitação
 -----------------------
 
 Nome:
-{{reimbursement_request.name}}
+{{ reimbursement_request.name }}
 
 E-mail:
-{{reimbursement_request.email}}
+{{ reimbursement_request.email }}
 
 Valor:
-{{reimbursement_request.value}}
+{{ reimbursement_request.value }}
 
 Data:
-{{reimbursement_request.date}}
+{{ reimbursement_request.date }}
 
 Descrição:
-{{reimbursement_request.description}}
+{{ reimbursement_request.description }}
 
 Informações de pagamento:
-{{reimbursement_request.payment_info}}
+{{ reimbursement_request.payment_info }}
 
 Atenciosamente,
 Laboratório Hacker de Campinas
