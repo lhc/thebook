@@ -22,6 +22,7 @@ You need to install the following tools to start developing in the project:
 - [pyenv](https://github.com/pyenv/pyenv) to manage your Python version and create isolated
   environment where you can safely develop;
 - [poetry](https://python-poetry.org/) for packaging and dependency management
+- [pre-commit](https://pre-commit.com/) to run code formatter and linter before commits
 
 ## Local Environment
 
@@ -36,7 +37,13 @@ Now you need to activate the virtual environment so you can start developing. Yo
 execute this step before any other described in this document:
 
 ```
-poetry shell
+eval $(poetry env activate)
+```
+
+Enable your `pre-commit` hooks:
+
+```
+pre-commit install
 ```
 
 ### Running
