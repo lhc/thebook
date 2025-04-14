@@ -1,4 +1,4 @@
-Olá {membership.member.name},
+Olá {{ membership.member.name }},
 
 Boas vindas ao **Laboratório Hacker de Campinas**. Agora você é oficialmente uma pessoa
 associada ao LHC! Este e-mail é muito importante e contém muitas informações que você
