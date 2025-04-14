@@ -87,6 +87,12 @@ class Membership(models.Model):
         ),
     )
 
+    @classmethod
+    def from_db(cls, db, field_names, values):
+        new = super().from_db(db, field_names, values)
+        new._original_active = new.active
+        return new
+
     def __str__(self):
         active_status = "Active" if self.active else "Inactive"
         return f"{active_status} membership of {self.member.name}"
