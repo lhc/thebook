@@ -1,28 +1,18 @@
 Olá {{ membership.member.name }},
 
-Boas vindas ao **Laboratório Hacker de Campinas**. Agora você é oficialmente uma pessoa
-associada ao LHC! Este e-mail é muito importante e contém muitas informações que você
-precisa saber sobre o funcionamento do LHC. Ele é um pouquinho longo, mas vale a pena
-ser lido.
+Boas vindas ao **Laboratório Hacker de Campinas**. Agora você é oficialmente uma pessoa associada ao LHC! Este e-mail é muito importante e contém muitas informações que você precisa saber sobre o funcionamento do LHC. Ele é um pouquinho longo, mas precisa ser lido.
 
 # Código de conduta
 
-Todas as pessoas que frequentam o LHC (inclusive nos espaços virtuais) devem seguir o
-nosso Código de Conduta. E você deve conhecê-lo, segui-lo e também, como uma nova
-pessoa associada, ter a responsabilidade de garantir que ele seja cumprido em todos
-os nosso espaços pelas outras pessoas. Você pode ler a versão atualizada em:
+Todas as pessoas que frequentam o LHC (inclusive nos espaços virtuais) devem seguir o nosso Código de Conduta. E você deve conhecê-lo, segui-lo e também, como uma nova pessoa associada, ter a responsabilidade de garantir que ele seja cumprido em todos os nosso espaços pelas outras pessoas. Você pode ler a versão atualizada em:
 
 https://github.com/lhc/estatuto/blob/master/src/codigo_conduta.md
 
 # Contribuição Associativa
 
-Ao associar-s ao LHC você deve iniciar o pagamento de sua contribuição associativa. Temos
-dois valores de contribuição: R$85 e R$110. Não existe nenhuma diferença em direitos do uso
-do espaço ao escolher qualquer valor. Apenas damos mais uma opção para que quem puder,
-contribua com um valor maior.
+Ao associar-se ao LHC você deve iniciar o pagamento de sua contribuição associativa. Temos dois valores de contribuição: R$85 e R$110. Não existe nenhuma diferença em direitos do uso do espaço ao escolher qualquer valor. Apenas damos mais uma opção para que quem puder, contribua com um valor maior.
 
-Para iniciar o pagamento, escolha o link abaixo e faça sua assinatura. O valor será cobrado
-no seu cartão de crédito mensalmente no dia do mês que você fez o primeiro pagamento.
+Para iniciar o pagamento, escolha o link abaixo e faça sua assinatura. O valor será cobrado no seu cartão de crédito mensalmente no dia do mês que você fez o primeiro pagamento.
 
 Mensalmente - R$85 - via PayPal
 https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=MTSKUDJM463MY
@@ -32,9 +22,7 @@ https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4WXUZR98BEF
 
 # Estatuto e Regimento Interno
 
-O LHC é uma associação sem fins lucrativos. Desta maneira temos registrado um Estatuto
-e um Regimento Interno que definem todas as regras e burocracias necessárias para o
-funcionamento da Associação. Muito importante conhecer estes documentos.
+O LHC é uma associação sem fins lucrativos. Desta maneira temos registrado um Estatuto e um Regimento Interno que definem todas as regras e burocracias necessárias para o funcionamento da Associação. Muito importante conhecer estes documentos.
 
 Você pode acessá-los em:
 
@@ -43,17 +31,13 @@ https://github.com/lhc/estatuto/blob/master/src/regimento_interno.md
 
 # TheBook
 
-Você fez o seu cadastro no TheBook (senão não estaria recebendo este e-mail!). Este
-é o sistema (sempre em desenvolvimento) de controle administrativo do LHC. Aqui você
-tem acesso a todas as informações financeiras do hackerspace:
+Você fez o seu cadastro no TheBook (senão não estaria recebendo este e-mail!). Este é o sistema (sempre em desenvolvimento) de controle administrativo do LHC. Aqui você tem acesso a todas as informações financeiras do hackerspace:
 
 https://thebook.lhc.net.br/
 
 # Comunicação por mensagens
 
-Temos alguns grupos de mensagens. O mais importante é o Administrativo, onde discutimos
-questões mais administrativas do hackerspace. Caso algum link não funcione, mande uma
-mensagem para contato@lhc.net.br
+Temos alguns grupos de mensagens. O mais importante é o Administrativo, onde discutimos questões mais administrativas do hackerspace. Caso algum link não funcione, mande uma mensagem para contato@lhc.net.br
 
 - Grupo de Whatsapp - Administrativo - apenas para pessoas associadas
 https://chat.whatsapp.com/IvaYAgNYNpXDx45sxKkCte
