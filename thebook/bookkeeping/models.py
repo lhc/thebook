@@ -10,47 +10,39 @@ from django.db.models import Sum
 from django.utils.text import slugify
 from django.utils.translation import gettext as _
 
+from thebook.bookkeeping.categorizer import CategoryRule
 from thebook.bookkeeping.managers import CashBookQuerySet, TransactionQuerySet
 
 DONATION = "Doação"
-RECURRING_DONATION = "Doação Recorrente"
-BANK_FEES = "Tarifas Bancárias"
-BANK_INCOME = "Investimentos"
-CREDIT_CARD_BILL = "Fatura Cartão de Crédito"
-RECURRING = "Recorrente"
-MEMBERSHIP_FEE = "Mensalidade"
-CASH_BOOK_TRANSFER = "Transferência entre contas"
-ACCOUNTANT = "Contabilidade"
-TAXES = "Impostos"
-UNCATEGORIZED = "Uncategorized"
 
 
 def get_categorize_rules():
-    uncategorized, _ = Category.objects.get_or_create(name=UNCATEGORIZED)
     donation, _ = Category.objects.get_or_create(name=DONATION)
-    recurring_donation, _ = Category.objects.get_or_create(name=RECURRING_DONATION)
-    bank_fees, _ = Category.objects.get_or_create(name=BANK_FEES)
-    bank_income, _ = Category.objects.get_or_create(name=BANK_INCOME)
-    credit_card_bill, _ = Category.objects.get_or_create(name=CREDIT_CARD_BILL)
-    recurring, _ = Category.objects.get_or_create(name=RECURRING)
-    cash_book_transfer, _ = Category.objects.get_or_create(name=CASH_BOOK_TRANSFER)
-    accountant, _ = Category.objects.get_or_create(name=ACCOUNTANT)
-    taxes, _ = Category.objects.get_or_create(name=TAXES)
-    membership_fee, _ = Category.objects.get_or_create(name=MEMBERSHIP_FEE)
+    bank_fees, _ = Category.objects.get_or_create(name="Tarifas Bancárias")
+    bank_income, _ = Category.objects.get_or_create(name="Investimentos")
+    cash_book_transfer, _ = Category.objects.get_or_create(
+        name="Transferência entre contas"
+    )
+    services, _ = Category.objects.get_or_create(name="Serviços")
+    taxes, _ = Category.objects.get_or_create(name="Impostos")
+    membership_fee, _ = Category.objects.get_or_create(name="Contribuição Associativa")
 
-    return {
-        "TARIFA BANCARIA": bank_fees,
-        "CONTA DE TELEFONE": recurring,
-        "CONTA DE AGUA": recurring,
-        "CONTA DE LUZ": recurring,
-        "COBRANCA ALUGUEL": recurring,
-        "RENTAB.INVEST FACILCRED": bank_income,
-        "SYSTEN CONSULTORIA": accountant,
-        "CONTADOR": accountant,
-        "PAYPAL DO BRASIL": cash_book_transfer,
-        "PAGTO ELETRONICO TRIBUTO INTERNET --P.M CAMPINAS/SP": taxes,
-        "PAGAMENTO DA FATURA": credit_card_bill,
-    }
+    return [
+        CategoryRule(pattern="TARIFA BANCARIA", category=bank_fees),
+        CategoryRule(pattern="CONTA DE TELEFONE", category=services),
+        CategoryRule(pattern="CONTA DE AGUA", category=services),
+        CategoryRule(pattern="CONTA DE LUZ", category=services),
+        CategoryRule(pattern="COBRANCA ALUGUEL", category=services),
+        CategoryRule(pattern="RENTAB.INVEST FACILCRED", category=bank_income),
+        CategoryRule(pattern="SYSTEN CONSULTORIA", category=services),
+        CategoryRule(pattern=".*CONTADOR.*", category=services),
+        CategoryRule(pattern="PAYPAL DO BRASIL", category=cash_book_transfer),
+        CategoryRule(
+            pattern="PAGTO ELETRONICO TRIBUTO INTERNET --P.M CAMPINAS/SP",
+            category=taxes,
+        ),
+        CategoryRule(pattern="PAGAMENTO DA FATURA", category=cash_book_transfer),
+    ]
 
 
 def document_upload_path(instance, filename):
@@ -217,9 +209,9 @@ class Transaction(models.Model):
         if rules is None:
             rules = get_categorize_rules()
 
-        for description, category in rules.items():
-            if description.lower() in self.description.lower():
-                self.category = category
+        for rule in rules:
+            self, applied = rule.apply_rule(self)
+            if applied:
                 self.save()
                 return
 
