@@ -28,14 +28,31 @@ def get_categorize_rules():
     membership_fee, _ = Category.objects.get_or_create(name="Contribuição Associativa")
 
     return [
+        CategoryRule(
+            pattern="TARIFA BANCARIA Max Empresarial 1",
+            category=bank_fees,
+            tags=["recorrente"],
+        ),
         CategoryRule(pattern="TARIFA BANCARIA", category=bank_fees),
-        CategoryRule(pattern="CONTA DE TELEFONE", category=services),
-        CategoryRule(pattern="CONTA DE AGUA", category=services),
-        CategoryRule(pattern="CONTA DE LUZ", category=services),
-        CategoryRule(pattern="COBRANCA ALUGUEL", category=services),
+        CategoryRule(
+            pattern="CONTA DE TELEFONE", category=services, tags=["vivo", "recorrente"]
+        ),
+        CategoryRule(
+            pattern="CONTA DE AGUA", category=services, tags=["sanasa", "recorrente"]
+        ),
+        CategoryRule(
+            pattern="CONTA DE LUZ", category=services, tags=["cpfl", "recorrente"]
+        ),
+        CategoryRule(
+            pattern="COBRANCA ALUGUEL",
+            category=services,
+            tags=["aluguel", "recorrente"],
+        ),
         CategoryRule(pattern="RENTAB.INVEST FACILCRED", category=bank_income),
-        CategoryRule(pattern="SYSTEN CONSULTORIA", category=services),
-        CategoryRule(pattern=".*CONTADOR.*", category=services),
+        CategoryRule(
+            pattern="SYSTEN CONSULTORIA", category=services, tags=["contabilidade"]
+        ),
+        CategoryRule(pattern="CONTADOR", category=services),
         CategoryRule(pattern="PAYPAL DO BRASIL", category=cash_book_transfer),
         CategoryRule(
             pattern="PAGTO ELETRONICO TRIBUTO INTERNET --P.M CAMPINAS/SP",

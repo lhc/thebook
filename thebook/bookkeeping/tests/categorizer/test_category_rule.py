@@ -10,9 +10,15 @@ def bank_fee_category():
     return Category(name="Bank Fee")
 
 
-@pytest.fixture
-def membership_fee_category():
-    return Category(name="Membership Fee")
+def test_rule_with_tag_can_not_be_applied_if_transaction_not_persisted(
+    bank_fee_category,
+):
+    category_rule = CategoryRule(
+        pattern="bank fee", category=bank_fee_category, tags=["bank"]
+    )
+    transaction = baker.prepare(Transaction, description="bank fee")
+    with pytest.raises(ValueError):
+        transaction, applied = category_rule.apply_rule(transaction)
 
 
 @pytest.mark.parametrize(
@@ -59,3 +65,27 @@ def test_do_not_apply_rule_when_regex_not_a_match(
 
     assert not applied
     assert transaction.category is None
+
+
+@pytest.mark.parametrize(
+    "pattern,description,tags",
+    [
+        (r"\d{5} bank", "12345 bank", ["bank", "fees"]),
+        (r"\d{5} bank", "12345 bank", ["bank"]),
+        (r"\d{5} bank", "12345 bank", []),
+    ],
+)
+def test_apply_tags_to_matched_transactions(
+    db, bank_fee_category, pattern, description, tags
+):
+    category_rule = CategoryRule(
+        pattern=pattern,
+        category=bank_fee_category,
+        tags=tags,
+    )
+    transaction = baker.make(Transaction, description=description)
+
+    transaction, applied = category_rule.apply_rule(transaction)
+
+    assert applied
+    assert sorted(list(transaction.tags.names())) == sorted(tags)

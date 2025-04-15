@@ -13,7 +13,15 @@ class CategoryRule:
 
     def apply_rule(self, transaction):
         applied = False
+        if self.tags and not transaction.id:
+            raise ValueError(
+                "You need to save the transaction before adding tags to it."
+            )
+
         if re.match(self.pattern, transaction.description, re.IGNORECASE):
             transaction.category = self.category
+            if self.tags:
+                transaction.tags.add(*self.tags)
             applied = True
+
         return transaction, applied
