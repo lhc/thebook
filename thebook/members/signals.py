@@ -23,7 +23,7 @@ def _send_onboarding_message(membership):
 
 @receiver(post_save, sender=Membership)
 def check_active_status(sender, instance, created, **kwargs):
-    if created and not instance.active:
+    if created:
         return
 
     if instance.active and not instance._original_active:

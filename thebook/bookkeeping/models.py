@@ -33,6 +33,20 @@ def get_categorize_rules():
             category=bank_fees,
             tags=["recorrente"],
         ),
+        CategoryRule(
+            pattern="PAGTO ELETRON COBRANCA CONTADORA",
+            category=services,
+            value=Decimal("-540"),
+            comparison_function="EQ",
+            tags=["contabilidade", "recorrente"],
+        ),
+        CategoryRule(
+            pattern="PAGTO ELETRON COBRANCA CONTADOR",
+            category=services,
+            value=Decimal("-207.80"),
+            comparison_function="EQ",
+            tags=["contabilidade", "recorrente"],
+        ),
         CategoryRule(pattern="TARIFA BANCARIA", category=bank_fees),
         CategoryRule(
             pattern="CONTA DE TELEFONE", category=services, tags=["vivo", "recorrente"]
@@ -52,7 +66,7 @@ def get_categorize_rules():
         CategoryRule(
             pattern="SYSTEN CONSULTORIA", category=services, tags=["contabilidade"]
         ),
-        CategoryRule(pattern="CONTADOR", category=services),
+        CategoryRule(pattern=".*CONTADOR.*", category=services, tags=["contabilidade"]),
         CategoryRule(pattern="PAYPAL DO BRASIL", category=cash_book_transfer),
         CategoryRule(
             pattern="PAGTO ELETRONICO TRIBUTO INTERNET --P.M CAMPINAS/SP",

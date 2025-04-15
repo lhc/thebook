@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 import pytest
 from model_bakery import baker
 
@@ -6,11 +8,11 @@ from thebook.bookkeeping.models import Category, Transaction
 
 
 @pytest.fixture
-def bank_fee_category():
-    return Category(name="Bank Fee")
+def bank_fee_category(db):
+    return Category.objects.create(name="Bank Fee")
 
 
-def test_rule_with_tag_can_not_be_applied_if_transaction_not_persisted(
+def test_can_not_apply_rule_in_not_persisted_transaction(
     bank_fee_category,
 ):
     category_rule = CategoryRule(
@@ -31,16 +33,18 @@ def test_rule_with_tag_can_not_be_applied_if_transaction_not_persisted(
         (r"\d{5} bank", "12345 bank"),
     ],
 )
-def test_apply_rule_by_regex_pattern(bank_fee_category, pattern, description):
+def test_apply_rule_by_regex_pattern(db, bank_fee_category, pattern, description):
     category_rule = CategoryRule(
         pattern=pattern,
         category=bank_fee_category,
     )
-    transaction = baker.prepare(Transaction, description=description)
+    transaction = baker.make(Transaction, description=description)
 
     transaction, applied = category_rule.apply_rule(transaction)
 
     assert applied
+
+    transaction.refresh_from_db()
     assert transaction.category == bank_fee_category
 
 
@@ -53,17 +57,19 @@ def test_apply_rule_by_regex_pattern(bank_fee_category, pattern, description):
     ],
 )
 def test_do_not_apply_rule_when_regex_not_a_match(
-    bank_fee_category, pattern, description
+    db, bank_fee_category, pattern, description
 ):
     category_rule = CategoryRule(
         pattern=pattern,
         category=bank_fee_category,
     )
-    transaction = baker.prepare(Transaction, description=description)
+    transaction = baker.make(Transaction, description=description)
 
     transaction, applied = category_rule.apply_rule(transaction)
 
     assert not applied
+
+    transaction.refresh_from_db()
     assert transaction.category is None
 
 
@@ -88,4 +94,38 @@ def test_apply_tags_to_matched_transactions(
     transaction, applied = category_rule.apply_rule(transaction)
 
     assert applied
+
+    transaction.refresh_from_db()
     assert sorted(list(transaction.tags.names())) == sorted(tags)
+
+
+@pytest.mark.parametrize(
+    "rule_value,comparison_function,amount,expected_applied",
+    [
+        (Decimal("10.00"), "EQ", Decimal("10.00"), True),
+        (Decimal("10.00"), "LTE", Decimal("10.00"), True),
+        (Decimal("10.00"), "GTE", Decimal("10.00"), True),
+        (Decimal("10.00"), "EQ", Decimal("9.00"), False),
+        (Decimal("10.00"), "LTE", Decimal("11.00"), False),
+        (Decimal("10.00"), "GTE", Decimal("8.50"), False),
+    ],
+)
+def test_apply_rule_considering_value(
+    db,
+    bank_fee_category,
+    rule_value,
+    comparison_function,
+    amount,
+    expected_applied,
+):
+    category_rule = CategoryRule(
+        pattern="bank fee",
+        category=bank_fee_category,
+        value=rule_value,
+        comparison_function=comparison_function,
+    )
+    transaction = baker.make(Transaction, description="bank fee", amount=amount)
+
+    transaction, applied = category_rule.apply_rule(transaction)
+
+    assert applied == expected_applied
