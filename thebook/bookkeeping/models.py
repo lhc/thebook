@@ -31,7 +31,7 @@ def get_categorize_rules():
         CategoryRule(
             pattern="TARIFA BANCARIA Max Empresarial 1",
             category=bank_fees,
-            tags=["recorrente"],
+            tags=["banco", "recorrente"],
         ),
         CategoryRule(
             pattern=".*CONTADORA.*",
@@ -70,6 +70,20 @@ def get_categorize_rules():
         ),
         CategoryRule(
             pattern=".*Bruno Renatto Sugobon.*",
+            category=membership_fee,
+            value=Decimal("110"),
+            comparison_function="EQ",
+            tags=["mensalidade"],
+        ),
+        CategoryRule(
+            pattern=".*Mensalidade.*",
+            category=membership_fee,
+            value=Decimal("85"),
+            comparison_function="EQ",
+            tags=["mensalidade"],
+        ),
+        CategoryRule(
+            pattern=".*Mensalidade.*",
             category=membership_fee,
             value=Decimal("110"),
             comparison_function="EQ",
