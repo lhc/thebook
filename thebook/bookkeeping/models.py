@@ -34,7 +34,7 @@ def get_categorize_rules():
             tags=["recorrente"],
         ),
         CategoryRule(
-            pattern="PAGTO ELETRON COBRANCA CONTADORA",
+            pattern=".*CONTADORA.*",
             category=services,
             value=Decimal("-540"),
             comparison_function="EQ",
@@ -46,6 +46,34 @@ def get_categorize_rules():
             value=Decimal("-207.80"),
             comparison_function="EQ",
             tags=["contabilidade", "recorrente"],
+        ),
+        CategoryRule(
+            pattern=".*ESTEVAN CASTILHO DE MACEDO.*",
+            category=membership_fee,
+            value=Decimal("85"),
+            comparison_function="EQ",
+            tags=["mensalidade"],
+        ),
+        CategoryRule(
+            pattern=".*ELITON P CRUVINEL.*",
+            category=membership_fee,
+            value=Decimal("85"),
+            comparison_function="EQ",
+            tags=["mensalidade"],
+        ),
+        CategoryRule(
+            pattern=".*RENNE SILVA G OLIVEIRA ROCHA.*",
+            category=membership_fee,
+            value=Decimal("85"),
+            comparison_function="EQ",
+            tags=["mensalidade"],
+        ),
+        CategoryRule(
+            pattern=".*Bruno Renatto Sugobon.*",
+            category=membership_fee,
+            value=Decimal("110"),
+            comparison_function="EQ",
+            tags=["mensalidade"],
         ),
         CategoryRule(pattern="TARIFA BANCARIA", category=bank_fees),
         CategoryRule(
