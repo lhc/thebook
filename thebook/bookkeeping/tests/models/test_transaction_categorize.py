@@ -3,6 +3,7 @@ from decimal import Decimal
 import pytest
 from model_bakery import baker
 
+from thebook.bookkeeping.categorizer import CategoryRule
 from thebook.bookkeeping.models import Category, Transaction
 
 
@@ -90,9 +91,13 @@ def test_transactions_below_certain_positive_value_set_as_donation(
 def test_transactions_description_rules_over_donation_threshold(
     db, mocker, settings, uncategorized, accountant
 ):
-    test_rules = {
-        "NOT DONATION": accountant,
-    }
+    test_rules = [
+        CategoryRule(
+            pattern="NOT DONATION",
+            category=accountant,
+        )
+    ]
+
     mocker.patch(
         "thebook.bookkeeping.models.get_categorize_rules", return_value=test_rules
     )
