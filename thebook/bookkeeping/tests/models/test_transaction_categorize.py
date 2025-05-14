@@ -3,7 +3,7 @@ from decimal import Decimal
 import pytest
 from model_bakery import baker
 
-from thebook.bookkeeping.categorizer import CategoryRule
+from thebook.bookkeeping.categorizer import CategoryMatchRule
 from thebook.bookkeeping.models import Category, Transaction
 
 
@@ -92,7 +92,7 @@ def test_transactions_description_rules_over_donation_threshold(
     db, mocker, settings, uncategorized, accountant
 ):
     test_rules = [
-        CategoryRule(
+        CategoryMatchRule(
             pattern="NOT DONATION",
             category=accountant,
         )

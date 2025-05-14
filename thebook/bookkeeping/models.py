@@ -10,7 +10,7 @@ from django.db.models import Sum
 from django.utils.text import slugify
 from django.utils.translation import gettext as _
 
-from thebook.bookkeeping.categorizer import CategoryRule, get_categorize_rules
+from thebook.bookkeeping.categorizer import CategoryMatchRule, get_categorize_rules
 from thebook.bookkeeping.managers import CashBookQuerySet, TransactionQuerySet
 
 
