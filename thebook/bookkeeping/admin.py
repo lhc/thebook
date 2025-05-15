@@ -18,14 +18,14 @@ def make_donation(modeladmin, request, queryset):
 
 @admin.action(description="Mark selected transactions as membership fee")
 def make_membership_fee(modeladmin, request, queryset):
-    MEMBERSHIP_FEE = "Mensalidade"
+    MEMBERSHIP_FEE = "Contribuição Associativa"
     membership_fee, _ = Category.objects.get_or_create(name=MEMBERSHIP_FEE)
     queryset.update(category=membership_fee)
 
 
 @admin.action(description="Mark selected transactions as cash book transfer")
 def make_cash_book_transfer(modeladmin, request, queryset):
-    CASH_BOOK_TRANSFER = "Transferência entre contas"
+    CASH_BOOK_TRANSFER = "Transferência entre livros-caixa"
     cash_book_transfer, _ = Category.objects.get_or_create(name=CASH_BOOK_TRANSFER)
     queryset.update(category=cash_book_transfer)
 
