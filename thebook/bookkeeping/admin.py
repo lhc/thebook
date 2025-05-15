@@ -1,6 +1,12 @@
 from django.contrib import admin
 
-from thebook.bookkeeping.models import CashBook, Category, Document, Transaction
+from thebook.bookkeeping.models import (
+    CashBook,
+    Category,
+    CategoryMatchRule,
+    Document,
+    Transaction,
+)
 
 
 @admin.action(description="Mark selected transactions as donations")
@@ -36,6 +42,15 @@ class CashBookAdmin(admin.ModelAdmin): ...
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin): ...
+
+
+@admin.register(CategoryMatchRule)
+class CategoryMatchRuleAdmin(admin.ModelAdmin):
+    list_display = [
+        "priority",
+        "pattern",
+        "category",
+    ]
 
 
 @admin.register(Document)

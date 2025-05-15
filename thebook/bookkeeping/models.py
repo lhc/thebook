@@ -107,11 +107,51 @@ class Category(models.Model):
 
 
 class CategoryMatchRule(models.Model):
-    pattern = models.CharField()
-    category: "Category"
-    value: Decimal = None
-    comparison_function = models.CharField()
-    tags = models.CharField()
+    priority = models.IntegerField(unique=True)
+    pattern = models.CharField(max_length=512)
+    category = models.ForeignKey("bookkeeping.Category", on_delete=models.CASCADE)
+    value = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    comparison_function = models.CharField(
+        max_length=3,
+        choices={
+            "EQ": "EQ",
+            "LTE": "LTE",
+            "GTE": "GTE",
+        },
+        blank=True,
+        null=True,
+    )
+    tags = models.CharField(max_length=512, blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.pattern} ({self.priority})"
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                condition=(
+                    (
+                        models.Q(value__isnull=True)
+                        & models.Q(comparison_function__isnull=True)
+                    )
+                    | (
+                        models.Q(value__isnull=False)
+                        & models.Q(comparison_function__isnull=False)
+                    )
+                ),
+                name="value_and_comparison_function_are_required_together",
+            ),
+            models.CheckConstraint(
+                condition=(
+                    models.Q(comparison_function__isnull=True)
+                    | (
+                        models.Q(comparison_function__isnull=False)
+                        & models.Q(comparison_function__in=["EQ", "LTE", "GTE"])
+                    )
+                ),
+                name="valid_comparison_function",
+            ),
+        ]
 
 
 class Document(models.Model):
