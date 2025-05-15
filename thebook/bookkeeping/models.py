@@ -1,3 +1,4 @@
+import re
 import uuid
 from decimal import Decimal
 from pathlib import Path
@@ -115,6 +116,7 @@ class CategoryMatchRule(models.Model):
         max_length=3,
         choices={
             "EQ": "EQ",
+            "NEQ": "NEQ",
             "LTE": "LTE",
             "GTE": "GTE",
         },
@@ -146,12 +148,50 @@ class CategoryMatchRule(models.Model):
                     models.Q(comparison_function__isnull=True)
                     | (
                         models.Q(comparison_function__isnull=False)
-                        & models.Q(comparison_function__in=["EQ", "LTE", "GTE"])
+                        & models.Q(comparison_function__in=["EQ", "NEQ", "LTE", "GTE"])
                     )
                 ),
                 name="valid_comparison_function",
             ),
         ]
+
+    def apply_rule(self, transaction):
+        applied = False
+        if self.tags and not transaction.id:
+            raise ValueError(
+                "You need to save the transaction before adding tags to it."
+            )
+
+        string_pattern_matched = bool(
+            re.match(self.pattern, transaction.description, re.IGNORECASE)
+        )
+
+        if self.value:
+            value_matched = False
+            if self.comparison_function == "EQ" and transaction.amount == self.value:
+                value_matched = True
+            elif self.comparison_function == "NEQ" and transaction.amount != self.value:
+                value_matched = True
+            elif self.comparison_function == "LTE" and transaction.amount <= self.value:
+                value_matched = True
+            elif self.comparison_function == "GTE" and transaction.amount >= self.value:
+                value_matched = True
+        else:
+            value_matched = True
+
+        applied = all(
+            [
+                string_pattern_matched,
+                value_matched,
+            ]
+        )
+        if applied:
+            transaction.category = self.category
+            if self.tags:
+                transaction.tags.add(*self.tags.split(","))
+            transaction.save()
+
+        return transaction, applied
 
 
 class Document(models.Model):
