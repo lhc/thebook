@@ -44,15 +44,6 @@ def expected_category(
     }.get(request.param)
 
 
-@pytest.fixture
-def category_description_rules(accountant, bank_fees, recurring):
-    return {
-        "TARIFA BANCARIA": bank_fees,
-        "CONTA DE TELEFONE": recurring,
-        "CONTADOR": accountant,
-    }
-
-
 @pytest.mark.parametrize(
     "transaction_amount,donation_threshold,expected_category",
     [
@@ -90,17 +81,12 @@ def test_transactions_below_certain_positive_value_set_as_donation(
 def test_transactions_description_rules_over_donation_threshold(
     db, mocker, settings, uncategorized, accountant
 ):
-    test_rules = [
-        CategoryMatchRule.objects.create(
-            priority=100,
-            pattern="NOT DONATION",
-            category=accountant,
-        ),
-    ]
+    CategoryMatchRule.objects.create(
+        priority=100,
+        pattern="NOT DONATION",
+        category=accountant,
+    ),
 
-    mocker.patch(
-        "thebook.bookkeeping.models.get_categorize_rules", return_value=test_rules
-    )
     settings.DONATION_THRESHOLD = Decimal("50")
 
     transaction = baker.make(
@@ -114,3 +100,30 @@ def test_transactions_description_rules_over_donation_threshold(
 
     transaction.refresh_from_db()
     assert transaction.category == accountant
+
+
+def test_consider_match_rule_priority_when_categorizing(
+    db, mocker, settings, uncategorized, accountant, bank_fees
+):
+    CategoryMatchRule.objects.create(
+        priority=200,
+        pattern="PAYMENT",
+        category=accountant,
+    )
+    CategoryMatchRule.objects.create(
+        priority=100,
+        pattern="PAYMENT",
+        category=bank_fees,
+    )
+
+    transaction = baker.make(
+        Transaction,
+        description="PAYMENT",
+        category=uncategorized,
+        amount=Decimal("49.99"),
+    )
+
+    transaction.categorize()
+
+    transaction.refresh_from_db()
+    assert transaction.category == bank_fees

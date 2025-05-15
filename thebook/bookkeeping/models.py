@@ -11,7 +11,6 @@ from django.db.models import Sum
 from django.utils.text import slugify
 from django.utils.translation import gettext as _
 
-from thebook.bookkeeping.categorizer import CategoryMatchRule, get_categorize_rules
 from thebook.bookkeeping.managers import CashBookQuerySet, TransactionQuerySet
 
 
@@ -264,7 +263,7 @@ class Transaction(models.Model):
 
     def categorize(self, rules=None):
         if rules is None:
-            rules = get_categorize_rules()
+            rules = CategoryMatchRule.objects.order_by("priority")
 
         for rule in rules:
             self, applied = rule.apply_rule(self)
