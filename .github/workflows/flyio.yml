@@ -1,11 +1,11 @@
-name: flyio deploy
+name: 🔨 Deploy on fly.io
 on:
   push:
     branches:
       - main
 jobs:
   deploy:
-    name: main deploy
+    name: 🔨 Deploy main branch on fly.io
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

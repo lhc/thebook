@@ -1,3 +1,5 @@
+[![📅 Schedule Categorization](https://github.com/lhc/thebook/actions/workflows/categorize.yml/badge.svg)](https://github.com/lhc/thebook/actions/workflows/categorize.yml)
+
 # The Book
 
 Application for administrative control of
