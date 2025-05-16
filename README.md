@@ -1,4 +1,6 @@
+[![🔨 Deploy on fly.io](https://github.com/lhc/thebook/actions/workflows/flyio.yml/badge.svg)](https://github.com/lhc/thebook/actions/workflows/flyio.yml)
 [![📅 Schedule Categorization](https://github.com/lhc/thebook/actions/workflows/categorize.yml/badge.svg)](https://github.com/lhc/thebook/actions/workflows/categorize.yml)
+[![💰 Monthly Receivable Fees](https://github.com/lhc/thebook/actions/workflows/receivable_fees.yml/badge.svg)](https://github.com/lhc/thebook/actions/workflows/receivable_fees.yml)
 
 # The Book
 
