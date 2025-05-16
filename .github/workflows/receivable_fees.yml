@@ -1,0 +1,17 @@
+name: 💰 Monthly Receivable Fees
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 1,15 * *"
+
+jobs:
+  schedule:
+    name: 💰 Monthly Receivable Fees
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - run: flyctl ssh console -C "python manage.py create_receivable_fees_for_next_month"
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
