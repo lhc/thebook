@@ -1,0 +1,16 @@
+name: categorize transactions
+
+on:
+  schedule:
+    - cron: "*/1 * * * *"
+
+jobs:
+  deploy:
+    name: main deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - run: fly ssh console -C "python manage.py set_category_to_uncategorized_transactions"
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
