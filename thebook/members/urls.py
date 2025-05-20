@@ -6,8 +6,8 @@ app_name = "members"
 
 urlpatterns = [
     path(
-        "new",
+        "create",
         views.new_member,
-        name="new-member",
+        name="create-member",
     ),
 ]
