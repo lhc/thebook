@@ -94,7 +94,7 @@
     <div class="card border-left-primary shadow h-100 py-2">
       <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
         <h6 class="m-0 font-weight-bold text-primary">
-          {% translate "Cash Books (current month)" %}
+          {% translate "Cash Books" %}
         </h6>
       </div>
       <div class="card-body">
@@ -104,7 +104,7 @@
               {% translate "Cash Book" %}
             </th>
             <th>
-              {% translate "Balance (current month)" %}
+              {% translate "Balance" %} ({{ today.month|stringformat:"02d" }}/{{ today.year }})
             </th>
             <th>
               {% translate "Overall Balance" %}
