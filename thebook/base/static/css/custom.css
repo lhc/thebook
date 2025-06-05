@@ -1,0 +1,7 @@
+i.link {
+  cursor: pointer;
+}
+
+i.link:hover {
+  color: #4e73df;
+}

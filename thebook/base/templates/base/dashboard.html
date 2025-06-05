@@ -1,6 +1,6 @@
 {% extends "base/main.html" %}
 
-{% load currency i18n %}
+{% load currency i18n static %}
 
 {% block content %}
 <!-- Page Heading -->
@@ -90,44 +90,15 @@
 </div>
 
 <div class="row">
-  <div class="col-xl-6 col-md-2 mb-6">
-    <div class="card border-left-primary shadow h-100 py-2">
-      <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-        <h6 class="m-0 font-weight-bold text-primary">
-          {% translate "Cash Books" %}
-        </h6>
-      </div>
+
+  <div class="col-xl-6 col-md-2 mb-6" id="cash_books_dashboard">
+    <div class="card border-left-primary shadow h-100 py-2"
+         hx-get="{% url 'bookkeeping:partial-cash-books-dashboard' %}"
+         hx-swap="outerHTML"
+         hx-target="#cash_books_dashboard"
+         hx-trigger="load">
       <div class="card-body">
-        <table class="table table-hover">
-          <thead>
-            <th>
-              {% translate "Cash Book" %}
-            </th>
-            <th>
-              {% translate "Balance" %} ({{ today.month|stringformat:"02d" }}/{{ today.year }})
-            </th>
-            <th>
-              {% translate "Overall Balance" %}
-            </th>
-          </thead>
-          <tbody>
-            {% for cash_book_summary in cash_books_summary %}
-              <tr>
-                <td>
-                  <a href="{% url 'bookkeeping:cash-book-transactions' cash_book_summary.slug %}?year={{ today.year }}&month={{ today.month }}">
-                    {{ cash_book_summary.name }}
-                  </a>
-                </td>
-                <td {% if cash_book_summary.balance < 0 %}class="text-danger"{% endif %}>
-                  {{ cash_book_summary.balance|money }}
-                </td>
-                <td {% if cash_book_summary.overall_balance < 0 %}class="text-danger"{% endif %}>
-                  {{ cash_book_summary.overall_balance|money }}
-                </td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+        <center><img src="{% static 'img/bars.svg' %}" alt=""></center>
       </div>
     </div>
   </div>

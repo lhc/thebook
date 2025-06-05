@@ -25,4 +25,9 @@ urlpatterns = [
         views.partial_transaction_details,
         name="partial-transaction-details",
     ),
+    path(
+        "partial/cb/dashboard",
+        views.partial_cash_books_dashboard,
+        name="partial-cash-books-dashboard",
+    ),
 ]

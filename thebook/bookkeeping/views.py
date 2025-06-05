@@ -172,3 +172,31 @@ def partial_transaction_details(request, transaction_id):
         "bookkeeping/partial/transaction_details.html",
         context={"transaction": transaction},
     )
+
+
+def partial_cash_books_dashboard(request):
+    today = datetime.date.today()
+
+    month = int(request.GET.get("month") or today.month)
+    year = int(request.GET.get("year") or today.year)
+
+    reference_date = datetime.date(year, month, 1)
+    previous_month_reference_date = reference_date - datetime.timedelta(days=10)
+    next_month_reference_date = reference_date + datetime.timedelta(days=40)
+
+    cash_books_summary = CashBook.objects.filter(active=True).summary(
+        year=year, month=month
+    )
+    return render(
+        request,
+        "bookkeeping/partial/cash_books_dashboard.html",
+        context={
+            "cash_books_summary": cash_books_summary,
+            "month": int(month),
+            "next_month": next_month_reference_date.month,
+            "next_year": next_month_reference_date.year,
+            "previous_month": previous_month_reference_date.month,
+            "previous_year": previous_month_reference_date.year,
+            "year": int(year),
+        },
+    )

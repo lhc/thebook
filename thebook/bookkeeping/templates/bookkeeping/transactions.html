@@ -91,18 +91,18 @@
 
     <div>
       <h5 class="m-0 font-weight-bold">
-      {% if year or month %}
         <a href="{% url 'bookkeeping:cash-book-transactions' cash_book.slug %}?{{ previous_period }}">
-          <i class="fa fa-arrow-left" aria-hidden="true"></i>
+          <i class="fa fa-arrow-left" title='{% translate "Previous Month" %}'></i>
         </a>
+      {% if year or month %}
           {% translate "Transactions" %}
           {% if month %}{{ month }} / {% endif %}{% if year %}{{ year }}{% endif %}
-        <a href="{% url 'bookkeeping:cash-book-transactions' cash_book.slug %}?{{ next_period }}">
-          <i class="fa fa-arrow-right" aria-hidden="true"></i>
-        </a>
       {% else %}
         {% translate "All Transactions" %}
       {% endif %}
+        <a href="{% url 'bookkeeping:cash-book-transactions' cash_book.slug %}?{{ next_period }}">
+          <i class="fa fa-arrow-right" title='{% translate "Next Month" %}'></i>
+        </a>
       </h5>
 
       <div>
