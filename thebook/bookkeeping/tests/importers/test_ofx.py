@@ -8,7 +8,6 @@ from model_bakery import baker
 from django.contrib.auth import get_user_model
 
 from thebook.bookkeeping.importers import InvalidOFXFile
-from thebook.bookkeeping.importers.constants import UNCATEGORIZED
 from thebook.bookkeeping.importers.ofx import OFXImporter
 from thebook.bookkeeping.models import CashBook, Category, Transaction
 
@@ -23,21 +22,13 @@ def user():
     return baker.make(get_user_model())
 
 
-@pytest.fixture
-def uncategorized():
-    _uncategorized, _ = Category.objects.get_or_create(name=UNCATEGORIZED)
-    return _uncategorized
-
-
 def test_raise_error_when_providing_invalid_ofx_file(db, cash_book, user):
     with pytest.raises(InvalidOFXFile):
         invalid_ofx_file = io.BytesIO(b"NOT_A_VALID_OFX")
         ofx_importer = OFXImporter(invalid_ofx_file, cash_book, user)
 
 
-def test_cora_ofx_file_with_one_transaction(
-    db, request, cash_book, user, uncategorized
-):
+def test_cora_ofx_file_with_one_transaction(db, request, cash_book, user):
     ofx_file_path = request.path.parent / "data" / "cora-one-transaction.ofx"
     with open(ofx_file_path, "r") as ofx_file:
         ofx_importer = OFXImporter(ofx_file, cash_book, user)
@@ -53,12 +44,10 @@ def test_cora_ofx_file_with_one_transaction(
         assert transaction.notes == ""
         assert transaction.cash_book == cash_book
         assert transaction.created_by == user
-        assert transaction.category == uncategorized
+        assert transaction.category is None
 
 
-def test_bradesco_ofx_file_with_one_transaction(
-    db, request, cash_book, user, uncategorized
-):
+def test_bradesco_ofx_file_with_one_transaction(db, request, cash_book, user):
     ofx_file_path = request.path.parent / "data" / "bradesco-one-transaction.ofx"
     with open(ofx_file_path, "r") as ofx_file:
         ofx_importer = OFXImporter(ofx_file, cash_book, user)
@@ -74,7 +63,7 @@ def test_bradesco_ofx_file_with_one_transaction(
         assert transaction.notes == ""
         assert transaction.cash_book == cash_book
         assert transaction.created_by == user
-        assert transaction.category == uncategorized
+        assert transaction.category is None
 
 
 def test_ofx_file_with_multiple_transactions(db, request, cash_book, user):

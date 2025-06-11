@@ -16,7 +16,6 @@ from thebook.bookkeeping.importers.constants import (
     RECURRING,
     RECURRING_DONATION,
     TAXES,
-    UNCATEGORIZED,
 )
 from thebook.bookkeeping.models import Category, Transaction
 
@@ -31,7 +30,6 @@ def get_categories():
     recurring, _ = Category.objects.get_or_create(name=RECURRING)
     recurring_donation, _ = Category.objects.get_or_create(name=RECURRING_DONATION)
     taxes, _ = Category.objects.get_or_create(name=TAXES)
-    uncategorized, _ = Category.objects.get_or_create(name=UNCATEGORIZED)
 
     return {
         ACCOUNTANT: accountant,
@@ -43,7 +41,6 @@ def get_categories():
         RECURRING: recurring,
         RECURRING_DONATION: recurring_donation,
         TAXES: taxes,
-        UNCATEGORIZED: uncategorized,
     }
 
 
@@ -179,8 +176,6 @@ class CSVImporter:
                     # We don't process USD recurring here
                     continue
 
-                category = self.categories[UNCATEGORIZED]
-
                 self.new_transactions.append(
                     Transaction(
                         reference=transaction_reference,
@@ -188,7 +183,6 @@ class CSVImporter:
                         description=f"{transaction_type} - {transaction_name}",
                         amount=transaction_amount,
                         cash_book=self.cash_book,
-                        category=category,
                         created_by=self.user,
                     )
                 )
@@ -247,7 +241,6 @@ class CSVCoraCreditCardImporter:
                     amount=transaction_amount,
                     notes=transaction_notes,
                     cash_book=self.cash_book,
-                    category=self.categories[UNCATEGORIZED],
                     created_by=self.user,
                 )
             )

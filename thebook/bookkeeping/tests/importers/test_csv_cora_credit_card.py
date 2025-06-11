@@ -8,7 +8,6 @@ from model_bakery import baker
 from django.contrib.auth import get_user_model
 
 from thebook.bookkeeping.importers import InvalidOFXFile
-from thebook.bookkeeping.importers.constants import UNCATEGORIZED
 from thebook.bookkeeping.importers.csv import CSVCoraCreditCardImporter
 from thebook.bookkeeping.models import CashBook, Category, Transaction
 
@@ -23,15 +22,9 @@ def user():
     return baker.make(get_user_model())
 
 
-@pytest.fixture
-def uncategorized():
-    _uncategorized, _ = Category.objects.get_or_create(name=UNCATEGORIZED)
-    return _uncategorized
-
-
 @pytest.mark.xfail(reason="need to pass the correct data to the importer")
 def test_cora_csv_credit_card_file_with_one_transaction(
-    mocker, db, request, cash_book, user, uncategorized
+    mocker, db, request, cash_book, user
 ):
     mocker.patch(
         "thebook.bookkeeping.importers.csv.uuid.uuid4",
@@ -55,4 +48,4 @@ def test_cora_csv_credit_card_file_with_one_transaction(
         assert transaction.notes == "USD19,00"
         assert transaction.cash_book == cash_book
         assert transaction.created_by == user
-        assert transaction.category == uncategorized
+        assert transaction.category is None

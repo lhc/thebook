@@ -27,20 +27,12 @@ def recurring():
 
 
 @pytest.fixture
-def uncategorized():
-    return Category.objects.create(name="Uncategorized")
-
-
-@pytest.fixture
-def expected_category(
-    request, accountant, bank_fees, donation, recurring, uncategorized
-):
+def expected_category(request, accountant, bank_fees, donation, recurring):
     return {
         "accountant": accountant,
         "bank_fees": bank_fees,
         "donation": donation,
         "recurring": recurring,
-        "uncategorized": uncategorized,
     }.get(request.param)
 
 
@@ -48,29 +40,26 @@ def expected_category(
     "transaction_amount,donation_threshold,expected_category",
     [
         (Decimal("50.0"), Decimal("50.0"), "donation"),
-        (Decimal("50.0"), Decimal("40.0"), "uncategorized"),
+        (Decimal("50.0"), Decimal("40.0"), None),
         (Decimal("49.99"), Decimal("50.0"), "donation"),
         (Decimal("5"), Decimal("50.0"), "donation"),
-        (Decimal("50.01"), Decimal("50.0"), "uncategorized"),
-        (Decimal("100"), Decimal("50.0"), "uncategorized"),
-        (Decimal("-0.01"), Decimal("50.0"), "uncategorized"),
-        (Decimal("-50.0"), Decimal("50.0"), "uncategorized"),
+        (Decimal("50.01"), Decimal("50.0"), None),
+        (Decimal("100"), Decimal("50.0"), None),
+        (Decimal("-0.01"), Decimal("50.0"), None),
+        (Decimal("-50.0"), Decimal("50.0"), None),
     ],
     indirect=["expected_category"],
 )
 def test_transactions_below_certain_positive_value_set_as_donation(
     db,
     settings,
-    uncategorized,
     transaction_amount,
     donation_threshold,
     expected_category,
 ):
     settings.DONATION_THRESHOLD = donation_threshold
 
-    transaction = baker.make(
-        Transaction, category=uncategorized, amount=transaction_amount
-    )
+    transaction = baker.make(Transaction, amount=transaction_amount)
 
     transaction.categorize()
 
@@ -79,7 +68,7 @@ def test_transactions_below_certain_positive_value_set_as_donation(
 
 
 def test_transactions_description_rules_over_donation_threshold(
-    db, mocker, settings, uncategorized, accountant
+    db, mocker, settings, accountant
 ):
     CategoryMatchRule.objects.create(
         priority=100,
@@ -92,7 +81,6 @@ def test_transactions_description_rules_over_donation_threshold(
     transaction = baker.make(
         Transaction,
         description="NOT DONATION",
-        category=uncategorized,
         amount=Decimal("49.99"),
     )
 
@@ -103,7 +91,7 @@ def test_transactions_description_rules_over_donation_threshold(
 
 
 def test_consider_match_rule_priority_when_categorizing(
-    db, mocker, settings, uncategorized, accountant, bank_fees
+    db, mocker, settings, accountant, bank_fees
 ):
     CategoryMatchRule.objects.create(
         priority=200,
@@ -119,7 +107,6 @@ def test_consider_match_rule_priority_when_categorizing(
     transaction = baker.make(
         Transaction,
         description="PAYMENT",
-        category=uncategorized,
         amount=Decimal("49.99"),
     )
 

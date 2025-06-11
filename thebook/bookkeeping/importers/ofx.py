@@ -7,7 +7,6 @@ from ofxtools.Parser import OFXTree
 from django.conf import settings
 from django.db import IntegrityError
 
-from thebook.bookkeeping.importers.constants import UNCATEGORIZED
 from thebook.bookkeeping.models import Category, Transaction
 
 # Default List of transactions descriptions that we
@@ -22,7 +21,6 @@ DEFAULT_IGNORED_MEMOS = [
 
 class OFXImporter:
     def __init__(self, transactions_file, cash_book, user):
-        self.uncategorized, _ = Category.objects.get_or_create(name=UNCATEGORIZED)
         self.new_transactions = []
 
         self.transactions_file = transactions_file
@@ -67,7 +65,6 @@ class OFXImporter:
                     description=transaction.memo,
                     amount=transaction.amount,
                     cash_book=self.cash_book,
-                    category=self.uncategorized,
                     created_by=self.user,
                 )
             )
