@@ -4,6 +4,7 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from thebook.members.forms import NewMemberForm
+from thebook.members.models import Member
 
 
 @login_not_required
@@ -17,3 +18,8 @@ def new_member(request):
         form = NewMemberForm()
 
     return render(request, "members/new_member.html", {"form": form})
+
+
+def members_list(request):
+    members = Member.objects.all().order_by("name")
+    return render(request, "members/members.html", {"members": members})

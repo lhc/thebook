@@ -1,0 +1,58 @@
+{% extends "base/main.html" %}
+
+{% load currency i18n %}
+
+{% block content %}
+<div class="card shadow mb-4">
+  <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+    <h4 class="m-0 font-weight-bold text-primary">
+      {% translate "Active Members" %}
+    </h4>
+  </div>
+
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-sm table-bordered" id="transactions" width="100%" cellspacing="0">
+        <thead>
+          <tr>
+            <th>{% translate "Name" %}</th>
+            <th>{% translate "Start Membership" %}</th>
+            <th>{% translate "Fee Amount" %}</th>
+            <th>{% translate "Payment Method" %}</th>
+            <th>{% translate "Payment Period" %}</th>
+            <th>{% translate "Key" %}</th>
+            <th>{% translate "Phone Number" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for member in members %}
+          <tr>
+            <td>{{ member.name }}</td>
+            <td>{{ member.membership.start_date }}</td>
+            <td>{{ member.membership.membership_fee_amount }}</td>
+            <td>{{ member.membership.payment_method }}</td>
+            <td>{{ member.membership.payment_interval }}</td>
+            <td>{{ member.has_key }}</td>
+            <td>{{ member.phone_number }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr>
+            <th>{% translate "Name" %}</th>
+            <th>{% translate "Start Membership" %}</th>
+            <th>{% translate "Membership Amount" %}</th>
+            <th>{% translate "Payment Method" %}</th>
+            <th>{% translate "Payment Period" %}</th>
+            <th>{% translate "Key" %}</th>
+            <th>{% translate "Phone Number" %}</th>
+          </tr>
+        </tfoot>
+
+      </table>
+    </div>
+  </div>
+
+</div>
+
+{% endblock content %}

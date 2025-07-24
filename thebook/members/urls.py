@@ -10,4 +10,9 @@ urlpatterns = [
         views.new_member,
         name="create-member",
     ),
+    path(
+        "list",
+        views.members_list,
+        name="members-list",
+    ),
 ]
