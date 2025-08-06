@@ -47,3 +47,16 @@ class ReceivableFeeManager(models.Manager):
             update_fields=["membership", "start_date"],
             unique_fields=["membership", "start_date"],
         )
+
+    def _by_status(self, status):
+        return self.filter(status=status)
+
+    def due(self):
+        from thebook.members.models import FeePaymentStatus
+
+        return self._by_status(status=FeePaymentStatus.DUE)
+
+    def unpaid(self):
+        from thebook.members.models import FeePaymentStatus
+
+        return self._by_status(status=FeePaymentStatus.UNPAID)
