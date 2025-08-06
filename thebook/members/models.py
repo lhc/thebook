@@ -170,6 +170,11 @@ class ReceivableFee(models.Model):
         default=FeePaymentStatus.UNPAID,
         verbose_name=_("Payment Status"),
     )
+    transaction = models.ForeignKey(
+        "bookkeeping.Transaction",
+        null=True,
+        on_delete=models.SET_NULL,
+    )
 
     class Meta:
         constraints = [
@@ -180,3 +185,10 @@ class ReceivableFee(models.Model):
         ]
 
     objects = ReceivableFeeManager()
+
+    def paid_with(self, transaction):
+        self.status = FeePaymentStatus.PAID
+        self.transaction = transaction
+        self.save()
+
+        return self
