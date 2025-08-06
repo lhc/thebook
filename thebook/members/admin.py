@@ -1,6 +1,11 @@
 from django.contrib import admin
 
-from thebook.members.models import Member, Membership, ReceivableFee
+from thebook.members.models import (
+    Member,
+    Membership,
+    ReceivableFee,
+    ReceivableFeeTransactionMatchRule,
+)
 
 
 @admin.register(Membership)
@@ -46,3 +51,7 @@ class ReceivableFeeAdmin(admin.ModelAdmin):
     list_select_related = [
         "membership",
     ]
+
+
+@admin.register(ReceivableFeeTransactionMatchRule)
+class ReceivableFeeTransactionMatchRuleAdmin(admin.ModelAdmin): ...
