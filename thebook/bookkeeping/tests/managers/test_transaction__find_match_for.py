@@ -188,3 +188,33 @@ def test_match_with_rules_of_right_membership(db, unpaid_rf, membership_fee_cate
     matched_transaction = Transaction.objects.find_match_for(unpaid_rf)
 
     assert matched_transaction is None
+
+
+def test_ignore_if_transaction_was_linked_to_other_receivable_fee(
+    db, unpaid_rf, membership_fee_category, membership
+):
+    transaction = baker.make(
+        Transaction,
+        date=datetime.date(2025, 6, 10),
+        amount=Decimal("100"),
+        category=membership_fee_category,
+        description="Payment of membership fee",
+    )
+    other_rf = baker.make(
+        ReceivableFee,
+        membership=membership,
+        start_date=datetime.date(2025, 6, 1),
+        due_date=datetime.date(2025, 6, 10),
+        amount=Decimal("100.0"),
+        status=FeePaymentStatus.UNPAID,
+    )
+    other_rf.paid_with(transaction)
+
+    rf_match_rule = ReceivableFeeTransactionMatchRule.objects.create(
+        pattern="Payment of membership fee",
+        membership=unpaid_rf.membership,
+    )
+
+    matched_transaction = Transaction.objects.find_match_for(unpaid_rf)
+
+    assert matched_transaction is None

@@ -3,7 +3,7 @@ import decimal
 from dataclasses import dataclass
 
 from django.db import models
-from django.db.models import IntegerField, Q, Sum, Value
+from django.db.models import Exists, IntegerField, OuterRef, Q, Sum, Value
 
 
 class CashBookQuerySet(models.QuerySet):
@@ -64,6 +64,8 @@ class CashBookQuerySet(models.QuerySet):
 
 class TransactionQuerySet(models.QuerySet):
     def find_match_for(self, receivable_fee):
+        from thebook.members.models import ReceivableFee
+
         transaction = None
         for (
             rule
@@ -74,6 +76,9 @@ class TransactionQuerySet(models.QuerySet):
                     amount=receivable_fee.amount,
                     description__regex=rule.pattern,
                     date__gte=receivable_fee.membership.start_date,
+                )
+                .exclude(
+                    Exists(ReceivableFee.objects.filter(transaction=OuterRef("pk")))
                 )
                 .order_by("date")
                 .first()
