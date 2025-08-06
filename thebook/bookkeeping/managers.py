@@ -62,4 +62,24 @@ class CashBookQuerySet(models.QuerySet):
         ).order_by("name")
 
 
-class TransactionQuerySet(models.QuerySet): ...
+class TransactionQuerySet(models.QuerySet):
+    def find_match_for(self, receivable_fee):
+        transaction = None
+        for (
+            rule
+        ) in receivable_fee.membership.receivablefeetransactionmatchrule_set.all():
+            matched_transaction = (
+                self.filter(
+                    category__name="Contribuição Associativa",
+                    amount=receivable_fee.amount,
+                    description__regex=rule.pattern,
+                    date__gte=receivable_fee.membership.start_date,
+                )
+                .order_by("date")
+                .first()
+            )
+            if matched_transaction:
+                transaction = matched_transaction
+                break
+
+        return transaction

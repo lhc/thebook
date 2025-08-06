@@ -192,3 +192,11 @@ class ReceivableFee(models.Model):
         self.save()
 
         return self
+
+
+class ReceivableFeeTransactionMatchRule(models.Model):
+    pattern = models.CharField(max_length=512)
+    membership = models.ForeignKey(
+        "members.Membership",
+        on_delete=models.CASCADE,
+    )
