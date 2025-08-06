@@ -31,4 +31,18 @@ class MemberAdmin(admin.ModelAdmin):
 
 
 @admin.register(ReceivableFee)
-class ReceivableFeeAdmin(admin.ModelAdmin): ...
+class ReceivableFeeAdmin(admin.ModelAdmin):
+    list_display = [
+        "membership__member",
+        "start_date",
+        "due_date",
+        "amount",
+        "status",
+        "due_date",
+    ]
+    list_filter = [
+        "status",
+    ]
+    list_select_related = [
+        "membership",
+    ]
