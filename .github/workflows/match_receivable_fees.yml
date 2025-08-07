@@ -1,0 +1,17 @@
+name: 💰 Match Receivable Fees with Transactions
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * 0"
+
+jobs:
+  schedule:
+    name: 💰 Match Receivable Fees with Transactions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - run: flyctl ssh console -C "python manage.py match_receivable_fees_with_transactions"
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
