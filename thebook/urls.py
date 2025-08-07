@@ -15,6 +15,8 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
+from debug_toolbar.toolbar import debug_toolbar_urls
+
 from django.contrib import admin
 from django.urls import include, path
 
@@ -28,4 +30,4 @@ urlpatterns = [
         "reimbursements/",
         include("thebook.reimbursements.urls", namespace="reimbursements"),
     ),
-]
+] + debug_toolbar_urls()
