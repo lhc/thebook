@@ -15,3 +15,6 @@ jobs:
       - run: flyctl ssh console -C "python manage.py create_receivable_fees_for_next_month"
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+      - run: flyctl ssh console -C "python manage.py set_due_receivable_fees"
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
