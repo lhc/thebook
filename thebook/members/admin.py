@@ -48,6 +48,7 @@ class ReceivableFeeAdmin(admin.ModelAdmin):
     ]
     list_filter = [
         "status",
+        "membership__member__name",
     ]
     list_select_related = [
         "membership",
