@@ -14,6 +14,7 @@ class MembershipAdmin(admin.ModelAdmin):
         "member",
         "membership_fee_amount",
         "payment_interval",
+        "start_date",
         "active",
     ]
     list_select_related = [
