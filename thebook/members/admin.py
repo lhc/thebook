@@ -56,4 +56,8 @@ class ReceivableFeeAdmin(admin.ModelAdmin):
 
 
 @admin.register(ReceivableFeeTransactionMatchRule)
-class ReceivableFeeTransactionMatchRuleAdmin(admin.ModelAdmin): ...
+class ReceivableFeeTransactionMatchRuleAdmin(admin.ModelAdmin):
+    list_display = [
+        "membership",
+        "pattern",
+    ]
