@@ -132,6 +132,10 @@ class Membership(models.Model):
 
         return datetime.date(next_payment_year, next_payment_month, next_payment_day)
 
+    @property
+    def debtor(self):
+        return self.receivable_fees.due().exists()
+
 
 class Member(models.Model):
     name = models.CharField(max_length=100, verbose_name=_("Name"))

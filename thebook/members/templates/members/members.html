@@ -22,6 +22,7 @@
             <th>{% translate "Payment Period" %}</th>
             <th>{% translate "Key" %}</th>
             <th>{% translate "Phone Number" %}</th>
+            <th>{% translate "Debtor" %}</th>
           </tr>
         </thead>
         <tbody>
@@ -34,6 +35,13 @@
             <td>{{ member.membership.payment_interval }}</td>
             <td>{{ member.has_key }}</td>
             <td>{{ member.phone_number }}</td>
+            <td>
+              <center style="color: red">
+              {% if member.membership.debtor %}
+                <i class="fas fa-comments-dollar"></i>
+              {% endif %}
+              </center>
+            </td>
           </tr>
           {% endfor %}
         </tbody>
@@ -46,6 +54,7 @@
             <th>{% translate "Payment Period" %}</th>
             <th>{% translate "Key" %}</th>
             <th>{% translate "Phone Number" %}</th>
+            <th>{% translate "Debtor" %}</th>
           </tr>
         </tfoot>
 
