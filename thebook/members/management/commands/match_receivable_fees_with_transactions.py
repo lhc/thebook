@@ -14,10 +14,8 @@ class Command(BaseCommand):
         for status in (FeePaymentStatus.DUE, FeePaymentStatus.UNPAID):
             receivable_fees = ReceivableFee.objects.filter(status=status)
             for receivable_fee in receivable_fees:
-                # This is the date we started to create ReceivableFees
-                # automatically, so we should ignore past transactions
                 transaction = Transaction.objects.filter(
-                    date__gte=datetime.date(2025, 6, 1)
+                    date__gte=receivable_fee.start_date
                 ).find_match_for(receivable_fee)
                 if not transaction:
                     continue
