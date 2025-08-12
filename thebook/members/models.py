@@ -176,6 +176,7 @@ class ReceivableFee(models.Model):
     )
     transaction = models.ForeignKey(
         "bookkeeping.Transaction",
+        blank=True,
         null=True,
         on_delete=models.SET_NULL,
     )
