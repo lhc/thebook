@@ -38,6 +38,9 @@ class MemberAdmin(admin.ModelAdmin):
 
 @admin.register(ReceivableFee)
 class ReceivableFeeAdmin(admin.ModelAdmin):
+    autocomplete_fields = [
+        "transaction",
+    ]
     list_display = [
         "membership__member",
         "start_date",

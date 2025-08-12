@@ -97,6 +97,11 @@ class TransactionAdmin(admin.ModelAdmin):
     inlines = [
         DocumentInline,
     ]
+    search_fields = [
+        "id",
+        "date",
+        "description",
+    ]
 
     def ref(self, obj):
         return obj.reference.split("-").pop()
