@@ -52,6 +52,7 @@ class ReceivableFeeAdmin(admin.ModelAdmin):
     ]
     list_select_related = [
         "membership",
+        "membership__member",
     ]
 
 
