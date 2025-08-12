@@ -31,8 +31,8 @@
             <td>{{ member.name }}</td>
             <td>{{ member.membership.start_date }}</td>
             <td>{{ member.membership.membership_fee_amount }}</td>
-            <td>{{ member.membership.payment_method }}</td>
-            <td>{{ member.membership.payment_interval }}</td>
+            <td>{{ member.membership.get_payment_method_display }}</td>
+            <td>{{ member.membership.get_payment_interval_display }}</td>
             <td>{{ member.has_key }}</td>
             <td>{{ member.phone_number }}</td>
             <td>
