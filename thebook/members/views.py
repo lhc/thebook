@@ -21,5 +21,11 @@ def new_member(request):
 
 
 def members_list(request):
-    members = Member.objects.filter(membership__active=True).order_by("name")
+    members = (
+        Member.objects.filter(membership__active=True)
+        .select_related(
+            "membership",
+        )
+        .order_by("name")
+    )
     return render(request, "members/members.html", {"members": members})
