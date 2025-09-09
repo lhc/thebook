@@ -16,7 +16,7 @@ class ReceivableFeeManager(models.Manager):
 
         memberships = Membership.objects.filter(active=True)
         for membership in memberships:
-            receivable_fees.append(self.create_next_receivable_fee(commit=False))
+            receivable_fees.append(memberships.create_next_receivable_fee(commit=False))
 
         return self.model.objects.bulk_create(
             receivable_fees,
