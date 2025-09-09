@@ -5,11 +5,11 @@ from thebook.members.models import ReceivableFee
 
 
 class Command(BaseCommand):
-    help = "Create receivable fees for next month"
+    help = "Create receivable fees for next period"
 
     def handle(self, *args, **options):
-        ReceivableFee.objects.create_for_next_month()
+        ReceivableFee.objects.create_for_next_iperiod()
 
         self.stdout.write(
-            self.style.SUCCESS("Successfully created receivable fees for next month")
+            self.style.SUCCESS("Successfully create d receivable fees for next period")
         )

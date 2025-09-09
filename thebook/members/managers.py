@@ -6,9 +6,6 @@ from django.db import models
 
 class ReceivableFeeManager(models.Manager):
 
-    def create_for_next_month(self):
-        return self.create_for_next_period()
-
     def create_for_next_period(self):
         from thebook.members.models import FeePaymentStatus, Membership
 
@@ -16,7 +13,7 @@ class ReceivableFeeManager(models.Manager):
 
         memberships = Membership.objects.filter(active=True)
         for membership in memberships:
-            receivable_fees.append(memberships.create_next_receivable_fee(commit=False))
+            receivable_fees.append(membership.create_next_receivable_fee(commit=False))
 
         return self.model.objects.bulk_create(
             receivable_fees,
