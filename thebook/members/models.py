@@ -126,7 +126,7 @@ class Membership(models.Model):
 
             return next_month, next_year
 
-        last_receivable_fee = self.receivable_fees.first()
+        last_receivable_fee = self.receivable_fees.order_by("-start_date").first()
         if last_receivable_fee is None:
             _, last_day_of_month = calendar.monthrange(
                 self.start_date.year, self.start_date.month

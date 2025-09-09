@@ -113,6 +113,26 @@ def test_next_membership_fee_payment_date_based_on_membership_start_date(
         )
 
 
+def test_use_newest_receivable_fee_as_reference_for_the_next_one(db, build_membership):
+    membership = build_membership(start_date=date(2025, 1, 1))
+    ReceivableFee.objects.create(
+        membership=membership,
+        start_date=date(2025, 1, 1),
+        due_date=date(2025, 1, 31),
+        amount=Decimal("85"),
+    )
+    ReceivableFee.objects.create(
+        membership=membership,
+        start_date=date(2025, 2, 1),
+        due_date=date(2025, 2, 28),
+        amount=Decimal("85"),
+    )
+    next_receivable_fee = membership.create_next_receivable_fee()
+
+    assert next_receivable_fee.start_date == date(2025, 3, 1)
+    assert next_receivable_fee.due_date == date(2025, 3, 31)
+
+
 def test_when_membership_is_activated_add_first_receivable_fee(db):
     membership = Membership(
         member=baker.make(Member),
