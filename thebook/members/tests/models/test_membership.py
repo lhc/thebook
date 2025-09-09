@@ -10,6 +10,7 @@ from django.db.utils import IntegrityError
 from thebook.members.models import (
     FeeIntervals,
     FeePaymentStatus,
+    Member,
     Membership,
     ReceivableFee,
 )
@@ -110,3 +111,21 @@ def test_next_membership_fee_payment_date_based_on_membership_start_date(
             membership.next_membership_fee_payment_date
             == next_membership_fee_payment_date
         )
+
+
+def test_when_membership_is_activated_add_first_receivable_fee(db):
+    membership = Membership(
+        member=baker.make(Member),
+        start_date=date(2025, 8, 11),
+        membership_fee_amount=Decimal("85"),
+        payment_interval=FeeIntervals.MONTHLY,
+        active=False,
+    )
+
+    assert not membership.receivable_fees.exists()
+
+    membership.active = True
+    membership.save()
+
+    assert membership.receivable_fees.exists()
+    assert membership.receivable_fees.count() == 1

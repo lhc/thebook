@@ -5,6 +5,8 @@ import pytest
 from freezegun import freeze_time
 from model_bakery import baker
 
+from django.db.models import signals
+
 from thebook.members.models import (
     FeeIntervals,
     FeePaymentStatus,
@@ -13,223 +15,142 @@ from thebook.members.models import (
 )
 
 
-@pytest.mark.freeze_time("2024-11-10")
-def test_create_receivable_fee_for_next_month(db):
-    membership = baker.make(
-        Membership,
-        start_date=datetime.date(2024, 1, 1),
-        membership_fee_amount=Decimal("85"),
-        payment_interval=FeeIntervals.MONTHLY,
+@pytest.fixture
+def mute_signals(request):
+    """Fixture to temporarily mute Django model signals."""
+    _signals = [
+        signals.pre_save,
+        signals.post_save,
+        signals.pre_delete,
+        signals.post_delete,
+        signals.m2m_changed,
+    ]
+    restore = {}
+    for signal in _signals:
+        # Temporarily remove the signal's receivers
+        restore[signal] = signal.receivers
+        signal.receivers = []
+
+    def restore_signals():
+        # Restore the signals after the test
+        for signal, receivers in restore.items():
+            signal.receivers = receivers
+
+    # Add the restore function as a finalizer
+    request.addfinalizer(restore_signals)
+
+
+@pytest.fixture
+def build_membership(db, mute_signals):
+    def _build_membership(
+        start_date, active=True, payment_interval=FeeIntervals.MONTHLY
+    ):
+        return baker.make(
+            Membership,
+            start_date=start_date,
+            membership_fee_amount=Decimal("85"),
+            payment_interval=payment_interval,
+            active=active,
+        )
+
+    return _build_membership
+
+
+@pytest.mark.parametrize(
+    ("payment_interval"),
+    (
+        FeeIntervals.MONTHLY,
+        FeeIntervals.QUARTERLY,
+        FeeIntervals.BIANNUALLY,
+        FeeIntervals.ANNUALLY,
+    ),
+)
+def test_create_first_receivable_fee(db, build_membership, payment_interval):
+    membership = build_membership(
+        start_date=datetime.date(2024, 1, 10), payment_interval=payment_interval
     )
 
-    receivable_fees = ReceivableFee.objects.create_for_next_month()
-
-    assert len(receivable_fees) == 1
-    receivable_fee = receivable_fees[0]
+    receivable_fee = membership.create_next_receivable_fee()
 
     assert receivable_fee.membership == membership
-    assert receivable_fee.start_date == datetime.date(2024, 12, 1)
-    assert receivable_fee.due_date == datetime.date(2024, 12, 31)
+    assert receivable_fee.start_date == datetime.date(2024, 1, 1)
+    assert receivable_fee.due_date == datetime.date(2024, 1, 31)
     assert receivable_fee.amount == Decimal("85")
     assert receivable_fee.status == FeePaymentStatus.UNPAID
 
 
-@pytest.mark.freeze_time("2024-11-10")
-def test_create_receivable_fee_only_for_active_membership(db):
-    active_membership = baker.make(
-        Membership,
-        payment_interval=FeeIntervals.MONTHLY,
-        active=True,
-    )
-    inactive_membership = baker.make(
-        Membership,
-        payment_interval=FeeIntervals.MONTHLY,
-        active=False,
-    )
-
-    receivable_fees = ReceivableFee.objects.create_for_next_month()
-
-    assert len(receivable_fees) == 1
-    receivable_fee = receivable_fees[0]
-
-    assert receivable_fee.membership == active_membership
-
-
-@pytest.mark.freeze_time("2024-11-10")
-def test_do_not_duplicate_receivable_fees_for_same_membership(db):
-    membership = baker.make(
-        Membership,
-        start_date=datetime.date(2024, 1, 1),
-        membership_fee_amount=Decimal("85"),
-        payment_interval=FeeIntervals.MONTHLY,
-    )
-    ReceivableFee.objects.create_for_next_month()
-    ReceivableFee.objects.create_for_next_month()
-
-    assert ReceivableFee.objects.count() == 1
-
-
 @pytest.mark.parametrize(
-    ["current_date", "expected_receivable_fee"],
-    [
-        ("2024-02-01", 1),
-        ("2024-03-01", 1),
-        ("2024-04-01", 1),
-        ("2024-05-01", 1),
-        ("2024-06-01", 1),
-        ("2024-07-01", 1),
-        ("2024-08-01", 1),
-        ("2024-09-01", 1),
-        ("2024-10-01", 1),
-        ("2024-11-01", 1),
-        ("2024-12-01", 1),
-        ("2025-01-01", 1),
-    ],
+    (
+        "membership_start_date",
+        "payment_interval",
+        "expected_start_date",
+        "expected_due_date",
+    ),
+    (
+        # fmt: off
+        (datetime.date(2024, 1, 10), FeeIntervals.MONTHLY, datetime.date(2024, 2, 1), datetime.date(2024, 2, 29)),
+        (datetime.date(2024, 4, 10), FeeIntervals.MONTHLY, datetime.date(2024, 5, 1), datetime.date(2024, 5, 31)),
+        (datetime.date(2024, 12, 10), FeeIntervals.MONTHLY, datetime.date(2025, 1, 1), datetime.date(2025, 1, 31)),
+        (datetime.date(2024, 1, 10), FeeIntervals.QUARTERLY, datetime.date(2024, 4, 1), datetime.date(2024, 4, 30)),
+        (datetime.date(2024, 2, 10), FeeIntervals.QUARTERLY, datetime.date(2024, 5, 1), datetime.date(2024, 5, 31)),
+        (datetime.date(2024, 11, 10), FeeIntervals.QUARTERLY, datetime.date(2025, 2, 1), datetime.date(2025, 2, 28)),
+        (datetime.date(2024, 1, 10), FeeIntervals.BIANNUALLY, datetime.date(2024, 7, 1), datetime.date(2024, 7, 31)),
+        (datetime.date(2024, 6, 10), FeeIntervals.BIANNUALLY, datetime.date(2024, 12, 1), datetime.date(2024, 12, 31)),
+        (datetime.date(2024, 9, 10), FeeIntervals.BIANNUALLY, datetime.date(2025, 3, 1), datetime.date(2025, 3, 31)),
+        (datetime.date(2024, 1, 10), FeeIntervals.ANNUALLY, datetime.date(2025, 1, 1), datetime.date(2025, 1, 31)),
+        (datetime.date(2024, 3, 10), FeeIntervals.ANNUALLY, datetime.date(2025, 3, 1), datetime.date(2025, 3, 31)),
+        # fmt: on
+    ),
 )
-def test_create_receivable_fee_for_monthly_payment_interval(
-    db, current_date, expected_receivable_fee
+def test_create_second_receivable_fee(
+    db,
+    build_membership,
+    membership_start_date,
+    payment_interval,
+    expected_start_date,
+    expected_due_date,
 ):
-    membership = baker.make(
-        Membership,
-        start_date=datetime.date(2024, 1, 1),
-        membership_fee_amount=Decimal("85"),
-        payment_interval=FeeIntervals.MONTHLY,
+    membership = build_membership(
+        start_date=membership_start_date, payment_interval=payment_interval
     )
+    membership.create_next_receivable_fee()
 
-    with freeze_time(current_date):
-        receivable_fees = ReceivableFee.objects.create_for_next_month()
+    receivable_fee = membership.create_next_receivable_fee()
 
-        assert len(receivable_fees) == expected_receivable_fee
-
-
-@pytest.mark.parametrize(
-    ["current_date", "expected_receivable_fee"],
-    [
-        ("2024-02-01", 0),
-        ("2024-03-01", 1),
-        ("2024-04-01", 0),
-        ("2024-05-01", 0),
-        ("2024-06-01", 1),
-        ("2024-07-01", 0),
-        ("2024-08-01", 0),
-        ("2024-09-01", 1),
-        ("2024-10-01", 0),
-        ("2024-11-01", 0),
-        ("2024-12-01", 1),
-        ("2025-01-01", 0),
-    ],
-)
-def test_create_receivable_fee_for_quarterly_payment_interval(
-    db, current_date, expected_receivable_fee
-):
-    membership = baker.make(
-        Membership,
-        start_date=datetime.date(2024, 1, 1),
-        membership_fee_amount=Decimal("85"),
-        payment_interval=FeeIntervals.QUARTERLY,
-    )
-
-    with freeze_time(current_date):
-        receivable_fees = ReceivableFee.objects.create_for_next_month()
-
-        assert len(receivable_fees) == expected_receivable_fee
+    assert receivable_fee.membership == membership
+    assert receivable_fee.start_date == expected_start_date
+    assert receivable_fee.due_date == expected_due_date
+    assert receivable_fee.amount == Decimal("85")
+    assert receivable_fee.status == FeePaymentStatus.UNPAID
 
 
-@pytest.mark.parametrize(
-    ["current_date", "expected_receivable_fee"],
-    [
-        ("2024-02-01", 0),
-        ("2024-03-01", 0),
-        ("2024-04-01", 0),
-        ("2024-05-01", 0),
-        ("2024-06-01", 1),
-        ("2024-07-01", 0),
-        ("2024-08-01", 0),
-        ("2024-09-01", 0),
-        ("2024-10-01", 0),
-        ("2024-11-01", 0),
-        ("2024-12-01", 1),
-        ("2025-01-01", 0),
-    ],
-)
-def test_create_receivable_fee_for_biannually_payment_interval(
-    db, current_date, expected_receivable_fee
-):
-    membership = baker.make(
-        Membership,
-        start_date=datetime.date(2024, 1, 1),
-        membership_fee_amount=Decimal("85"),
-        payment_interval=FeeIntervals.BIANNUALLY,
-    )
+def test_do_not_create_receivable_fee_for_iactive_membership(db, build_membership):
+    membership = build_membership(start_date=datetime.date(2024, 1, 10), active=False)
 
-    with freeze_time(current_date):
-        receivable_fees = ReceivableFee.objects.create_for_next_month()
+    receivable_fee = membership.create_next_receivable_fee()
 
-        assert len(receivable_fees) == expected_receivable_fee
+    assert receivable_fee is None
 
 
-@pytest.mark.parametrize(
-    ["current_date", "expected_receivable_fee"],
-    [
-        ("2024-02-01", 0),
-        ("2024-03-01", 0),
-        ("2024-04-01", 0),
-        ("2024-05-01", 0),
-        ("2024-06-01", 0),
-        ("2024-07-01", 0),
-        ("2024-08-01", 0),
-        ("2024-09-01", 0),
-        ("2024-10-01", 0),
-        ("2024-11-01", 0),
-        ("2024-12-01", 1),
-        ("2025-01-01", 0),
-    ],
-)
-def test_create_receivable_fee_for_annually_payment_interval(
-    db, current_date, expected_receivable_fee
-):
-    membership = baker.make(
-        Membership,
-        start_date=datetime.date(2024, 1, 1),
-        membership_fee_amount=Decimal("85"),
-        payment_interval=FeeIntervals.ANNUALLY,
-    )
+def test_create_receivable_fee_without_saving_in_db(db, build_membership):
+    membership = build_membership(start_date=datetime.date(2025, 9, 8))
 
-    with freeze_time(current_date):
-        receivable_fees = ReceivableFee.objects.create_for_next_month()
+    receivable_fee = membership.create_next_receivable_fee(commit=False)
 
-        assert len(receivable_fees) == expected_receivable_fee
+    assert receivable_fee.pk is None
 
 
-@pytest.mark.parametrize(
-    ["current_date", "expected_due_date"],
-    [
-        ("2024-01-10", datetime.date(2024, 2, 29)),
-        ("2024-02-10", datetime.date(2024, 3, 31)),
-        ("2024-03-11", datetime.date(2024, 4, 30)),
-        ("2024-04-12", datetime.date(2024, 5, 31)),
-        ("2024-05-13", datetime.date(2024, 6, 30)),
-        ("2024-06-14", datetime.date(2024, 7, 31)),
-        ("2024-07-15", datetime.date(2024, 8, 31)),
-        ("2024-08-16", datetime.date(2024, 9, 30)),
-        ("2024-09-17", datetime.date(2024, 10, 31)),
-        ("2024-10-18", datetime.date(2024, 11, 30)),
-        ("2024-11-19", datetime.date(2024, 12, 31)),
-        ("2024-12-20", datetime.date(2025, 1, 31)),
-        ("2025-01-21", datetime.date(2025, 2, 28)),
-    ],
-)
-def test_due_date_last_day_of_next_month(db, current_date, expected_due_date):
-    membership = baker.make(
-        Membership,
-        start_date=datetime.date(2024, 1, 1),
-        membership_fee_amount=Decimal("85"),
-        payment_interval=FeeIntervals.MONTHLY,
-    )
-    with freeze_time(current_date):
-        receivable_fees = ReceivableFee.objects.create_for_next_month()
+def test_create_receivable_fee_saving_in_db_by_default(db, build_membership):
+    membership = build_membership(start_date=datetime.date(2025, 9, 8))
 
-        assert len(receivable_fees) == 1
-        receivable_fee = receivable_fees[0]
+    receivable_fee = membership.create_next_receivable_fee()
 
-        assert receivable_fee.due_date == expected_due_date
+    assert receivable_fee.pk is not None
+
+
+def test_create_receivable_fee_saving_in_db(db, build_membership):
+    membership = build_membership(start_date=datetime.date(2025, 9, 8))
+
+    receivable_fee = membership.create_next_receivable_fee(commit=True)
+
+    assert receivable_fee.pk is not None

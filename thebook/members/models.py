@@ -31,6 +31,7 @@ class FeePaymentStatus:
     PAID = 1
     UNPAID = 2
     DUE = 3
+    SKIPPED = 4
 
     @classproperty
     def choices(cls):
@@ -38,18 +39,21 @@ class FeePaymentStatus:
             (cls.PAID, _("Paid")),
             (cls.UNPAID, _("Unpaid")),
             (cls.DUE, _("Due")),
+            (cls.SKIPPED, _("Skipped")),
         )
 
 
 class PaymentMethod:
     PAYPAL = 1
     PIX = 2
+    PIX_RECURRING = 3
 
     @classproperty
     def choices(cls):
         return (
             (cls.PAYPAL, _("PayPal")),
             (cls.PIX, _("Pix")),
+            (cls.PIX_RECURRING, _("Recurring Pix")),
         )
 
 
@@ -80,7 +84,7 @@ class Membership(models.Model):
         help_text=_("How fees are paid?"),
     )
     active = models.BooleanField(
-        default=True,
+        default=False,
         verbose_name=_("Active Membership"),
         help_text=_(
             "Indicates is we are expecting to be receiving fees from this membership"
@@ -96,6 +100,60 @@ class Membership(models.Model):
     def __str__(self):
         active_status = "Active" if self.active else "Inactive"
         return f"{active_status} membership of {self.member.name}"
+
+    def create_next_receivable_fee(self, commit=True):
+        if not self.active:
+            return None
+
+        def _next_period(current_date, payment_interval):
+            month_increment = {
+                FeeIntervals.MONTHLY: 1,
+                FeeIntervals.QUARTERLY: 3,
+                FeeIntervals.BIANNUALLY: 6,
+                FeeIntervals.ANNUALLY: 12,
+            }
+            next_possible_month = current_date.month + month_increment[payment_interval]
+
+            if (
+                next_possible_month % 12 == next_possible_month
+                or next_possible_month % 12 == 0
+            ):
+                next_month = next_possible_month
+                next_year = current_date.year
+            else:
+                next_month = next_possible_month % 12
+                next_year = current_date.year + 1
+
+            return next_month, next_year
+
+        last_receivable_fee = self.receivable_fees.first()
+        if last_receivable_fee is None:
+            _, last_day_of_month = calendar.monthrange(
+                self.start_date.year, self.start_date.month
+            )
+            start_date = datetime.date(self.start_date.year, self.start_date.month, 1)
+            due_date = datetime.date(
+                self.start_date.year, self.start_date.month, last_day_of_month
+            )
+        else:
+            next_month, next_year = _next_period(
+                last_receivable_fee.start_date, self.payment_interval
+            )
+            _, last_day_of_month = calendar.monthrange(next_year, next_month)
+            start_date = datetime.date(next_year, next_month, 1)
+            due_date = datetime.date(next_year, next_month, last_day_of_month)
+
+        receivable_fee = ReceivableFee(
+            membership=self,
+            start_date=start_date,
+            due_date=due_date,
+            amount=self.membership_fee_amount,
+            status=FeePaymentStatus.UNPAID,
+        )
+        if commit:
+            receivable_fee.save()
+
+        return receivable_fee
 
     @property
     def next_membership_fee_payment_date(self):
