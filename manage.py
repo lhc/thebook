@@ -3,10 +3,34 @@
 import os
 import sys
 
+from decouple import config
+from opentelemetry import trace
+from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+from opentelemetry.instrumentation.django import DjangoInstrumentor
+from opentelemetry.sdk import resources
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExporter
+
 
 def main():
     """Run administrative tasks."""
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "thebook.settings")
+
+    DjangoInstrumentor().instrument()
+
+    resource = resources.Resource(
+        attributes={
+            resources.SERVICE_NAME: "the-book",
+            resources.SERVICE_NAMESPACE: "lhc",
+        }
+    )
+    trace_provider = TracerProvider(resource=resource)
+    trace.set_tracer_provider(trace_provider)
+
+    span_exporter = OTLPSpanExporter()
+    span_processor = BatchSpanProcessor(span_exporter)
+    trace.get_tracer_provider().add_span_processor(span_processor)
+
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

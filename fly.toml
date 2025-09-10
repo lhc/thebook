@@ -16,6 +16,8 @@ console_command = '/code/manage.py shell'
   STATIC_URL = 'https://lhc-thebook-static.s3.us-east-005.backblazeb2.com/'
   AWS_REQUEST_CHECKSUM_CALCULATION = 'WHEN_REQUIRED'
   AWS_RESPONSE_CHECKSUM_VALIDATION = 'WHEN_REQUIRED'
+  OTEL_EXPORTER_OTLP_PROTOCOL = 'http/protobuf'
+  OTEL_EXPORTER_OTLP_ENDPOINT = 'https://otlp-gateway-prod-sa-east-1.grafana.net/otlp'
 
 [http_service]
   internal_port = 8000

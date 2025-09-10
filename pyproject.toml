@@ -20,6 +20,10 @@ ofxparse = {git = "https://github.com/rennerocha/ofxparse.git", rev = "master"}
 django-taggit = "^6.1.0"
 setuptools = "^75.6.0"
 django-htmx = "^1.23.0"
+opentelemetry-sdk = "^1.36.0"
+opentelemetry-exporter-otlp = "^1.36.0"
+opentelemetry-distro = "^0.58b0"
+opentelemetry-instrumentation-django = "^0.58b0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"
