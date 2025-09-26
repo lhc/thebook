@@ -1,4 +1,3 @@
-import logging
 from http import HTTPStatus
 
 from django.contrib.auth.decorators import login_not_required
@@ -8,7 +7,7 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 
-logger = logging.getLogger(__name__)
+from thebook.webhooks.models import OpenPixWebhookPayload
 
 
 @method_decorator(csrf_exempt, "dispatch")
@@ -22,13 +21,16 @@ class OpenPixWebhook(View):
     required_headers = ("X-OpenPix-Signature", "X-TheBook-Token")
 
     def post(self, request, *args, **kwargs):
-        body = request.body.decode("utf-8")
-        logger.info("Received: %s", body)
 
         if not all(
             required_header in request.headers
             for required_header in self.required_headers
         ):
             return HttpResponse(status=HTTPStatus.NOT_FOUND)
+
+        OpenPixWebhookPayload.objects.create(
+            thebook_token=request.headers["X-TheBook-Token"],
+            payload=request.body.decode("utf-8"),
+        )
 
         return HttpResponse(status=HTTPStatus.OK)

@@ -1,3 +1,4 @@
+import json
 from http import HTTPStatus
 
 import pytest
@@ -5,8 +6,10 @@ import pytest
 from django.test import Client
 from django.urls import reverse
 
+from thebook.webhooks.models import OpenPixWebhookPayload
 
-def test_webhook_reachable(client):
+
+def test_webhook_reachable(db, client):
     response = client.post(
         reverse("webhooks:openpix-webhook"),
         headers={
@@ -18,7 +21,7 @@ def test_webhook_reachable(client):
     assert response.status_code == HTTPStatus.OK
 
 
-def test_webhook_does_not_have_csrf_protection():
+def test_webhook_does_not_have_csrf_protection(db):
     csrf_client = Client(enforce_csrf_checks=True)
 
     response = csrf_client.post(
@@ -71,3 +74,22 @@ def test_not_found_if_thebook_token_missing(client):
     )
 
     assert response.status_code == HTTPStatus.NOT_FOUND
+
+
+def test_when_received_store_body_and_headers(db, client):
+    thebook_token = "thebook-token"
+    webhook_payload = {"event": "OPENPIX:TRANSACTION_RECEIVED"}
+
+    response = client.post(
+        reverse("webhooks:openpix-webhook"),
+        webhook_payload,
+        headers={
+            "X-OpenPix-Signature": "openpix-signature-value",
+            "X-TheBook-Token": thebook_token,
+        },
+        content_type="application/json",
+    )
+
+    assert OpenPixWebhookPayload.objects.filter(
+        thebook_token=thebook_token, payload=json.dumps(webhook_payload)
+    ).exists()
