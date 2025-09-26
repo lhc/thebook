@@ -20,13 +20,13 @@ class OpenPixWebhook(View):
     required_headers = ("X-OpenPix-Signature", "X-TheBook-Token")
 
     def post(self, request, *args, **kwargs):
+        body = request.body.decode("utf-8")
+        logger.info("Received: %s", body)
+
         if not all(
             required_header in request.headers
             for required_header in self.required_headers
         ):
             return HttpResponse(status=HTTPStatus.NOT_FOUND)
-
-        body = request.body.decode("utf-8")
-        logger.info("Received: %s", body)
 
         return HttpResponse(status=HTTPStatus.OK)
