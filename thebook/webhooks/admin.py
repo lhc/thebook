@@ -1,3 +1,7 @@
 from django.contrib import admin
 
-# Register your models here.
+from thebook.webhooks.models import OpenPixWebhookPayload
+
+
+@admin.register(OpenPixWebhookPayload)
+class OpenPixWebhookPayloadAdmin(admin.ModelAdmin): ...
