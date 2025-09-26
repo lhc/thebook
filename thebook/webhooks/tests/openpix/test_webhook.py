@@ -2,11 +2,26 @@ from http import HTTPStatus
 
 import pytest
 
+from django.test import Client
 from django.urls import reverse
 
 
 def test_webhook_reachable(client):
     response = client.post(
+        reverse("webhooks:openpix-webhook"),
+        headers={
+            "X-OpenPix-Signature": "openpix-signature-value",
+            "X-TheBook-Token": "thebook-token",
+        },
+    )
+
+    assert response.status_code == HTTPStatus.OK
+
+
+def test_webhook_does_not_have_csrf_protection():
+    csrf_client = Client(enforce_csrf_checks=True)
+
+    response = csrf_client.post(
         reverse("webhooks:openpix-webhook"),
         headers={
             "X-OpenPix-Signature": "openpix-signature-value",

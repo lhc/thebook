@@ -6,10 +6,12 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views import View
+from django.views.decorators.csrf import csrf_exempt
 
 logger = logging.getLogger(__name__)
 
 
+@method_decorator(csrf_exempt, "dispatch")
 @method_decorator(login_not_required, "dispatch")
 class OpenPixWebhook(View):
 
