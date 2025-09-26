@@ -200,9 +200,7 @@ class CSVImporter:
 
         Transaction.objects.bulk_create(
             self.new_transactions,
-            update_conflicts=True,
-            update_fields=["description", "amount"],
-            unique_fields=["reference"],
+            ignore_conflicts=True,
         )
 
 
