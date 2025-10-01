@@ -33,7 +33,11 @@
             <td>{{ member.membership.membership_fee_amount }}</td>
             <td>{{ member.membership.get_payment_method_display }}</td>
             <td>{{ member.membership.get_payment_interval_display }}</td>
-            <td>{{ member.has_key }}</td>
+            <td>
+                {% if member.has_key %}🔑{% endif %}
+                {% if not member.has_key and member.can_have_key %}🚫{% endif %}
+                {% if not member.can_have_key %}-{% endif %}
+            </td>
             <td>{{ member.phone_number }}</td>
             <td>
               <center style="color: red">

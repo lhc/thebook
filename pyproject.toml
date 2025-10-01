@@ -24,6 +24,7 @@ opentelemetry-sdk = "^1.36.0"
 opentelemetry-exporter-otlp = "^1.36.0"
 opentelemetry-distro = "^0.58b0"
 opentelemetry-instrumentation-django = "^0.58b0"
+python-dateutil = "^2.9.0.post0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"
@@ -48,7 +49,7 @@ build-backend = "poetry.core.masonry.api"
 collectstatic = "python manage.py collectstatic"
 makemigrations = "python manage.py makemigrations"
 migrate = "python manage.py migrate"
-run = "python manage.py runserver"
+run = "OTEL_PYTHON_DJANGO_INSTRUMENT=False python manage.py runserver"
 shell = "python manage.py shell"
 test = "pytest -s --cov=thebook"
 

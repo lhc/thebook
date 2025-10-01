@@ -2,6 +2,8 @@ import calendar
 import datetime
 import itertools
 
+from dateutil.relativedelta import relativedelta
+
 from django.conf import settings
 from django.db import models
 from django.db.models import UniqueConstraint
@@ -209,6 +211,12 @@ class Member(models.Model):
 
     def __str__(self):
         return self.name
+
+    @property
+    def can_have_key(self):
+        return self.membership.start_date < datetime.date.today() - relativedelta(
+            months=3
+        )
 
 
 class ReceivableFee(models.Model):
