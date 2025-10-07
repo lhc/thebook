@@ -176,6 +176,9 @@
             <td>{{ transaction.description }}</td>
             <td>{{ transaction.category }}</td>
             <td style="display: block; text-align: center;">
+              <a href="{% url 'admin:bookkeeping_transaction_change' transaction.id %}">
+                <i class="fas fa-edit fa-sm fa-fw"></i>
+              </a>
               <a
                 style="cursor: pointer"
                 data-toggle="modal"
@@ -394,9 +397,9 @@
             { width: "6%" },
             { width: "9%" },
             { width: "10%" },
-            { width: "50%" },
-            { width: "15%" },
-            { width: "5%" },
+            { width: "45%" },
+            { width: "18%" },
+            { width: "8%" },
           ],
         }
       )
