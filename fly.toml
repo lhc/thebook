@@ -17,6 +17,8 @@ console_command = '/code/manage.py shell'
   AWS_RESPONSE_CHECKSUM_VALIDATION = 'WHEN_REQUIRED'
   OTEL_EXPORTER_OTLP_PROTOCOL = 'http/protobuf'
   OTEL_EXPORTER_OTLP_ENDPOINT = 'https://otlp-gateway-prod-sa-east-1.grafana.net/otlp'
+  CORA_EMAIL_HOST_IMAP = 'imap.migadu.com'
+  CORA_EMAIL_HOST_USER = 'thebook@lhc.net.br'
 
 [http_service]
   internal_port = 8000
