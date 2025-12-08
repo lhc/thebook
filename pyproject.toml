@@ -26,6 +26,7 @@ opentelemetry-distro = "^0.58b0"
 opentelemetry-instrumentation-django = "^0.58b0"
 python-dateutil = "^2.9.0.post0"
 whitenoise = "^6.11.0"
+jmespath = "^1.0.1"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"
