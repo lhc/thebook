@@ -5,8 +5,7 @@ from thebook.webhooks.models import OpenPixWebhookPayload
 
 @admin.action(description="Process Webhook Payload")
 def process_payload(modeladmin, request, queryset):
-    for payload in queryset:
-        payload.process()
+    OpenPixWebhookPayload.objects.process_received_payloads()
 
 
 @admin.register(OpenPixWebhookPayload)

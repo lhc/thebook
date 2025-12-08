@@ -9,6 +9,7 @@ from django.utils.functional import classproperty
 from django.utils.translation import gettext as _
 
 from thebook.bookkeeping.models import CashBook, Transaction
+from thebook.webhooks.managers import OpenPixWebhookPayloadManager
 
 
 class ProcessingStatus:
@@ -31,8 +32,9 @@ class OpenPixWebhookPayload(models.Model):
         default=ProcessingStatus.RECEIVED,
         verbose_name=_("Processing Status"),
     )
-
     created_at = models.DateTimeField(auto_now_add=True)
+
+    objects = OpenPixWebhookPayloadManager()
 
     def process(self, cash_book=None, user=None):
         if self.status == ProcessingStatus.PROCESSED:
