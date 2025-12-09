@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from thebook.webhooks.models import OpenPixWebhookPayload
+from thebook.webhooks.models import OpenPixWebhookPayload, PaypalWebhookPayload
 
 
 @admin.action(description="Process Webhook Payload")
@@ -13,6 +13,17 @@ class OpenPixWebhookPayloadAdmin(admin.ModelAdmin):
     actions = [
         process_payload,
     ]
+    list_display = [
+        "status",
+        "created_at",
+    ]
+    list_filter = [
+        "status",
+    ]
+
+
+@admin.register(PaypalWebhookPayload)
+class PaypalWebhookPayloadAdmin(admin.ModelAdmin):
     list_display = [
         "status",
         "created_at",
