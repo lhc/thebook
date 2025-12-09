@@ -43,24 +43,33 @@ class PaypalWebhook(View):
         "post",
     ]
 
-    # required_headers = ("X-OpenPix-Signature", "X-TheBook-Token")
+    required_headers = (
+        "Paypal-Transmission-Time",
+        "Paypal-Auth-Version",
+        "Paypal-Cert-Url",
+        "Paypal-Auth-Algo",
+        "Paypal-Transmission-Sig",
+        "Paypal-Transmission-Id",
+        "Correlation-Id",
+    )
 
     def post(self, request, *args, **kwargs):
-        # if not all(
-        #     required_header in request.headers
-        #     for required_header in self.required_headers
-        # ):
-        #     return HttpResponse(status=HTTPStatus.NOT_FOUND)
+        if not all(
+            required_header in request.headers
+            for required_header in self.required_headers
+        ):
+            return HttpResponse(status=HTTPStatus.NOT_FOUND)
 
-        full_content = [
-            request.method,
-            request.body.decode("utf-8"),
-            str(request.headers),
-        ]
-        payload = "\n".join(full_content)
-
-        PaypalWebhookPayload.objects.create(
-            payload=payload,
-        )
+        webhook_data = {
+            "paypal_transmission_time": request.headers["Paypal-Transmission-Time"],
+            "paypal_auth_version": request.headers["Paypal-Auth-Version"],
+            "paypal_cert_url": request.headers["Paypal-Cert-Url"],
+            "paypal_auth_algo": request.headers["Paypal-Auth-Algo"],
+            "paypal_transmission_sig": request.headers["Paypal-Transmission-Sig"],
+            "paypal_transmission_id": request.headers["Paypal-Transmission-Id"],
+            "correlation_id": request.headers["Correlation-Id"],
+            "payload": request.body.decode("utf-8"),
+        }
+        PaypalWebhookPayload.objects.create(**webhook_data)
 
         return HttpResponse(status=HTTPStatus.OK)

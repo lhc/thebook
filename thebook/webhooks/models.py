@@ -105,7 +105,14 @@ class OpenPixWebhookPayload(models.Model):
 
 
 class PaypalWebhookPayload(models.Model):
-    # transmission_id = models.CharField()
+    paypal_transmission_time = models.CharField()
+    paypal_auth_version = models.CharField()
+    paypal_cert_url = models.CharField()
+    paypal_auth_algo = models.CharField()
+    paypal_transmission_sig = models.CharField()
+    paypal_transmission_id = models.CharField()
+    correlation_id = models.CharField()
+
     payload = models.CharField()
     status = models.IntegerField(
         choices=ProcessingStatus.choices,
