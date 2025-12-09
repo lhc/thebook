@@ -52,8 +52,15 @@ class PaypalWebhook(View):
         # ):
         #     return HttpResponse(status=HTTPStatus.NOT_FOUND)
 
+        full_content = [
+            request.method,
+            request.body.decode("utf-8"),
+            str(request.headers),
+        ]
+        payload = "\n".join(full_content)
+
         PaypalWebhookPayload.objects.create(
-            payload=request.body.decode("utf-8"),
+            payload=payload,
         )
 
         return HttpResponse(status=HTTPStatus.OK)
