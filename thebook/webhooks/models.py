@@ -102,3 +102,14 @@ class OpenPixWebhookPayload(models.Model):
 
             self.status = ProcessingStatus.PROCESSED
             self.save()
+
+
+class PaypalWebhookPayload(models.Model):
+    # transmission_id = models.CharField()
+    payload = models.CharField()
+    status = models.IntegerField(
+        choices=ProcessingStatus.choices,
+        default=ProcessingStatus.RECEIVED,
+        verbose_name=_("Processing Status"),
+    )
+    created_at = models.DateTimeField(auto_now_add=True)

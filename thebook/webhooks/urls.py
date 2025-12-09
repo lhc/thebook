@@ -10,4 +10,9 @@ urlpatterns = [
         views.OpenPixWebhook.as_view(),
         name="openpix-webhook",
     ),
+    path(
+        "paypal",
+        views.PaypalWebhook.as_view(),
+        name="paypal-webhook",
+    ),
 ]
