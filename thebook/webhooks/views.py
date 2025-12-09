@@ -7,7 +7,7 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 
-from thebook.webhooks.models import OpenPixWebhookPayload
+from thebook.webhooks.models import OpenPixWebhookPayload, PaypalWebhookPayload
 
 
 @method_decorator(csrf_exempt, "dispatch")
