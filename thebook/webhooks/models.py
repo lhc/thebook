@@ -94,7 +94,7 @@ class OpenPixWebhookPayload(models.Model):
             Transaction.objects.create(
                 reference="T" + reference,
                 date=utc_transaction_date,
-                description="Taxa - " + description,
+                description="Taxa OpenPix - " + description,
                 amount=fee,
                 cash_book=cash_book,
                 created_by=user,
