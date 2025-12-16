@@ -1,6 +1,7 @@
 from datetime import date, datetime
 from decimal import Decimal
 
+import structlog
 from ofxparse import OfxParser
 from ofxtools.Parser import OFXTree
 
@@ -8,6 +9,9 @@ from django.conf import settings
 from django.db import IntegrityError
 
 from thebook.bookkeeping.models import Category, Transaction
+
+logger = structlog.get_logger(__name__)
+
 
 # Default List of transactions descriptions that we
 # can ignore and not insert into the system
@@ -29,10 +33,10 @@ class OFXImporter:
 
         try:
             self.ofx_parser = OfxParser.parse(self.transactions_file)
-        except (UnicodeDecodeError, TypeError, ValueError):
+        except (UnicodeDecodeError, TypeError, ValueError) as exc:
             from thebook.bookkeeping.importers import InvalidOFXFile
 
-            raise InvalidOFXFile()
+            raise InvalidOFXFile() from exc
 
     def _get_reference(self, fitid, checknum):
         return "-".join([field for field in (fitid, checknum) if field])
@@ -46,12 +50,17 @@ class OFXImporter:
         return all(date_rules)
 
     def run(self, start_date=None, end_date=None, ignored_memos=None):
+        logger.info("importers.ofx.run.start", start_date=start_date, end_date=end_date)
+
         if ignored_memos is None:
             ignored_memos = DEFAULT_IGNORED_MEMOS
 
         ofx_transactions = self.ofx_parser.account.statement.transactions
         for transaction in ofx_transactions:
             if transaction.memo in ignored_memos:
+                logger.debug(
+                    "importers.ofx.run.ignore_transaction", transaction=transaction.memo
+                )
                 continue
 
             transaction_date = transaction.date.date()
@@ -69,6 +78,10 @@ class OFXImporter:
                 )
             )
 
+        logger.info(
+            "importers.ofx.run", new_transactions_count=len(self.new_transactions)
+        )
+
         transactions = Transaction.objects.bulk_create(
             self.new_transactions,
             update_conflicts=True,
@@ -76,4 +89,5 @@ class OFXImporter:
             unique_fields=["reference"],
         )
 
+        logger.info("importers.ofx.run.end", start_date=start_date, end_date=end_date)
         return transactions
