@@ -11,10 +11,13 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 import json
+import logging
 from decimal import Decimal
 from pathlib import Path
 
 import dj_database_url
+import orjson
+import structlog
 from decouple import config
 
 from django.contrib.messages import constants as messages
@@ -33,17 +36,30 @@ SECRET_KEY = config("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True  # config("DEBUG", default=False, cast=bool)
 
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
+    "formatters": {
+        "plain_console": {
+            "()": structlog.stdlib.ProcessorFormatter,
+            "processor": structlog.dev.ConsoleRenderer(),
+        },
+    },
     "handlers": {
         "console": {
-            "level": "INFO",
             "class": "logging.StreamHandler",
+            "formatter": "plain_console",
         },
     },
     "loggers": {
-        "django": {
+        "django_structlog": {
+            "handlers": [
+                "console",
+            ],
+            "level": "INFO",
+        },
+        "django_structlog_the_book": {
             "handlers": [
                 "console",
             ],
@@ -51,6 +67,19 @@ LOGGING = {
         },
     },
 }
+
+structlog.configure(
+    cache_logger_on_first_use=True,
+    wrapper_class=structlog.make_filtering_bound_logger(logging.INFO),
+    processors=[
+        structlog.contextvars.merge_contextvars,
+        structlog.stdlib.add_log_level,
+        structlog.processors.format_exc_info,
+        structlog.processors.TimeStamper(fmt="iso", utc=True),
+        structlog.processors.JSONRenderer(serializer=orjson.dumps),
+    ],
+    logger_factory=structlog.BytesLoggerFactory(),
+)
 
 ALLOWED_HOSTS = config(
     "ALLOWED_HOSTS",
@@ -74,6 +103,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_htmx",
+    "django_structlog",
     "taggit",
     "thebook.bookkeeping",
     "thebook.members",
@@ -95,6 +125,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
+    "django_structlog.middlewares.RequestMiddleware",
 ]
 
 INTERNAL_IPS = [
