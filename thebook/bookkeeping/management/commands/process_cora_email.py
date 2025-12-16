@@ -36,7 +36,7 @@ class Command(BaseCommand):
                 is_attachment = part.get_filename()
                 if is_attachment:
                     attachment_content = part.get_payload(decode=True)
-                    ofx_file = io.StringIO(attachment_content.decode("utf-8"))
+                    ofx_file = io.BytesIO(attachment_content)
                     import_transactions(
                         ofx_file, "ofx", cora_cash_book, user, None, None
                     )
