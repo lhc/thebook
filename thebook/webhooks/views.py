@@ -43,6 +43,8 @@ class OpenPixWebhook(View):
             id_=openpix_webhook_payload.id,
         )
 
+        openpix_webhook_payload.process()
+
         return HttpResponse(status=HTTPStatus.OK)
 
 
