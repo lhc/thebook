@@ -42,7 +42,7 @@ def _csv_cash_book_transactions(context):
                 transaction.description,
                 transaction.amount,
                 transaction.notes,
-                transaction.category.name,
+                transaction.category.name if transaction.category is not None else "",
                 transaction.has_documents,
                 transaction_tags,
             ]
