@@ -25,3 +25,25 @@ class UserManager(BaseUserManager):
             raise ValueError(_("Superuser must have is_staff=True."))
 
         return self._create_user(email, password, **extra_fields)
+
+    def get_or_create_automation_user(self):
+        """
+        This user must be used as the reponsible for any automatic process
+        (e.g. importing transaction from a scheduled job)
+        """
+        User = self.model
+        automation_user_email = "batman@lhc.net.br"
+
+        try:
+            automation_user = User.objects.get(email=automation_user_email)
+        except User.DoesNotExist:
+            automation_user = self.model(
+                email=automation_user_email,
+                first_name="Bruce",
+                last_name="Wayne",
+                is_staff=False,
+                is_active=False,
+            )
+            automation_user.save(using=self._db)
+
+        return automation_user

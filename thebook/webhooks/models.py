@@ -44,7 +44,7 @@ class OpenPixWebhookPayload(models.Model):
             cash_book = CashBook.objects.get(name="OpenPix")
 
         if user is None:
-            user = get_user_model().objects.get(email="renne@rocha.dev.br")
+            user = get_user_model().objects.get_or_create_automation_user()
 
         payload = json.loads(self.payload)
 

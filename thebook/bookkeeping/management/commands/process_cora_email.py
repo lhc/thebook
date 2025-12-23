@@ -18,8 +18,7 @@ class Command(BaseCommand):
         cora_cash_book = CashBook.objects.get(name="Cora")
         User = get_user_model()
 
-        # TODO: Create a user for automated imports
-        user = User.objects.get(email="renne@rocha.dev.br")
+        user = User.objects.get_or_create_automation_user()
 
         M = imaplib.IMAP4_SSL(config("CORA_EMAIL_HOST_IMAP"))
         M.login(config("CORA_EMAIL_HOST_USER"), config("CORA_EMAIL_HOST_PASSWORD"))
