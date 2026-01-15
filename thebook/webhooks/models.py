@@ -3,6 +3,7 @@ import json
 
 import jmespath
 import requests
+import structlog
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -15,6 +16,8 @@ from thebook.webhooks.managers import (
     OpenPixWebhookPayloadManager,
     PayPalWebhookPayloadManager,
 )
+
+logger = structlog.get_logger(__name__)
 
 
 class ProcessingStatus:
