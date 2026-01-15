@@ -11,3 +11,12 @@ class OpenPixWebhookPayloadManager(models.Manager):
 
         for payload in self.filter(status=ProcessingStatus.RECEIVED):
             payload.process()
+
+
+class PayPalWebhookPayloadManager(models.Manager):
+
+    def process_received_payloads(self):
+        from thebook.webhooks.models import ProcessingStatus
+
+        for payload in self.filter(status=ProcessingStatus.RECEIVED):
+            payload.process()

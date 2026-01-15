@@ -2,14 +2,19 @@ import datetime
 import json
 
 import jmespath
+import requests
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import DatabaseError, models, transaction
 from django.utils.functional import classproperty
 from django.utils.translation import gettext as _
 
 from thebook.bookkeeping.models import CashBook, Transaction
-from thebook.webhooks.managers import OpenPixWebhookPayloadManager
+from thebook.webhooks.managers import (
+    OpenPixWebhookPayloadManager,
+    PayPalWebhookPayloadManager,
+)
 
 
 class ProcessingStatus:
@@ -120,3 +125,77 @@ class PaypalWebhookPayload(models.Model):
         verbose_name=_("Processing Status"),
     )
     created_at = models.DateTimeField(auto_now_add=True)
+
+    objects = PayPalWebhookPayloadManager()
+
+    def process(self, cash_book=None, user=None):
+        if self.status == ProcessingStatus.PROCESSED:
+            return
+
+        if cash_book is None:
+            cash_book = CashBook.objects.get(name="PayPal")
+
+        if user is None:
+            user = get_user_model().objects.get_or_create_automation_user()
+
+        payload = json.loads(self.payload)
+
+        event_type = payload.get("event_type")
+        if event_type != "PAYMENT.SALE.COMPLETED":
+            return
+
+        billing_agreement_id = (
+            jmespath.search("resource.billing_agreement_id", payload) or ""
+        )
+        if not billing_agreement_id:
+            return
+
+        response = requests.post(
+            f"{settings.PAYPAL_API_BASE_URL}/v1/oauth2/token",
+            data={
+                "grant_type": "client_credentials",
+            },
+            auth=(settings.PAYPAL_CLIENT_ID, settings.PAYPAL_CLIENT_SECRET),
+        )
+        access_token = response.json().get("access_token") or ""
+
+        response = requests.get(
+            f"{settings.PAYPAL_API_BASE_URL}/v1/billing/subscriptions/{billing_agreement_id}",
+            headers={"Authorization": f"Bearer {access_token}"},
+        )
+        subscription = response.json()
+
+        amount = float(jmespath.search("resource.amount.total", payload))
+        fee = -1 * float(jmespath.search("resource.transaction_fee.value", payload))
+        paid_at = jmespath.search("resource.create_time", payload)
+        utc_transaction_date = datetime.datetime.strptime(paid_at, "%Y-%m-%dT%H:%M:%SZ")
+
+        given_name = jmespath.search("subscriber.name.given_name", subscription) or ""
+        surname = jmespath.search("subscriber.name.surname", subscription) or ""
+        full_name = " ".join([given_name, surname]).strip()
+        payer_id = jmespath.search("subscriber.name.payer_id", subscription) or ""
+
+        description = " - ".join([part for part in (payer_id, full_name) if part])
+
+        reference = jmespath.search("resource.id", payload)
+
+        with transaction.atomic():
+            Transaction.objects.create(
+                reference=reference,
+                date=utc_transaction_date,
+                description=description,
+                amount=amount,
+                cash_book=cash_book,
+                created_by=user,
+            )
+            Transaction.objects.create(
+                reference="T" + reference,
+                date=utc_transaction_date,
+                description="Taxa PayPal - " + description,
+                amount=fee,
+                cash_book=cash_book,
+                created_by=user,
+            )
+
+            self.status = ProcessingStatus.PROCESSED
+            self.save()
