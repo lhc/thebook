@@ -160,6 +160,13 @@ class PaypalWebhookPayload(models.Model):
             },
             auth=(settings.PAYPAL_CLIENT_ID, settings.PAYPAL_CLIENT_SECRET),
         )
+        auth_data = response.json()
+        logger.info(f"{auth_data=}")
+        logger.info(f"{settings.PAYPAL_CLIENT_ID=}")
+        logger.info(f"{settings.PAYPAL_CLIENT_SECRET=}")
+        logger.info(f"{settings.PAYPAL_API_BASE_URL=}")
+        logger.info(f"{billing_agreement_id=}")
+
         access_token = response.json().get("access_token") or ""
 
         response = requests.get(
