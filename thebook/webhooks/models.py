@@ -170,12 +170,14 @@ class PaypalWebhookPayload(models.Model):
         paid_at = jmespath.search("resource.create_time", payload)
         utc_transaction_date = datetime.datetime.strptime(paid_at, "%Y-%m-%dT%H:%M:%SZ")
 
+        logger.info(f"{subscription=}")
         given_name = jmespath.search("subscriber.name.given_name", subscription) or ""
         surname = jmespath.search("subscriber.name.surname", subscription) or ""
         full_name = " ".join([given_name, surname]).strip()
         payer_id = jmespath.search("subscriber.name.payer_id", subscription) or ""
 
         description = " - ".join([part for part in (payer_id, full_name) if part])
+        logger.info(f"{description=}")
 
         reference = jmespath.search("resource.id", payload)
 
