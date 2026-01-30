@@ -6,12 +6,12 @@ from model_bakery import baker
 
 from django.utils.text import slugify
 
-from thebook.bookkeeping.models import CashBook, Transaction
+from thebook.bookkeeping.models import BankAccount, Transaction
 
 
 @pytest.fixture
 def cash_book():
-    return CashBook.objects.create(name="Test Cash Book")
+    return BankAccount.objects.create(name="Test Cash Book")
 
 
 @pytest.fixture
@@ -29,7 +29,7 @@ def cash_book_with_transactions(cash_book):
 
 @pytest.mark.parametrize("cash_book_name", ["Paypal Account", "Bank", "Cash Account"])
 def test_set_cash_book_slug_based_in_name_if_not_provided(db, cash_book_name):
-    cash_book = CashBook(name=cash_book_name)
+    cash_book = BankAccount(name=cash_book_name)
 
     cash_book.save()
 
@@ -172,11 +172,11 @@ def test_cash_book_summary_with_transactions_filter_by_year_and_month(
 
 
 def test_cash_book_default_fetch_order_by_name(db):
-    cash_book_1 = CashBook.objects.create(name="Cash Book C")
-    cash_book_2 = CashBook.objects.create(name="Cash Book A")
-    cash_book_3 = CashBook.objects.create(name="Cash Book B")
+    cash_book_1 = BankAccount.objects.create(name="Cash Book C")
+    cash_book_2 = BankAccount.objects.create(name="Cash Book A")
+    cash_book_3 = BankAccount.objects.create(name="Cash Book B")
 
-    cash_books = CashBook.objects.all()
+    cash_books = BankAccount.objects.all()
 
     assert cash_books[0].name == cash_book_2.name
     assert cash_books[1].name == cash_book_3.name

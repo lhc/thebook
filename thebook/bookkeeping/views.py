@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404, render
 from django.utils.translation import gettext as _
 
 from thebook.bookkeeping.importers import ImportTransactionsError, import_transactions
-from thebook.bookkeeping.models import CashBook, Document, Transaction
+from thebook.bookkeeping.models import BankAccount, Document, Transaction
 
 
 def _csv_cash_book_transactions(context):
@@ -105,7 +105,7 @@ def _get_cash_book_transactions_context(cash_book, *, year=None, month=None):
 
 
 def cash_book_transactions(request, cash_book_slug):
-    cash_book = get_object_or_404(CashBook, slug=cash_book_slug)
+    cash_book = get_object_or_404(BankAccount, slug=cash_book_slug)
     response_context = _get_cash_book_transactions_context(
         cash_book, year=request.GET.get("year"), month=request.GET.get("month")
     )
@@ -122,7 +122,7 @@ def cash_book_transactions(request, cash_book_slug):
 
 
 def cash_book_import_transactions(request, cash_book_slug):
-    cash_book = get_object_or_404(CashBook, slug=cash_book_slug)
+    cash_book = get_object_or_404(BankAccount, slug=cash_book_slug)
 
     start_date = request.POST.get("start_date") or None
     if start_date is not None:
@@ -184,7 +184,7 @@ def partial_cash_books_dashboard(request):
     previous_month_reference_date = reference_date - datetime.timedelta(days=10)
     next_month_reference_date = reference_date + datetime.timedelta(days=40)
 
-    cash_books_summary = CashBook.objects.filter(active=True).summary(
+    cash_books_summary = BankAccount.objects.filter(active=True).summary(
         year=year, month=month
     )
     return render(

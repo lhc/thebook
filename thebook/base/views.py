@@ -3,7 +3,7 @@ from decimal import ROUND_UP, Decimal
 
 from django.shortcuts import render
 
-from thebook.bookkeeping.models import CashBook
+from thebook.bookkeeping.models import BankAccount
 from thebook.members.models import Membership
 
 
@@ -14,7 +14,7 @@ def _get_dashboard_context():
     overall_balance = Decimal("0")
 
     today = datetime.date.today()
-    cash_books_summary = CashBook.objects.filter(active=True).summary(
+    cash_books_summary = BankAccount.objects.filter(active=True).summary(
         year=today.year, month=today.month
     )
     for cash_book in cash_books_summary:

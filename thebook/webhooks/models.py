@@ -11,7 +11,7 @@ from django.db import DatabaseError, models, transaction
 from django.utils.functional import classproperty
 from django.utils.translation import gettext as _
 
-from thebook.bookkeeping.models import CashBook, Transaction
+from thebook.bookkeeping.models import BankAccount, Transaction
 from thebook.webhooks.managers import (
     OpenPixWebhookPayloadManager,
     PayPalWebhookPayloadManager,
@@ -49,7 +49,7 @@ class OpenPixWebhookPayload(models.Model):
             return
 
         if cash_book is None:
-            cash_book = CashBook.objects.get(name="OpenPix")
+            cash_book = BankAccount.objects.get(name="OpenPix")
 
         if user is None:
             user = get_user_model().objects.get_or_create_automation_user()
@@ -136,7 +136,7 @@ class PaypalWebhookPayload(models.Model):
             return
 
         if cash_book is None:
-            cash_book = CashBook.objects.get(name="PayPal")
+            cash_book = BankAccount.objects.get(name="PayPal")
 
         if user is None:
             user = get_user_model().objects.get_or_create_automation_user()

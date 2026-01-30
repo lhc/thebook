@@ -25,7 +25,7 @@ def document_upload_path(instance, filename):
     return Path(instance.transaction.cash_book.slug, new_filename)
 
 
-class CashBook(models.Model):
+class BankAccount(models.Model):
     name = models.CharField(max_length=64, unique=True)
     slug = models.SlugField(max_length=64, unique=True)
     description = models.TextField(blank=True)
@@ -33,13 +33,13 @@ class CashBook(models.Model):
 
     objects = CashBookQuerySet.as_manager()
 
-    def __str__(self):
-        return self.name
-
     class Meta:
         ordering = [
             "name",
         ]
+
+    def __str__(self):
+        return self.name
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -234,7 +234,7 @@ class Transaction(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     cash_book = models.ForeignKey(
-        "bookkeeping.CashBook", on_delete=models.SET_NULL, null=True
+        "bookkeeping.BankAccount", on_delete=models.SET_NULL, null=True
     )
     category = models.ForeignKey(
         "bookkeeping.Category", on_delete=models.SET_NULL, null=True

@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from thebook.bookkeeping.models import (
-    CashBook,
+    BankAccount,
     Category,
     CategoryMatchRule,
     Document,
@@ -36,8 +36,8 @@ def categorize_transactions(modeladmin, request, queryset):
         transaction.categorize()
 
 
-@admin.register(CashBook)
-class CashBookAdmin(admin.ModelAdmin): ...
+@admin.register(BankAccount)
+class BankAccountAdmin(admin.ModelAdmin): ...
 
 
 @admin.register(Category)

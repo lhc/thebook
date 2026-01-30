@@ -8,14 +8,14 @@ from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand, CommandError
 
 from thebook.bookkeeping.importers import import_transactions
-from thebook.bookkeeping.models import CashBook
+from thebook.bookkeeping.models import BankAccount
 
 
 class Command(BaseCommand):
     help = "Check inbox for Cora OFX files and import them"
 
     def handle(self, *args, **options):
-        cora_cash_book = CashBook.objects.get(name="Cora")
+        cora_cash_book = BankAccount.objects.get(name="Cora")
         User = get_user_model()
 
         user = User.objects.get_or_create_automation_user()

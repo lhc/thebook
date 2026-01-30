@@ -9,12 +9,12 @@ from django.contrib.auth import get_user_model
 
 from thebook.bookkeeping.importers import InvalidOFXFile
 from thebook.bookkeeping.importers.csv import CSVCoraCreditCardImporter
-from thebook.bookkeeping.models import CashBook, Category, Transaction
+from thebook.bookkeeping.models import BankAccount, Category, Transaction
 
 
 @pytest.fixture
 def cash_book():
-    return CashBook.objects.create(name="Cash Book 1")
+    return BankAccount.objects.create(name="Cash Book 1")
 
 
 @pytest.fixture

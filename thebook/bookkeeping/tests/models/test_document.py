@@ -5,7 +5,7 @@ import pytest
 from model_bakery import baker
 
 from thebook.bookkeeping.models import (
-    CashBook,
+    BankAccount,
     Document,
     Transaction,
     document_upload_path,
@@ -14,7 +14,7 @@ from thebook.bookkeeping.models import (
 
 @pytest.fixture
 def document():
-    cash_book = CashBook(name="test_cash_book", slug="test_cash_book")
+    cash_book = BankAccount(name="test_cash_book", slug="test_cash_book")
     transaction = Transaction(cash_book=cash_book)
     return Document(transaction=transaction)
 
@@ -34,7 +34,7 @@ def test_document_upload_path_generate_different_results_even_if_filename_is_the
 def test_document_upload_path_put_file_inside_cash_book_slug_directory(
     cash_book_slug,
 ):
-    cash_book = CashBook(name=cash_book_slug, slug=cash_book_slug)
+    cash_book = BankAccount(name=cash_book_slug, slug=cash_book_slug)
     transaction = Transaction(cash_book=cash_book)
     document = Document(transaction=transaction)
 

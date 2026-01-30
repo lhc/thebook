@@ -11,7 +11,7 @@ from django.contrib.auth import get_user_model
 from django.urls import reverse
 
 from thebook.base.views import _get_dashboard_context
-from thebook.bookkeeping.models import CashBook, Transaction
+from thebook.bookkeeping.models import BankAccount, Transaction
 from thebook.members.models import Membership
 
 
@@ -35,8 +35,8 @@ def test_allowed_access_dashboard_authenticated(db, client):
 
 @pytest.mark.freeze_time("2024-09-15")
 def test_dashboard_context(db):
-    cash_book_1 = CashBook.objects.create(name="Cash Book 1")
-    cash_book_2 = CashBook.objects.create(name="Cash Book 2")
+    cash_book_1 = BankAccount.objects.create(name="Cash Book 1")
+    cash_book_2 = BankAccount.objects.create(name="Cash Book 2")
 
     # fmt: off
     baker.make(Transaction, cash_book=cash_book_1, date=datetime.date(2023, 11, 1), amount=Decimal("100"))
@@ -58,15 +58,15 @@ def test_dashboard_context(db):
     assert context["overall_balance"] == Decimal("213.96")
     assert context["today"] == datetime.date(2024, 9, 15)
     assertQuerySetEqual(
-        context["cash_books_summary"], CashBook.objects.summary(year=2024, month=9)
+        context["cash_books_summary"], BankAccount.objects.summary(year=2024, month=9)
     )
 
 
 def test_dashboard_list_only_active_cash_books(db):
-    cash_book_1 = CashBook.objects.create(name="Cash Book 1", active=True)
-    cash_book_2 = CashBook.objects.create(name="Cash Book 2", active=False)
-    cash_book_3 = CashBook.objects.create(name="Cash Book 3", active=True)
-    cash_book_4 = CashBook.objects.create(name="Cash Book 4", active=False)
+    cash_book_1 = BankAccount.objects.create(name="Cash Book 1", active=True)
+    cash_book_2 = BankAccount.objects.create(name="Cash Book 2", active=False)
+    cash_book_3 = BankAccount.objects.create(name="Cash Book 3", active=True)
+    cash_book_4 = BankAccount.objects.create(name="Cash Book 4", active=False)
 
     context = _get_dashboard_context()
 

@@ -13,13 +13,13 @@ from django.urls import reverse
 from django.utils.functional import SimpleLazyObject
 
 from thebook.bookkeeping.importers import ImportTransactionsError
-from thebook.bookkeeping.models import CashBook, Transaction
+from thebook.bookkeeping.models import BankAccount, Transaction
 from thebook.bookkeeping.views import _get_cash_book_transactions_context
 
 
 @pytest.fixture
 def cash_book():
-    return CashBook.objects.create(name="Cash Book 1")
+    return BankAccount.objects.create(name="Cash Book 1")
 
 
 @pytest.fixture

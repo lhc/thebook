@@ -9,7 +9,7 @@ from django.contrib.auth import get_user_model
 from django.test import RequestFactory
 from django.urls import reverse
 
-from thebook.bookkeeping.models import CashBook, Category, Document, Transaction
+from thebook.bookkeeping.models import BankAccount, Category, Document, Transaction
 from thebook.bookkeeping.views import (
     _get_cash_book_transactions_context,
     cash_book_transactions,
@@ -18,12 +18,12 @@ from thebook.bookkeeping.views import (
 
 @pytest.fixture
 def cash_book_1():
-    return CashBook.objects.create(name="Cash Book 1")
+    return BankAccount.objects.create(name="Cash Book 1")
 
 
 @pytest.fixture
 def cash_book_2():
-    return CashBook.objects.create(name="Cash Book 2")
+    return BankAccount.objects.create(name="Cash Book 2")
 
 
 @pytest.fixture

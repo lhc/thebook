@@ -9,7 +9,7 @@ from django.contrib.auth import get_user_model
 from django.test import RequestFactory
 from django.urls import reverse
 
-from thebook.bookkeeping.models import CashBook, Category, Document, Transaction
+from thebook.bookkeeping.models import BankAccount, Category, Document, Transaction
 
 
 @pytest.fixture

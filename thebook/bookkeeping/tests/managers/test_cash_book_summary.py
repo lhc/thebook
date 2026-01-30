@@ -1,4 +1,4 @@
-# CashBook.objects.summary(year=year, month=month)  # all history of year/month
+# BankAccount.objects.summary(year=year, month=month)  # all history of year/month
 # raise valueerror if month alone / month out of range
 
 
@@ -10,7 +10,7 @@ from model_bakery import baker
 
 from django.utils.text import slugify
 
-from thebook.bookkeeping.models import CashBook, Transaction
+from thebook.bookkeeping.models import BankAccount, Transaction
 
 
 @pytest.fixture
@@ -38,16 +38,16 @@ def transactions(cash_book_1, cash_book_2):
 
 @pytest.fixture
 def cash_book_1():
-    return CashBook.objects.create(name="Cash Book 1")
+    return BankAccount.objects.create(name="Cash Book 1")
 
 
 @pytest.fixture
 def cash_book_2():
-    return CashBook.objects.create(name="Cash Book 2")
+    return BankAccount.objects.create(name="Cash Book 2")
 
 
 def test_cash_books_summary(db, cash_book_1, cash_book_2):
-    cash_books = CashBook.objects.summary()
+    cash_books = BankAccount.objects.summary()
 
     assert cash_books.count() == 2
 
@@ -69,7 +69,7 @@ def test_cash_books_summary(db, cash_book_1, cash_book_2):
 def test_cash_books_summary_with_transactions(
     db, transactions, cash_book_1, cash_book_2
 ):
-    cash_books = CashBook.objects.summary()
+    cash_books = BankAccount.objects.summary()
 
     assert cash_books.count() == 2
 
@@ -94,7 +94,7 @@ def test_cash_books_summary_with_transactions(
 def test_cash_books_summary_for_year_no_transactions(
     db, cash_book_1, cash_book_2, year
 ):
-    cash_books = CashBook.objects.summary(year=year)
+    cash_books = BankAccount.objects.summary(year=year)
 
     assert cash_books.count() == 2
 
@@ -111,7 +111,7 @@ def test_cash_books_summary_for_year_no_transactions(
 def test_cash_books_summary_for_year_and_month_no_transactions(
     db, cash_book_1, cash_book_2, year, month
 ):
-    cash_books = CashBook.objects.summary(year=year, month=month)
+    cash_books = BankAccount.objects.summary(year=year, month=month)
 
     assert cash_books.count() == 2
 
@@ -168,7 +168,7 @@ def test_cash_books_summary_for_year_with_transactions(
     withdraws_2,
     balance_2,
 ):
-    cash_books = CashBook.objects.summary(year=year)
+    cash_books = BankAccount.objects.summary(year=year)
 
     assert cash_books.count() == 2
 
@@ -241,7 +241,7 @@ def test_cash_books_summary_for_year_and_month_with_transactions(
     withdraws_2,
     balance_2,
 ):
-    cash_books = CashBook.objects.summary(year=year, month=month)
+    cash_books = BankAccount.objects.summary(year=year, month=month)
 
     assert cash_books.count() == 2
 
@@ -259,7 +259,7 @@ def test_cash_books_summary_for_year_and_month_with_transactions(
 def test_cash_books_summary_for_year_include_overall_balance(
     db, transactions, cash_book_1, cash_book_2
 ):
-    cash_books = CashBook.objects.summary(year=2020)
+    cash_books = BankAccount.objects.summary(year=2020)
 
     assert cash_books.count() == 2
 
@@ -277,7 +277,7 @@ def test_cash_books_summary_for_year_include_overall_balance(
 def test_cash_books_summary_for_year_and_month_include_overall_balance(
     db, transactions, cash_book_1, cash_book_2
 ):
-    cash_books = CashBook.objects.summary(year=2020, month=11)
+    cash_books = BankAccount.objects.summary(year=2020, month=11)
 
     assert cash_books.count() == 2
 
@@ -295,10 +295,10 @@ def test_cash_books_summary_for_year_and_month_include_overall_balance(
 @pytest.mark.parametrize("month", [0, -1, 13, 9999])
 def test_cash_books_summary_for_invalid_month(db, month):
     with pytest.raises(ValueError):
-        cash_books = CashBook.objects.summary(year=2024, month=month)
+        cash_books = BankAccount.objects.summary(year=2024, month=month)
 
 
 @pytest.mark.parametrize("month", [1, 5, 11])
 def test_cash_books_summary_value_error_if_valid_month_provided_without_year(db, month):
     with pytest.raises(ValueError):
-        cash_book_summary = CashBook.objects.summary(month=month)
+        cash_book_summary = BankAccount.objects.summary(month=month)
