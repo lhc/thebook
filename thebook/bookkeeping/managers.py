@@ -6,7 +6,7 @@ from django.db import models
 from django.db.models import Exists, IntegerField, OuterRef, Q, Sum, Value
 
 
-class CashBookQuerySet(models.QuerySet):
+class BankAccountQuerySet(models.QuerySet):
     def summary(self, *, year=None, month=None):
         def _valid_year_and_month(month, year):
             if month is not None:

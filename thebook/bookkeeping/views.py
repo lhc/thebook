@@ -10,9 +10,9 @@ from thebook.bookkeeping.importers import ImportTransactionsError, import_transa
 from thebook.bookkeeping.models import BankAccount, Document, Transaction
 
 
-def _csv_cash_book_transactions(context):
-    cash_book = context["cash_book"]
-    output_filename = f"{cash_book.slug}-transactions.csv"
+def _csv_bank_account_transactions(context):
+    bank_account = context["bank_account"]
+    output_filename = f"{bank_account.slug}-transactions.csv"
     response = HttpResponse(
         content_type="text/csv",
         headers={"Content-Disposition": f'attachment; filename="{output_filename}"'},
@@ -71,7 +71,7 @@ def _get_periods(year, month):
     return previous_period, next_period
 
 
-def _get_cash_book_transactions_context(cash_book, *, year=None, month=None):
+def _get_bank_account_transactions_context(bank_account, *, year=None, month=None):
     previous_period, next_period = None, None
 
     if year is not None:
@@ -79,7 +79,7 @@ def _get_cash_book_transactions_context(cash_book, *, year=None, month=None):
     if month is not None:
         month = int(month)
 
-    transactions = cash_book.transaction_set.select_related(
+    transactions = bank_account.transaction_set.select_related(
         "category"
     ).prefetch_related("documents")
     if year:
@@ -95,7 +95,7 @@ def _get_cash_book_transactions_context(cash_book, *, year=None, month=None):
     previous_period, next_period = _get_periods(year, month)
 
     return {
-        "cash_book": cash_book.with_summary(year=year, month=month),
+        "bank_account": bank_account.with_summary(year=year, month=month),
         "transactions": transactions.order_by("date"),
         "year": year,
         "month": month,
@@ -104,15 +104,15 @@ def _get_cash_book_transactions_context(cash_book, *, year=None, month=None):
     }
 
 
-def cash_book_transactions(request, cash_book_slug):
-    cash_book = get_object_or_404(BankAccount, slug=cash_book_slug)
-    response_context = _get_cash_book_transactions_context(
-        cash_book, year=request.GET.get("year"), month=request.GET.get("month")
+def bank_account_transactions(request, bank_account_slug):
+    bank_account = get_object_or_404(BankAccount, slug=bank_account_slug)
+    response_context = _get_bank_account_transactions_context(
+        bank_account, year=request.GET.get("year"), month=request.GET.get("month")
     )
 
     response_format = request.GET.get("format")
     if response_format == "csv":
-        return _csv_cash_book_transactions(response_context)
+        return _csv_bank_account_transactions(response_context)
 
     return render(
         request,
@@ -121,8 +121,8 @@ def cash_book_transactions(request, cash_book_slug):
     )
 
 
-def cash_book_import_transactions(request, cash_book_slug):
-    cash_book = get_object_or_404(BankAccount, slug=cash_book_slug)
+def bank_account_import_transactions(request, bank_account_slug):
+    bank_account = get_object_or_404(BankAccount, slug=bank_account_slug)
 
     start_date = request.POST.get("start_date") or None
     if start_date is not None:
@@ -143,7 +143,12 @@ def cash_book_import_transactions(request, cash_book_slug):
             transactions_file = request.FILES["csv_cora_credit_card_file"]
 
         import_transactions(
-            transactions_file, file_type, cash_book, request.user, start_date, end_date
+            transactions_file,
+            file_type,
+            bank_account,
+            request.user,
+            start_date,
+            end_date,
         )
     except ImportTransactionsError as err:
         messages.add_message(request, messages.ERROR, str(err))
@@ -174,7 +179,7 @@ def partial_transaction_details(request, transaction_id):
     )
 
 
-def partial_cash_books_dashboard(request):
+def partial_bank_accounts_dashboard(request):
     today = datetime.date.today()
 
     month = int(request.GET.get("month") or today.month)
@@ -184,14 +189,14 @@ def partial_cash_books_dashboard(request):
     previous_month_reference_date = reference_date - datetime.timedelta(days=10)
     next_month_reference_date = reference_date + datetime.timedelta(days=40)
 
-    cash_books_summary = BankAccount.objects.filter(active=True).summary(
+    bank_accounts_summary = BankAccount.objects.filter(active=True).summary(
         year=year, month=month
     )
     return render(
         request,
-        "bookkeeping/partial/cash_books_dashboard.html",
+        "bookkeeping/partial/bank_accounts_dashboard.html",
         context={
-            "cash_books_summary": cash_books_summary,
+            "bank_accounts_summary": bank_accounts_summary,
             "month": int(month),
             "next_month": next_month_reference_date.month,
             "next_year": next_month_reference_date.year,

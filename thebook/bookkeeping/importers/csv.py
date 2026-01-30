@@ -8,9 +8,9 @@ from django.db import IntegrityError
 
 from thebook.bookkeeping.importers.constants import (
     ACCOUNTANT,
+    BANK_ACCOUNT_TRANSFER,
     BANK_FEES,
     BANK_INCOME,
-    CASH_BOOK_TRANSFER,
     DONATION,
     MEMBERSHIP_FEE,
     RECURRING,
@@ -24,7 +24,9 @@ def get_categories():
     accountant, _ = Category.objects.get_or_create(name=ACCOUNTANT)
     bank_fees, _ = Category.objects.get_or_create(name=BANK_FEES)
     bank_income, _ = Category.objects.get_or_create(name=BANK_INCOME)
-    cash_book_transfer, _ = Category.objects.get_or_create(name=CASH_BOOK_TRANSFER)
+    bank_account_transfer, _ = Category.objects.get_or_create(
+        name=BANK_ACCOUNT_TRANSFER
+    )
     donation, _ = Category.objects.get_or_create(name=DONATION)
     membership_fee, _ = Category.objects.get_or_create(name=MEMBERSHIP_FEE)
     recurring, _ = Category.objects.get_or_create(name=RECURRING)
@@ -35,7 +37,7 @@ def get_categories():
         ACCOUNTANT: accountant,
         BANK_FEES: bank_fees,
         BANK_INCOME: bank_income,
-        CASH_BOOK_TRANSFER: cash_book_transfer,
+        BANK_ACCOUNT_TRANSFER: bank_account_transfer,
         DONATION: donation,
         MEMBERSHIP_FEE: membership_fee,
         RECURRING: recurring,
@@ -47,11 +49,11 @@ def get_categories():
 class CSVImporter:
     new_transactions = []
 
-    def __init__(self, transactions_file, cash_book, user):
+    def __init__(self, transactions_file, bank_account, user):
         self.categories = get_categories()
 
         self.transactions_file = transactions_file
-        self.cash_book = cash_book
+        self.bank_account = bank_account
         self.user = user
 
     def run(self, start_date=None, end_date=None, ignored_memos=None):
@@ -89,8 +91,8 @@ class CSVImporter:
                         date=transaction_date,
                         description=description,
                         amount=transaction_amount,
-                        cash_book=self.cash_book,
-                        category=self.categories[CASH_BOOK_TRANSFER],
+                        bank_account=self.bank_account,
+                        category=self.categories[BANK_ACCOUNT_TRANSFER],
                         created_by=self.user,
                     )
                 )
@@ -105,7 +107,7 @@ class CSVImporter:
                         date=transaction_date,
                         description="Mensalidade LHC - USD50 - Marcio Paduan Donadio",
                         amount=transaction_amount,
-                        cash_book=self.cash_book,
+                        bank_account=self.bank_account,
                         category=self.categories[MEMBERSHIP_FEE],
                         created_by=self.user,
                     )
@@ -117,7 +119,7 @@ class CSVImporter:
                         date=transaction_date,
                         description=f"Doação Recebida de {transaction_name}",
                         amount=transaction_amount,
-                        cash_book=self.cash_book,
+                        bank_account=self.bank_account,
                         category=self.categories[DONATION],
                         created_by=self.user,
                     )
@@ -128,7 +130,7 @@ class CSVImporter:
                         date=transaction_date,
                         description=f"Taxa Intermediação - Doação Recebida de {transaction_name}",
                         amount=transaction_tax,
-                        cash_book=self.cash_book,
+                        bank_account=self.bank_account,
                         category=self.categories[BANK_FEES],
                         created_by=self.user,
                     )
@@ -155,7 +157,7 @@ class CSVImporter:
                         date=transaction_date,
                         description=f"{recurring_fee_type} - {transaction_name}",
                         amount=transaction_amount,
-                        cash_book=self.cash_book,
+                        bank_account=self.bank_account,
                         category=category,
                         created_by=self.user,
                     )
@@ -166,7 +168,7 @@ class CSVImporter:
                         date=transaction_date,
                         description=f"Taxa Intermediação - {recurring_fee_type} - {transaction_name}",
                         amount=transaction_tax,
-                        cash_book=self.cash_book,
+                        bank_account=self.bank_account,
                         category=self.categories[BANK_FEES],
                         created_by=self.user,
                     )
@@ -182,7 +184,7 @@ class CSVImporter:
                         date=transaction_date,
                         description=f"{transaction_type} - {transaction_name}",
                         amount=transaction_amount,
-                        cash_book=self.cash_book,
+                        bank_account=self.bank_account,
                         created_by=self.user,
                     )
                 )
@@ -192,7 +194,7 @@ class CSVImporter:
                         date=transaction_date,
                         description=f"Taxa Intermediação - {transaction_type} - {transaction_name}",
                         amount=transaction_tax,
-                        cash_book=self.cash_book,
+                        bank_account=self.bank_account,
                         category=self.categories[BANK_FEES],
                         created_by=self.user,
                     )
@@ -205,12 +207,12 @@ class CSVImporter:
 
 
 class CSVCoraCreditCardImporter:
-    def __init__(self, transactions_file, cash_book, user):
+    def __init__(self, transactions_file, bank_account, user):
         self.categories = get_categories()
         self.new_transactions = []
 
         self.transactions_file = transactions_file
-        self.cash_book = cash_book
+        self.bank_account = bank_account
         self.user = user
 
     def run(self, start_date=None, end_date=None, ignored_memos=None):
@@ -238,7 +240,7 @@ class CSVCoraCreditCardImporter:
                     description=transaction["Descrição"].strip(),
                     amount=transaction_amount,
                     notes=transaction_notes,
-                    cash_book=self.cash_book,
+                    bank_account=self.bank_account,
                     created_by=self.user,
                 )
             )

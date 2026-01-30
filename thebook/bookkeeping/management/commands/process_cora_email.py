@@ -15,7 +15,7 @@ class Command(BaseCommand):
     help = "Check inbox for Cora OFX files and import them"
 
     def handle(self, *args, **options):
-        cora_cash_book = BankAccount.objects.get(name="Cora")
+        cora_bank_account = BankAccount.objects.get(name="Cora")
         User = get_user_model()
 
         user = User.objects.get_or_create_automation_user()
@@ -37,7 +37,7 @@ class Command(BaseCommand):
                     attachment_content = part.get_payload(decode=True)
                     ofx_file = io.BytesIO(attachment_content)
                     import_transactions(
-                        ofx_file, "ofx", cora_cash_book, user, None, None
+                        ofx_file, "ofx", cora_bank_account, user, None, None
                     )
 
                     M.copy(msgnum, "CoraProcessed")

@@ -1,7 +1,7 @@
 ACCOUNTANT = "Contabilidade"
 BANK_FEES = "Tarifas Bancárias"
 BANK_INCOME = "Investimentos"
-CASH_BOOK_TRANSFER = "Transferência entre livros-caixa"
+BANK_ACCOUNT_TRANSFER = "Transferência entre contas bancárias"
 DONATION = "Doação"
 MEMBERSHIP_FEE = "Contribuição Associativa"
 RECURRING = "Recorrente"

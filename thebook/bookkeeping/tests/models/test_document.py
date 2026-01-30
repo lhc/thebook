@@ -14,8 +14,8 @@ from thebook.bookkeeping.models import (
 
 @pytest.fixture
 def document():
-    cash_book = BankAccount(name="test_cash_book", slug="test_cash_book")
-    transaction = Transaction(cash_book=cash_book)
+    bank_account = BankAccount(name="test_bank_account", slug="test_bank_account")
+    transaction = Transaction(bank_account=bank_account)
     return Document(transaction=transaction)
 
 
@@ -30,19 +30,19 @@ def test_document_upload_path_generate_different_results_even_if_filename_is_the
     assert first_file != second_file
 
 
-@pytest.mark.parametrize("cash_book_slug", ["cash_book_1", "cash_book_2"])
-def test_document_upload_path_put_file_inside_cash_book_slug_directory(
-    cash_book_slug,
+@pytest.mark.parametrize("bank_account_slug", ["bank_account_1", "bank_account_2"])
+def test_document_upload_path_put_file_inside_bank_account_slug_directory(
+    bank_account_slug,
 ):
-    cash_book = BankAccount(name=cash_book_slug, slug=cash_book_slug)
-    transaction = Transaction(cash_book=cash_book)
+    bank_account = BankAccount(name=bank_account_slug, slug=bank_account_slug)
+    transaction = Transaction(bank_account=bank_account)
     document = Document(transaction=transaction)
 
     filename = "invoice.pdf"
 
     upload_path = document_upload_path(document, filename)
 
-    assert upload_path.parts[0] == cash_book_slug
+    assert upload_path.parts[0] == bank_account_slug
 
 
 def test_document_upload_path_create_uuid_name_for_file(document):

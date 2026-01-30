@@ -13,8 +13,8 @@ from thebook.bookkeeping.models import BankAccount, Category, Transaction
 
 
 @pytest.fixture
-def cash_book():
-    return BankAccount.objects.create(name="Cash Book 1")
+def bank_account():
+    return BankAccount.objects.create(name="Bank Account 1")
 
 
 @pytest.fixture
@@ -24,7 +24,7 @@ def user():
 
 @pytest.mark.xfail(reason="need to pass the correct data to the importer")
 def test_cora_csv_credit_card_file_with_one_transaction(
-    mocker, db, request, cash_book, user
+    mocker, db, request, bank_account, user
 ):
     mocker.patch(
         "thebook.bookkeeping.importers.csv.uuid.uuid4",
@@ -35,7 +35,7 @@ def test_cora_csv_credit_card_file_with_one_transaction(
         request.path.parent / "data" / "cora-credit-card-one-transaction.csv"
     )
     with open(csv_file_path, "r") as csv_file:
-        csv_importer = CSVCoraCreditCardImporter(csv_file, cash_book, user)
+        csv_importer = CSVCoraCreditCardImporter(csv_file, bank_account, user)
 
         transactions = csv_importer.run()
 
@@ -46,6 +46,6 @@ def test_cora_csv_credit_card_file_with_one_transaction(
         assert transaction.description == "MIGADU.COM EMAIL SRVC."
         assert transaction.amount == decimal.Decimal("-112.83")
         assert transaction.notes == "USD19,00"
-        assert transaction.cash_book == cash_book
+        assert transaction.bank_account == bank_account
         assert transaction.created_by == user
         assert transaction.category is None

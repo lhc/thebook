@@ -44,12 +44,12 @@ class OpenPixWebhookPayload(models.Model):
 
     objects = OpenPixWebhookPayloadManager()
 
-    def process(self, cash_book=None, user=None):
+    def process(self, bank_account=None, user=None):
         if self.status == ProcessingStatus.PROCESSED:
             return
 
-        if cash_book is None:
-            cash_book = BankAccount.objects.get(name="OpenPix")
+        if bank_account is None:
+            bank_account = BankAccount.objects.get(name="OpenPix")
 
         if user is None:
             user = get_user_model().objects.get_or_create_automation_user()
@@ -96,7 +96,7 @@ class OpenPixWebhookPayload(models.Model):
                 date=utc_transaction_date,
                 description=description,
                 amount=amount,
-                cash_book=cash_book,
+                bank_account=bank_account,
                 created_by=user,
             )
             Transaction.objects.create(
@@ -104,7 +104,7 @@ class OpenPixWebhookPayload(models.Model):
                 date=utc_transaction_date,
                 description="Taxa OpenPix - " + description,
                 amount=fee,
-                cash_book=cash_book,
+                bank_account=bank_account,
                 created_by=user,
             )
 
@@ -131,12 +131,12 @@ class PaypalWebhookPayload(models.Model):
 
     objects = PayPalWebhookPayloadManager()
 
-    def process(self, cash_book=None, user=None):
+    def process(self, bank_account=None, user=None):
         if self.status == ProcessingStatus.PROCESSED:
             return
 
-        if cash_book is None:
-            cash_book = BankAccount.objects.get(name="PayPal")
+        if bank_account is None:
+            bank_account = BankAccount.objects.get(name="PayPal")
 
         if user is None:
             user = get_user_model().objects.get_or_create_automation_user()
@@ -197,7 +197,7 @@ class PaypalWebhookPayload(models.Model):
                 date=utc_transaction_date,
                 description=description,
                 amount=amount,
-                cash_book=cash_book,
+                bank_account=bank_account,
                 created_by=user,
             )
             Transaction.objects.create(
@@ -205,7 +205,7 @@ class PaypalWebhookPayload(models.Model):
                 date=utc_transaction_date,
                 description="Taxa PayPal - " + description,
                 amount=fee,
-                cash_book=cash_book,
+                bank_account=bank_account,
                 created_by=user,
             )
 

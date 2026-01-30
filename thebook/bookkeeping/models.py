@@ -11,7 +11,7 @@ from django.db.models import Sum
 from django.utils.text import slugify
 from django.utils.translation import gettext as _
 
-from thebook.bookkeeping.managers import CashBookQuerySet, TransactionQuerySet
+from thebook.bookkeeping.managers import BankAccountQuerySet, TransactionQuerySet
 
 
 def document_upload_path(instance, filename):
@@ -22,7 +22,7 @@ def document_upload_path(instance, filename):
     if instance.transaction is None:
         return Path(new_filename)
 
-    return Path(instance.transaction.cash_book.slug, new_filename)
+    return Path(instance.transaction.bank_account.slug, new_filename)
 
 
 class BankAccount(models.Model):
@@ -31,7 +31,7 @@ class BankAccount(models.Model):
     description = models.TextField(blank=True)
     active = models.BooleanField(default=True)
 
-    objects = CashBookQuerySet.as_manager()
+    objects = BankAccountQuerySet.as_manager()
 
     class Meta:
         ordering = [
@@ -233,7 +233,7 @@ class Transaction(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    cash_book = models.ForeignKey(
+    bank_account = models.ForeignKey(
         "bookkeeping.BankAccount", on_delete=models.SET_NULL, null=True
     )
     category = models.ForeignKey(

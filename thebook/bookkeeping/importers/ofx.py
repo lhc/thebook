@@ -24,11 +24,11 @@ DEFAULT_IGNORED_MEMOS = [
 
 
 class OFXImporter:
-    def __init__(self, transactions_file, cash_book, user):
+    def __init__(self, transactions_file, bank_account, user):
         self.new_transactions = []
 
         self.transactions_file = transactions_file
-        self.cash_book = cash_book
+        self.bank_account = bank_account
         self.user = user
 
         try:
@@ -73,7 +73,7 @@ class OFXImporter:
                     date=transaction_date,
                     description=transaction.memo,
                     amount=transaction.amount,
-                    cash_book=self.cash_book,
+                    bank_account=self.bank_account,
                     created_by=self.user,
                 )
             )

@@ -1,27 +1,27 @@
 {% load currency i18n static %}
 
-<div class="col-xl-6 col-md-2 mb-6" id="cash_books_dashboard">
+<div class="col-xl-6 col-md-2 mb-6" id="bank_accounts_dashboard">
   <div class="card border-left-primary shadow h-100 py-2">
     <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
       <i class="fa fa-arrow-left link"
          title='{% translate "Previous Month" %}'
-         hx-get="{% url 'bookkeeping:partial-cash-books-dashboard' %}{% querystring month=previous_month year=previous_year %}"
+         hx-get="{% url 'bookkeeping:partial-bank-accounts-dashboard' %}{% querystring month=previous_month year=previous_year %}"
          hx-swap="outerHTML"
-         hx-target="#cash_books_dashboard"></i>
+         hx-target="#bank_accounts_dashboard"></i>
       <h6 class="m-0 font-weight-bold text-primary">
-        {% translate "Cash Books" %}
+        {% translate "Bank Accounts" %}
       </h6>
       <i class="fa fa-arrow-right link"
          title='{% translate "Next Month" %}'
-         hx-get="{% url 'bookkeeping:partial-cash-books-dashboard' %}{% querystring month=next_month year=next_year %}"
+         hx-get="{% url 'bookkeeping:partial-bank-accounts-dashboard' %}{% querystring month=next_month year=next_year %}"
          hx-swap="outerHTML"
-         hx-target="#cash_books_dashboard"></i>
+         hx-target="#bank_accounts_dashboard"></i>
     </div>
     <div class="card-body">
       <table class="table table-hover">
         <thead>
           <th>
-            {% translate "Cash Book" %}
+            {% translate "Bank Account" %}
           </th>
           <th>
             {% translate "Balance" %} ({{ month|stringformat:"02d" }}/{{ year }})
@@ -31,18 +31,18 @@
           </th>
         </thead>
         <tbody>
-          {% for cash_book_summary in cash_books_summary %}
+          {% for bank_account_summary in bank_accounts_summary %}
             <tr>
               <td>
-                <a href="{% url 'bookkeeping:cash-book-transactions' cash_book_summary.slug %}{% querystring month=month year=year %}">
-                  {{ cash_book_summary.name }}
+                <a href="{% url 'bookkeeping:bank-account-transactions' bank_account_summary.slug %}{% querystring month=month year=year %}">
+                  {{ bank_account_summary.name }}
                 </a>
               </td>
-              <td {% if cash_book_summary.balance < 0 %}class="text-danger"{% endif %}>
-                {{ cash_book_summary.balance|money }}
+              <td {% if bank_account_summary.balance < 0 %}class="text-danger"{% endif %}>
+                {{ bank_account_summary.balance|money }}
               </td>
-              <td {% if cash_book_summary.overall_balance < 0 %}class="text-danger"{% endif %}>
-                {{ cash_book_summary.overall_balance|money }}
+              <td {% if bank_account_summary.overall_balance < 0 %}class="text-danger"{% endif %}>
+                {{ bank_account_summary.overall_balance|money }}
               </td>
             </tr>
           {% endfor %}

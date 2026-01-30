@@ -24,10 +24,12 @@ def make_membership_fee(modeladmin, request, queryset):
 
 
 @admin.action(description="Mark selected transactions as cash book transfer")
-def make_cash_book_transfer(modeladmin, request, queryset):
-    CASH_BOOK_TRANSFER = "Transferência entre livros-caixa"
-    cash_book_transfer, _ = Category.objects.get_or_create(name=CASH_BOOK_TRANSFER)
-    queryset.update(category=cash_book_transfer)
+def make_bank_account_transfer(modeladmin, request, queryset):
+    BANK_ACCOUNT_TRANSFER = "Transferência entre contas bancárias"
+    bank_account_transfer, _ = Category.objects.get_or_create(
+        name=BANK_ACCOUNT_TRANSFER
+    )
+    queryset.update(category=bank_account_transfer)
 
 
 @admin.action(description="Automatically categorize transactions")
@@ -73,7 +75,7 @@ class TransactionAdmin(admin.ModelAdmin):
     actions = [
         make_donation,
         make_membership_fee,
-        make_cash_book_transfer,
+        make_bank_account_transfer,
         categorize_transactions,
     ]
     list_display = [
@@ -82,16 +84,16 @@ class TransactionAdmin(admin.ModelAdmin):
         "description",
         "amount",
         "category",
-        "cash_book",
+        "bank_account",
         "tag_list",
     ]
     list_filter = [
-        "cash_book",
+        "bank_account",
         "category",
         "date",
     ]
     list_select_related = [
-        "cash_book",
+        "bank_account",
         "category",
     ]
     inlines = [

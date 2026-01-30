@@ -14,21 +14,21 @@ def _get_dashboard_context():
     overall_balance = Decimal("0")
 
     today = datetime.date.today()
-    cash_books_summary = BankAccount.objects.filter(active=True).summary(
+    bank_accounts_summary = BankAccount.objects.filter(active=True).summary(
         year=today.year, month=today.month
     )
-    for cash_book in cash_books_summary:
-        deposits += cash_book.deposits
-        withdraws += cash_book.withdraws
-        balance += cash_book.balance
-        overall_balance += cash_book.overall_balance
+    for bank_account in bank_accounts_summary:
+        deposits += bank_account.deposits
+        withdraws += bank_account.withdraws
+        balance += bank_account.balance
+        overall_balance += bank_account.overall_balance
 
     return {
         "deposits": deposits.quantize(Decimal(".01"), rounding=ROUND_UP),
         "withdraws": withdraws.quantize(Decimal(".01"), rounding=ROUND_UP),
         "balance": balance.quantize(Decimal(".01"), rounding=ROUND_UP),
         "overall_balance": overall_balance.quantize(Decimal(".01"), rounding=ROUND_UP),
-        "cash_books_summary": cash_books_summary,
+        "bank_accounts_summary": bank_accounts_summary,
         "today": today,
         "active_memberships": Membership.objects.filter(active=True).count(),
     }

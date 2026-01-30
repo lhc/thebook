@@ -19,7 +19,7 @@ class InvalidOFXFile(Exception):
 
 
 def import_transactions(
-    transactions_file, file_type, cash_book, user, start_date, end_date
+    transactions_file, file_type, bank_account, user, start_date, end_date
 ):
     importers = {
         "csv": CSVImporter,
@@ -33,7 +33,7 @@ def import_transactions(
         )
 
     try:
-        importer(transactions_file, cash_book, user).run(start_date, end_date)
+        importer(transactions_file, bank_account, user).run(start_date, end_date)
     except Exception as err:
         logger.exception(err)
         raise ImportTransactionsError(_("Something wrong happened during file import."))

@@ -13,8 +13,8 @@ from thebook.bookkeeping.models import BankAccount, Category, Transaction
 
 
 @pytest.fixture
-def cash_book():
-    return BankAccount.objects.create(name="Cash Book 1")
+def bank_account():
+    return BankAccount.objects.create(name="Bank Account 1")
 
 
 @pytest.fixture
@@ -22,16 +22,16 @@ def user():
     return baker.make(get_user_model())
 
 
-def test_raise_error_when_providing_invalid_ofx_file(db, cash_book, user):
+def test_raise_error_when_providing_invalid_ofx_file(db, bank_account, user):
     with pytest.raises(InvalidOFXFile):
         invalid_ofx_file = io.BytesIO(b"NOT_A_VALID_OFX")
-        ofx_importer = OFXImporter(invalid_ofx_file, cash_book, user)
+        ofx_importer = OFXImporter(invalid_ofx_file, bank_account, user)
 
 
-def test_cora_ofx_file_with_one_transaction(db, request, cash_book, user):
+def test_cora_ofx_file_with_one_transaction(db, request, bank_account, user):
     ofx_file_path = request.path.parent / "data" / "cora-one-transaction.ofx"
     with open(ofx_file_path, "r") as ofx_file:
-        ofx_importer = OFXImporter(ofx_file, cash_book, user)
+        ofx_importer = OFXImporter(ofx_file, bank_account, user)
 
         transactions = ofx_importer.run()
 
@@ -42,15 +42,15 @@ def test_cora_ofx_file_with_one_transaction(db, request, cash_book, user):
         assert transaction.description == "Debito em Conta"
         assert transaction.amount == decimal.Decimal("-2500.50")
         assert transaction.notes == ""
-        assert transaction.cash_book == cash_book
+        assert transaction.bank_account == bank_account
         assert transaction.created_by == user
         assert transaction.category is None
 
 
-def test_bradesco_ofx_file_with_one_transaction(db, request, cash_book, user):
+def test_bradesco_ofx_file_with_one_transaction(db, request, bank_account, user):
     ofx_file_path = request.path.parent / "data" / "bradesco-one-transaction.ofx"
     with open(ofx_file_path, "r") as ofx_file:
-        ofx_importer = OFXImporter(ofx_file, cash_book, user)
+        ofx_importer = OFXImporter(ofx_file, bank_account, user)
 
         transactions = ofx_importer.run()
 
@@ -61,15 +61,15 @@ def test_bradesco_ofx_file_with_one_transaction(db, request, cash_book, user):
         assert transaction.description == "PAGTO ELETRON  COBRANCA ALUGUEL"
         assert transaction.amount == decimal.Decimal("-1798.60")
         assert transaction.notes == ""
-        assert transaction.cash_book == cash_book
+        assert transaction.bank_account == bank_account
         assert transaction.created_by == user
         assert transaction.category is None
 
 
-def test_ofx_file_with_multiple_transactions(db, request, cash_book, user):
+def test_ofx_file_with_multiple_transactions(db, request, bank_account, user):
     ofx_file_path = request.path.parent / "data" / "cora-multiple-transactions.ofx"
     with open(ofx_file_path, "r") as ofx_file:
-        ofx_importer = OFXImporter(ofx_file, cash_book, user)
+        ofx_importer = OFXImporter(ofx_file, bank_account, user)
 
         transactions = ofx_importer.run()
 
@@ -89,10 +89,10 @@ def test_ofx_file_with_multiple_transactions(db, request, cash_book, user):
         assert references == expected_references
 
 
-def test_bradesco_ofx_file_with_multiple_transactions(db, request, cash_book, user):
+def test_bradesco_ofx_file_with_multiple_transactions(db, request, bank_account, user):
     ofx_file_path = request.path.parent / "data" / "bradesco-multiple-transactions.ofx"
     with open(ofx_file_path, "r") as ofx_file:
-        ofx_importer = OFXImporter(ofx_file, cash_book, user)
+        ofx_importer = OFXImporter(ofx_file, bank_account, user)
 
         transactions = ofx_importer.run()
 
@@ -101,26 +101,26 @@ def test_bradesco_ofx_file_with_multiple_transactions(db, request, cash_book, us
 
 
 def test_import_same_ofx_file_twice_will_not_duplicate_transactions(
-    db, request, cash_book, user
+    db, request, bank_account, user
 ):
     ofx_file_path = request.path.parent / "data" / "cora-multiple-transactions.ofx"
     with open(ofx_file_path, "r") as ofx_file:
-        ofx_importer = OFXImporter(ofx_file, cash_book, user)
+        ofx_importer = OFXImporter(ofx_file, bank_account, user)
         transactions = ofx_importer.run()
         assert Transaction.objects.all().count() == 5
 
     with open(ofx_file_path, "r") as ofx_file:
-        ofx_importer = OFXImporter(ofx_file, cash_book, user)
+        ofx_importer = OFXImporter(ofx_file, bank_account, user)
         transactions = ofx_importer.run()
         assert Transaction.objects.all().count() == 5
 
 
 def test_import_ofx_file_that_overlaps_other_already_imported_do_not_duplicate_transactions(
-    db, request, cash_book, user
+    db, request, bank_account, user
 ):
     ofx_file_path = request.path.parent / "data" / "cora-multiple-transactions.ofx"
     with open(ofx_file_path, "r") as ofx_file:
-        ofx_importer = OFXImporter(ofx_file, cash_book, user)
+        ofx_importer = OFXImporter(ofx_file, bank_account, user)
         _ = ofx_importer.run()
         assert Transaction.objects.all().count() == 5
 
@@ -128,7 +128,7 @@ def test_import_ofx_file_that_overlaps_other_already_imported_do_not_duplicate_t
         request.path.parent / "data" / "cora-multiple-transactions-extended.ofx"
     )
     with open(ofx_file_path, "r") as ofx_file:
-        ofx_importer = OFXImporter(ofx_file, cash_book, user)
+        ofx_importer = OFXImporter(ofx_file, bank_account, user)
         transactions = ofx_importer.run()
     assert Transaction.objects.all().count() == 7
 
@@ -150,11 +150,11 @@ def test_import_ofx_file_that_overlaps_other_already_imported_do_not_duplicate_t
 
 
 def test_ofx_file_with_multiple_transactions_filter_by_start_date(
-    db, request, cash_book, user
+    db, request, bank_account, user
 ):
     ofx_file_path = request.path.parent / "data" / "cora-multiple-transactions.ofx"
     with open(ofx_file_path, "r") as ofx_file:
-        ofx_importer = OFXImporter(ofx_file, cash_book, user)
+        ofx_importer = OFXImporter(ofx_file, bank_account, user)
 
         transactions = ofx_importer.run(start_date=datetime.date(2024, 8, 25))
 
@@ -172,11 +172,11 @@ def test_ofx_file_with_multiple_transactions_filter_by_start_date(
 
 
 def test_ofx_file_with_multiple_transactions_filter_by_end_date(
-    db, request, cash_book, user
+    db, request, bank_account, user
 ):
     ofx_file_path = request.path.parent / "data" / "cora-multiple-transactions.ofx"
     with open(ofx_file_path, "r") as ofx_file:
-        ofx_importer = OFXImporter(ofx_file, cash_book, user)
+        ofx_importer = OFXImporter(ofx_file, bank_account, user)
 
         transactions = ofx_importer.run(end_date=datetime.date(2024, 8, 25))
 
@@ -193,11 +193,11 @@ def test_ofx_file_with_multiple_transactions_filter_by_end_date(
 
 
 def test_ofx_file_with_multiple_transactions_filter_by_start_date_and_end_date(
-    db, request, cash_book, user
+    db, request, bank_account, user
 ):
     ofx_file_path = request.path.parent / "data" / "cora-multiple-transactions.ofx"
     with open(ofx_file_path, "r") as ofx_file:
-        ofx_importer = OFXImporter(ofx_file, cash_book, user)
+        ofx_importer = OFXImporter(ofx_file, bank_account, user)
 
         transactions = ofx_importer.run(
             start_date=datetime.date(2024, 8, 24), end_date=datetime.date(2024, 9, 15)
@@ -244,11 +244,11 @@ def test_ofx_file_with_multiple_transactions_filter_by_start_date_and_end_date(
     ],
 )
 def test_ofx_file_ignoring_transactions_by_exact_description(
-    db, request, cash_book, user, ignored_memos, expected_references
+    db, request, bank_account, user, ignored_memos, expected_references
 ):
     ofx_file_path = request.path.parent / "data" / "bradesco-with-memos-to-ignore.ofx"
     with open(ofx_file_path, "r") as ofx_file:
-        ofx_importer = OFXImporter(ofx_file, cash_book, user)
+        ofx_importer = OFXImporter(ofx_file, bank_account, user)
 
         transactions = ofx_importer.run(ignored_memos=ignored_memos)
 
@@ -284,14 +284,14 @@ def test_ofx_file_ignoring_transactions_by_exact_description(
     ],
 )
 def test_use_default_list_of_ignored_descriptions_if_not_provided(
-    db, request, cash_book, user, default_ignored_memos, expected_references, mocker
+    db, request, bank_account, user, default_ignored_memos, expected_references, mocker
 ):
     mocker.patch(
         "thebook.bookkeeping.importers.ofx.DEFAULT_IGNORED_MEMOS", default_ignored_memos
     )
     ofx_file_path = request.path.parent / "data" / "bradesco-with-memos-to-ignore.ofx"
     with open(ofx_file_path, "r") as ofx_file:
-        ofx_importer = OFXImporter(ofx_file, cash_book, user)
+        ofx_importer = OFXImporter(ofx_file, bank_account, user)
 
         transactions = ofx_importer.run()
 
@@ -302,10 +302,10 @@ def test_use_default_list_of_ignored_descriptions_if_not_provided(
 @pytest.mark.xfail(
     reason="current version of ofxparser does not process UTF-8 characters correctly"
 )
-def test_utf_8_transactions_content(db, request, cash_book, user):
+def test_utf_8_transactions_content(db, request, bank_account, user):
     ofx_file_path = request.path.parent / "data" / "ofx-utf-8.ofx"
     with open(ofx_file_path, "r") as ofx_file:
-        ofx_importer = OFXImporter(ofx_file, cash_book, user)
+        ofx_importer = OFXImporter(ofx_file, bank_account, user)
 
         transactions = ofx_importer.run()
 

@@ -14,12 +14,12 @@ from django.utils.functional import SimpleLazyObject
 
 from thebook.bookkeeping.importers import ImportTransactionsError
 from thebook.bookkeeping.models import BankAccount, Transaction
-from thebook.bookkeeping.views import _get_cash_book_transactions_context
+from thebook.bookkeeping.views import _get_bank_account_transactions_context
 
 
 @pytest.fixture
-def cash_book():
-    return BankAccount.objects.create(name="Cash Book 1")
+def bank_account():
+    return BankAccount.objects.create(name="Bank Account 1")
 
 
 @pytest.fixture
@@ -28,14 +28,14 @@ def user():
 
 
 def test_unauthenticated_access_to_cb_import_transactions_not_allowed(
-    db, client, mocker, cash_book
+    db, client, mocker, bank_account
 ):
     import_transactions_mock = mocker.patch(
         "thebook.bookkeeping.views.import_transactions"
     )
 
     import_url = reverse(
-        "bookkeeping:cash-book-import-transactions", args=(cash_book.slug,)
+        "bookkeeping:bank-account-import-transactions", args=(bank_account.slug,)
     )
 
     response = client.post(
@@ -52,7 +52,7 @@ def test_unauthenticated_access_to_cb_import_transactions_not_allowed(
 
 
 def test_allowed_access_to_cb_import_transactions_authenticated(
-    db, client, mocker, user, cash_book
+    db, client, mocker, user, bank_account
 ):
     import_transactions_mock = mocker.patch(
         "thebook.bookkeeping.views.import_transactions"
@@ -61,9 +61,11 @@ def test_allowed_access_to_cb_import_transactions_authenticated(
     client.force_login(user)
 
     import_url = reverse(
-        "bookkeeping:cash-book-import-transactions", args=(cash_book.slug,)
+        "bookkeeping:bank-account-import-transactions", args=(bank_account.slug,)
     )
-    next_url = reverse("bookkeeping:cash-book-transactions", args=(cash_book.slug,))
+    next_url = reverse(
+        "bookkeeping:bank-account-transactions", args=(bank_account.slug,)
+    )
 
     response = client.post(
         import_url,
@@ -78,7 +80,7 @@ def test_allowed_access_to_cb_import_transactions_authenticated(
     assert response.url == next_url
 
 
-def test_not_found_with_invalid_cash_book_slug(db, client, mocker, user):
+def test_not_found_with_invalid_bank_account_slug(db, client, mocker, user):
     import_transactions_mock = mocker.patch(
         "thebook.bookkeeping.views.import_transactions"
     )
@@ -86,7 +88,8 @@ def test_not_found_with_invalid_cash_book_slug(db, client, mocker, user):
     client.force_login(user)
 
     import_url = reverse(
-        "bookkeeping:cash-book-import-transactions", args=("not-a-valid-cash-book",)
+        "bookkeeping:bank-account-import-transactions",
+        args=("not-a-valid-bank-account",),
     )
 
     response = client.post(
@@ -101,7 +104,7 @@ def test_not_found_with_invalid_cash_book_slug(db, client, mocker, user):
 
 
 def test_import_transactions_csv_called_when_provided_valid_data(
-    db, client, mocker, user, cash_book
+    db, client, mocker, user, bank_account
 ):
     import_transactions_mock = mocker.patch(
         "thebook.bookkeeping.views.import_transactions"
@@ -110,9 +113,11 @@ def test_import_transactions_csv_called_when_provided_valid_data(
     client.force_login(user)
 
     import_url = reverse(
-        "bookkeeping:cash-book-import-transactions", args=(cash_book.slug,)
+        "bookkeeping:bank-account-import-transactions", args=(bank_account.slug,)
     )
-    next_url = reverse("bookkeeping:cash-book-transactions", args=(cash_book.slug,))
+    next_url = reverse(
+        "bookkeeping:bank-account-transactions", args=(bank_account.slug,)
+    )
     file_type = "csv"
 
     response = client.post(
@@ -128,7 +133,7 @@ def test_import_transactions_csv_called_when_provided_valid_data(
 
 
 def test_import_transactions_add_error_message_when_failed(
-    db, client, mocker, user, cash_book
+    db, client, mocker, user, bank_account
 ):
     expected_error_message = "An error happened."
     import_transactions_mock = mocker.patch(
@@ -139,9 +144,11 @@ def test_import_transactions_add_error_message_when_failed(
     client.force_login(user)
 
     import_url = reverse(
-        "bookkeeping:cash-book-import-transactions", args=(cash_book.slug,)
+        "bookkeeping:bank-account-import-transactions", args=(bank_account.slug,)
     )
-    next_url = reverse("bookkeeping:cash-book-transactions", args=(cash_book.slug,))
+    next_url = reverse(
+        "bookkeeping:bank-account-transactions", args=(bank_account.slug,)
+    )
     file_type = "csv"
 
     response = client.post(

@@ -6,14 +6,14 @@ app_name = "bookkeeping"
 
 urlpatterns = [
     path(
-        "cb/<slug:cash_book_slug>/transactions",
-        views.cash_book_transactions,
-        name="cash-book-transactions",
+        "cb/<slug:bank_account_slug>/transactions",
+        views.bank_account_transactions,
+        name="bank-account-transactions",
     ),
     path(
-        "cb/<slug:cash_book_slug>/transactions/import",
-        views.cash_book_import_transactions,
-        name="cash-book-import-transactions",
+        "cb/<slug:bank_account_slug>/transactions/import",
+        views.bank_account_import_transactions,
+        name="bank-account-import-transactions",
     ),
     path(
         "transaction/upload",
@@ -27,7 +27,7 @@ urlpatterns = [
     ),
     path(
         "partial/cb/dashboard",
-        views.partial_cash_books_dashboard,
-        name="partial-cash-books-dashboard",
+        views.partial_bank_accounts_dashboard,
+        name="partial-bank-accounts-dashboard",
     ),
 ]
