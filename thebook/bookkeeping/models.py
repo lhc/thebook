@@ -234,7 +234,11 @@ class Transaction(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     bank_account = models.ForeignKey(
-        "bookkeeping.BankAccount", on_delete=models.SET_NULL, null=True
+        "bookkeeping.BankAccount",
+        on_delete=models.SET_NULL,
+        related_name="transactions",
+        related_query_name="transaction",
+        null=True,
     )
     category = models.ForeignKey(
         "bookkeeping.Category", on_delete=models.SET_NULL, null=True
