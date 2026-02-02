@@ -60,7 +60,7 @@ class BankAccount(models.Model):
         if not _valid_year_and_month(month, year):
             raise ValueError("Invalid 'month' and 'year' arguments")
 
-        transactions = self.transaction_set.all()
+        transactions = self.transactions.all()
 
         overall_balance = (
             transactions.aggregate(overall_balance=Sum("amount")).get("overall_balance")

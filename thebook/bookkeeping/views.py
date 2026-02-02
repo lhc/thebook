@@ -79,7 +79,7 @@ def _get_bank_account_transactions_context(bank_account, *, year=None, month=Non
     if month is not None:
         month = int(month)
 
-    transactions = bank_account.transaction_set.select_related(
+    transactions = bank_account.transactions.select_related(
         "category"
     ).prefetch_related("documents")
     if year:
