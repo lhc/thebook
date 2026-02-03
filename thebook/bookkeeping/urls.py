@@ -6,6 +6,11 @@ app_name = "bookkeeping"
 
 urlpatterns = [
     path(
+        "bank_account/<slug:bank_account_slug>",
+        views.BankAccountView.as_view(),
+        name="bank-account",
+    ),
+    path(
         "cb/<slug:bank_account_slug>/transactions",
         views.bank_account_transactions,
         name="bank-account-transactions",

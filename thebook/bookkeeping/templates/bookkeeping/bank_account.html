@@ -1,0 +1,88 @@
+{% extends "base/main.html" %}
+
+{% load currency i18n %}
+
+{% block content %}
+
+<div class="row">
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-success shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+              {% translate "Deposits (selected period)" %}
+            </div>
+            <div class="h5 mb-0 font-weight-bold {% if bank_account.deposits < 0 %}text-danger{% else %}text-gray-800{% endif %}">
+              {{ bank_account.deposits|money }}
+            </div>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-danger shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+              {% translate "Withdraws (selected period)" %}
+            </div>
+            <div class="h5 mb-0 font-weight-bold {% if bank_account.withdraws < 0 %}text-danger{% else %}text-gray-800{% endif %}">
+              {{ bank_account.withdraws|money }}
+            </div>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-primary shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+              {% translate "Balance (selected_period)" %}
+            </div>
+            <div class="h5 mb-0 font-weight-bold {% if bank_account.balance < 0 %}text-danger{% else %}text-gray-800{% endif %}">
+              {{ bank_account.balance|money }}
+            </div>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-university fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-primary shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row no-gutters align-items-center">
+          <div class="col mr-2">
+            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+              {% translate "Overall Balance" %}
+            </div>
+            <div class="h5 mb-0 font-weight-bold {% if bank_account.overall_balance < 0 %}text-danger{% else %}text-gray-800{% endif %}">
+              {{ bank_account.overall_balance|money }}
+            </div>
+          </div>
+          <div class="col-auto">
+            <i class="fas fa-university fa-2x text-gray-300"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+{% endblock content %}

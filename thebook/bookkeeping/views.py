@@ -1,3 +1,4 @@
+import calendar
 import csv
 import datetime
 
@@ -5,6 +6,7 @@ from django.contrib import messages
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.utils.translation import gettext as _
+from django.views import View
 
 from thebook.bookkeeping.importers import ImportTransactionsError, import_transactions
 from thebook.bookkeeping.models import BankAccount, Document, Transaction
@@ -205,3 +207,38 @@ def partial_bank_accounts_dashboard(request):
             "year": int(year),
         },
     )
+
+
+class BankAccountView(View):
+    def get(self, request, bank_account_slug):
+        bank_account = get_object_or_404(
+            BankAccount,
+            slug=bank_account_slug,
+        )
+
+        start_date = request.GET.get("start_date")
+        end_date = request.GET.get("end_date")
+        if start_date is None or end_date is None:
+            today = datetime.date.today()
+            current_month = today.month
+            current_year = today.year
+            start_date = datetime.date(current_year, current_month, 1)
+            _, last_day_of_month = calendar.monthrange(current_year, current_month)
+            end_date = datetime.date(
+                current_year, current_month, last_day_of_month
+            ) + datetime.timedelta(days=1)
+
+        transactions = bank_account.transactions.within_period(
+            start_date=start_date, end_date=end_date
+        )
+
+        return render(
+            request,
+            "bookkeeping/bank_account.html",
+            context={
+                "bank_account": bank_account,
+                "start_date": start_date,
+                "end_date": end_date,
+                "transactions": transactions,
+            },
+        )
