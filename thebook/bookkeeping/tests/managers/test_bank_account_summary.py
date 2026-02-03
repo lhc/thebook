@@ -304,3 +304,33 @@ def test_bank_accounts_summary_value_error_if_valid_month_provided_without_year(
 ):
     with pytest.raises(ValueError):
         bank_account_summary = BankAccount.objects.summary(month=month)
+
+
+def test_bank_accounts_summary_for_period(db):
+    bank_account = BankAccount.objects.create(name="Test Bank Account")
+    start_date = datetime.date(2026, 2, 3)
+    end_date = datetime.date(2026, 3, 15)
+
+    # fmt: off
+    baker.make(Transaction, bank_account=bank_account, date=datetime.date(2025, 12, 31), amount=Decimal("15.5"))
+    baker.make(Transaction, bank_account=bank_account, date=datetime.date(2026, 1, 10), amount=Decimal("-16.5"))
+    baker.make(Transaction, bank_account=bank_account, date=datetime.date(2026, 2, 2), amount=Decimal("300.26"))
+    baker.make(Transaction, bank_account=bank_account, date=datetime.date(2026, 2, 3), amount=Decimal("42.87"))
+    baker.make(Transaction, bank_account=bank_account, date=datetime.date(2026, 2, 16), amount=Decimal("-25.5"))
+    baker.make(Transaction, bank_account=bank_account, date=datetime.date(2026, 3, 15), amount=Decimal("-26.73"))
+    baker.make(Transaction, bank_account=bank_account, date=datetime.date(2026, 3, 16), amount=Decimal("-100.37"))
+    # fmt: on
+
+    bank_accounts = BankAccount.objects.with_summary(
+        start_date=start_date, end_date=end_date
+    )
+
+    assert bank_accounts.count() == 1
+
+    assert bank_accounts[0].id == bank_account.id
+    assert bank_accounts[0].incomes == Decimal("42.87")
+    assert bank_accounts[0].expenses == Decimal("-25.5")
+    assert bank_accounts[0].period_balance == Decimal("17.37")
+    assert bank_accounts[0].overall_balance == Decimal("189.53")
+    assert bank_accounts[0].summary_start_date == start_date
+    assert bank_accounts[0].summary_end_date == end_date

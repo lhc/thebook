@@ -3,10 +3,51 @@ import decimal
 from dataclasses import dataclass
 
 from django.db import models
-from django.db.models import Exists, IntegerField, OuterRef, Q, Sum, Value
+from django.db.models import DateField, Exists, IntegerField, OuterRef, Q, Sum, Value
 
 
 class BankAccountQuerySet(models.QuerySet):
+
+    def with_summary(self, start_date, end_date):
+        incomes_filters = {
+            "transaction__amount__gte": 0,
+            "transaction__date__gte": start_date,
+            "transaction__date__lt": end_date,
+        }
+        expenses_filters = {
+            "transaction__amount__lt": 0,
+            "transaction__date__gte": start_date,
+            "transaction__date__lt": end_date,
+        }
+        period_balance_filter = {
+            "transaction__date__gte": start_date,
+            "transaction__date__lt": end_date,
+        }
+
+        return self.annotate(
+            incomes=Sum(
+                "transaction__amount",
+                filter=Q(**incomes_filters),
+                default=decimal.Decimal("0"),
+            ),
+            expenses=Sum(
+                "transaction__amount",
+                filter=Q(**expenses_filters),
+                default=decimal.Decimal("0"),
+            ),
+            period_balance=Sum(
+                "transaction__amount",
+                filter=Q(**period_balance_filter),
+                default=decimal.Decimal("0"),
+            ),
+            overall_balance=Sum(
+                "transaction__amount",
+                default=decimal.Decimal("0"),
+            ),
+            summary_start_date=Value(start_date, output_field=DateField()),
+            summary_end_date=Value(end_date, output_field=DateField()),
+        )
+
     def summary(self, *, year=None, month=None):
         def _valid_year_and_month(month, year):
             if month is not None:
