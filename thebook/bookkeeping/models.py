@@ -8,6 +8,7 @@ from taggit.managers import TaggableManager
 from django.conf import settings
 from django.db import models
 from django.db.models import Sum
+from django.urls import reverse
 from django.utils.text import slugify
 from django.utils.translation import gettext as _
 
@@ -40,6 +41,9 @@ class BankAccount(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse("bookkeeping:bank-account", args=(self.slug,))
 
     def save(self, *args, **kwargs):
         if not self.slug:

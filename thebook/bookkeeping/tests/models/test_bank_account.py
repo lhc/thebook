@@ -4,6 +4,7 @@ from decimal import Decimal
 import pytest
 from model_bakery import baker
 
+from django.urls import reverse
 from django.utils.text import slugify
 
 from thebook.bookkeeping.models import BankAccount, Transaction
@@ -36,6 +37,12 @@ def test_set_bank_account_slug_based_in_name_if_not_provided(db, bank_account_na
     bank_account.save()
 
     assert bank_account.slug == slugify(bank_account_name)
+
+
+def test_bank_account_get_absolute_url(db, bank_account):
+    assert (
+        bank_account.get_absolute_url() == "/bookkeeping/bank_account/test-bank-account"
+    )
 
 
 def test_bank_account_summary(db, bank_account):
