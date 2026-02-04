@@ -228,3 +228,24 @@ def test_returns_bank_account_transactions_current_month_if_missing_end_date(
     assert t_3 in response.context["transactions"]
     assert t_4 in response.context["transactions"]
     assert t_5 not in response.context["transactions"]
+
+
+@pytest.mark.freeze_time("2026-02-03")
+def test_bank_account_has_summary_in_context(db, client, bank_account, user):
+    client.force_login(user)
+
+    bank_account_url = reverse(
+        "bookkeeping:bank-account",
+        args=(bank_account.slug,),
+    )
+
+    response = client.get(bank_account_url)
+
+    assert "bank_account" in response.context
+
+    assert hasattr(response.context["bank_account"], "incomes")
+    assert hasattr(response.context["bank_account"], "expenses")
+    assert hasattr(response.context["bank_account"], "period_balance")
+    assert hasattr(response.context["bank_account"], "overall_balance")
+    assert hasattr(response.context["bank_account"], "summary_start_date")
+    assert hasattr(response.context["bank_account"], "summary_end_date")

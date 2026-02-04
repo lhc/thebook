@@ -211,11 +211,6 @@ def partial_bank_accounts_dashboard(request):
 
 class BankAccountView(View):
     def get(self, request, bank_account_slug):
-        bank_account = get_object_or_404(
-            BankAccount,
-            slug=bank_account_slug,
-        )
-
         start_date = request.GET.get("start_date")
         end_date = request.GET.get("end_date")
         if start_date is None or end_date is None:
@@ -228,8 +223,17 @@ class BankAccountView(View):
                 current_year, current_month, last_day_of_month
             ) + datetime.timedelta(days=1)
 
-        transactions = bank_account.transactions.within_period(
-            start_date=start_date, end_date=end_date
+        bank_account = get_object_or_404(
+            BankAccount.objects.with_summary(start_date=start_date, end_date=end_date),
+            slug=bank_account_slug,
+        )
+
+        transactions = (
+            bank_account.transactions.within_period(
+                start_date=start_date, end_date=end_date
+            )
+            .select_related("category")
+            .prefetch_related("documents")
         )
 
         return render(
