@@ -1,0 +1,291 @@
+{% extends "base/main.html" %}
+
+{% block content %}
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+  <div>
+    <h1 class="h3 mb-0 text-gray-800">
+      {{ fornecedor.nome }}
+    </h1>
+    <p class="text-muted mt-2 mb-0">
+      Última atualização em {{ fornecedor.atualizado_em|date:"d/m/Y H:i" }}.
+    </p>
+  </div>
+  <div class="btn-group">
+    <a class="btn btn-secondary" href="{% url 'fornecedores:listar' %}">
+      <i class="fas fa-arrow-left mr-1"></i>
+      Voltar
+    </a>
+    <a class="btn btn-primary" href="{% url 'fornecedores:editar' fornecedor.id %}">
+      <i class="fas fa-edit mr-1"></i>
+      Editar
+    </a>
+    <a class="btn btn-danger" href="{% url 'fornecedores:excluir' fornecedor.id %}">
+      <i class="fas fa-trash-alt mr-1"></i>
+      Excluir
+    </a>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-4 mb-4">
+    <div class="card shadow h-100 border-left-primary">
+      <div class="card-body text-center">
+        <div class="icon-circle bg-primary mb-3">
+          <i class="fas fa-industry text-white"></i>
+        </div>
+        <h5 class="font-weight-bold">{{ fornecedor.nome }}</h5>
+        <p class="text-muted mb-1">
+          {% if fornecedor.documento %}
+          <i class="fas fa-id-card mr-1"></i>{{ fornecedor.documento }}
+          {% else %}
+          Documento não informado
+          {% endif %}
+        </p>
+        {% if fornecedor.ativo %}
+        <span class="badge badge-success">Fornecedor ativo</span>
+        {% else %}
+        <span class="badge badge-secondary">Fornecedor inativo</span>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-8 mb-4">
+    <div class="card shadow-sm border-left-info mb-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-info">
+          <i class="fas fa-address-book mr-2"></i>Contato
+        </h6>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <p class="mb-2 text-muted text-uppercase small">E-mail</p>
+            <p>
+              {% if fornecedor.email %}
+              <a href="mailto:{{ fornecedor.email }}">{{ fornecedor.email }}</a>
+              {% else %}
+              Não informado
+              {% endif %}
+            </p>
+          </div>
+          <div class="col-md-6">
+            <p class="mb-2 text-muted text-uppercase small">Telefone</p>
+            <p>{{ fornecedor.telefone|default:"Não informado" }}</p>
+          </div>
+          <div class="col-md-12">
+            <p class="mb-2 text-muted text-uppercase small">Site</p>
+            {% if fornecedor.site %}
+            <a href="{{ fornecedor.site }}" target="_blank" rel="noopener">
+              {{ fornecedor.site }}
+            </a>
+            {% else %}
+            <p>Não informado</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card shadow-sm border-left-warning">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-warning">
+          <i class="fas fa-sticky-note mr-2"></i>Notas e observações
+        </h6>
+      </div>
+      <div class="card-body">
+        {% if fornecedor.observacoes %}
+        <p class="mb-0">{{ fornecedor.observacoes|linebreaks }}</p>
+        {% else %}
+        <p class="text-muted mb-0">Nenhuma observação cadastrada até o momento.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="card shadow-sm border-left-success">
+      <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <h6 class="m-0 font-weight-bold text-success">
+          <i class="fas fa-box mr-2"></i>Histórico de entregas
+        </h6>
+        <a class="btn btn-success btn-sm" href="{% url 'fornecedores:entrega-criar' fornecedor.id %}">
+          <i class="fas fa-plus mr-1"></i> Registrar entrega
+        </a>
+      </div>
+      <div class="card-body">
+        {% if entregas %}
+        <div class="table-responsive">
+          <table class="table table-sm table-striped">
+            <thead class="text-muted small text-uppercase">
+              <tr>
+                <th>Título</th>
+                <th>Data</th>
+                <th>Qualidade</th>
+                <th>Valor</th>
+                <th class="text-center">Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for entrega in entregas %}
+              <tr>
+                <td>
+                  <strong>{{ entrega.titulo }}</strong>
+                  <div class="text-muted small">{{ entrega.descricao|truncatechars:80 }}</div>
+                </td>
+                <td>{{ entrega.data_entrega|date:"d/m/Y" }}</td>
+                <td>
+                  {% if entrega.qualidade == 1 %}
+                  <span class="badge badge-success">Excelente</span>
+                  {% elif entrega.qualidade == 2 %}
+                  <span class="badge badge-primary">Boa</span>
+                  {% elif entrega.qualidade == 3 %}
+                  <span class="badge badge-warning">Regular</span>
+                  {% else %}
+                  <span class="badge badge-danger">Ruim</span>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if entrega.valor_estimado %}
+                  R$ {{ entrega.valor_estimado }}
+                  {% else %}
+                  —
+                  {% endif %}
+                </td>
+                <td class="text-center">
+                  <div class="btn-group btn-group-sm">
+                    <a class="btn btn-outline-primary"
+                      href="{% url 'fornecedores:entrega-editar' fornecedor.id entrega.id %}">
+                      <i class="fas fa-edit"></i>
+                    </a>
+                    <a class="btn btn-outline-danger"
+                      href="{% url 'fornecedores:entrega-excluir' fornecedor.id entrega.id %}">
+                      <i class="fas fa-trash-alt"></i>
+                    </a>
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <p class="text-muted mb-0">
+          Nenhuma entrega registrada ainda. Use o botão “Registrar entrega” para criar o primeiro registro.
+        </p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-lg-12 mb-4">
+    <div class="card shadow-sm border-left-secondary">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-secondary">
+          <i class="fas fa-money-bill-wave mr-2"></i>Histórico financeiro (Transações)
+        </h6>
+      </div>
+      <div class="card-body">
+        {% if transactions %}
+        <div class="table-responsive">
+          <table class="table table-sm table-hover" id="transactions-table">
+            <thead class="text-muted small text-uppercase">
+              <tr>
+                <th style="width: 5%">#</th>
+                <th>Data</th>
+                <th>Descrição</th>
+                <th>Categoria</th>
+                <th class="text-right">Valor</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for transaction in transactions %}
+              <tr class="transaction-row" data-transaction-id="{{ transaction.id }}">
+                <td class="align-middle">
+                  <button class="btn btn-sm btn-link font-weight-bold p-0 toggle-details"
+                    data-url="{% url 'bookkeeping:partial-transaction-details' transaction.id %}">
+                    {{ transaction.id }}
+                  </button>
+                </td>
+                <td class="align-middle">{{ transaction.date|date:"d/m/Y" }}</td>
+                <td class="align-middle">
+                  <strong>{{ transaction.description }}</strong>
+                  {% if transaction.notes %}
+                  <br><small class="text-muted">{{ transaction.notes|truncatechars:60 }}</small>
+                  {% endif %}
+                </td>
+                <td class="align-middle">
+                  {% if transaction.category %}
+                  <span class="badge badge-light border">{{ transaction.category.name }}</span>
+                  {% else %}
+                  <span class="text-muted small">—</span>
+                  {% endif %}
+                </td>
+                <td
+                  class="align-middle text-right {% if transaction.amount < 0 %}text-danger{% else %}text-success{% endif %}">
+                  R$ {{ transaction.amount }}
+                </td>
+              </tr>
+              <tr class="detail-row d-none" id="detail-{{ transaction.id }}">
+                <td colspan="5" class="bg-light p-3">
+                  <div class="text-center text-muted spinner">
+                    <i class="fas fa-spinner fa-spin"></i> Carregando detalhes...
+                  </div>
+                  <div class="content"></div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <p class="text-muted mb-0">
+          Nenhuma transação financeira vinculada a este fornecedor.
+        </p>
+        {% endif %}
+
+        <div class="mt-4">
+          <a href="{% url 'fornecedores:vincular-transacoes' fornecedor.id %}" class="btn btn-primary btn-sm">
+            <i class="fas fa-link mr-1"></i> Vincular Transações Existentes
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block js_scripts %}
+<script>
+  $(document).ready(function () {
+    $('.toggle-details').on('click', function (e) {
+      e.preventDefault();
+      const btn = $(this);
+      const url = btn.data('url');
+      const tr = btn.closest('tr');
+      const detailRow = tr.next('.detail-row');
+      const contentDiv = detailRow.find('.content');
+      const spinner = detailRow.find('.spinner');
+
+      // Toggle visibility
+      if (!detailRow.hasClass('d-none')) {
+        detailRow.addClass('d-none');
+        return;
+      }
+
+      detailRow.removeClass('d-none');
+
+      // Load content if not loaded yet
+      if (contentDiv.is(':empty')) {
+        spinner.show();
+        $.get(url, function (data) {
+          contentDiv.html(data);
+          spinner.hide();
+        }).fail(function () {
+          contentDiv.html('<div class="text-danger">Erro ao carregar detalhes.</div>');
+          spinner.hide();
+        });
+      }
+    });
+  });
+</script>
+{% endblock js_scripts %}

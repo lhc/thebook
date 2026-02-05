@@ -110,6 +110,7 @@ INSTALLED_APPS = [
     "thebook.reimbursements",
     "thebook.users",
     "thebook.webhooks",
+    "thebook.fornecedores",
     "debug_toolbar",
 ]
 

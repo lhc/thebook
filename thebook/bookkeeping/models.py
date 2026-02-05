@@ -252,6 +252,15 @@ class Transaction(models.Model):
         on_delete=models.PROTECT,
     )
 
+    fornecedor = models.ForeignKey(
+        "fornecedores.Fornecedor",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name="Fornecedor",
+        related_name="transactions",
+    )
+
     tags = TaggableManager(blank=True)
 
     objects = TransactionQuerySet.as_manager()

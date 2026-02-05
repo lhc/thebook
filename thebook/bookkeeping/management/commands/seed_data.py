@@ -11,6 +11,7 @@ from thebook.bookkeeping.models import (
     CategoryMatchRule,
     Transaction,
 )
+from thebook.fornecedores.models import Fornecedor
 from thebook.members.models import (
     FeeIntervals,
     FeePaymentStatus,
@@ -38,6 +39,36 @@ CASH_BOOKS_DATA = [
     },
 ]
 
+# Fornecedores
+SUPPLIERS_DATA = [
+    {
+        "nome": "Imobiliária Campinas",
+        "observacoes": "Responsável pelo aluguel do espaço.",
+    },
+    {
+        "nome": "CPFL Paulista",
+        "observacoes": "Concessionária de energia.",
+    },
+    {
+        "nome": "Vivo Empresas",
+        "observacoes": "Provedor de internet fibra.",
+    },
+    {
+        "nome": "SANASA",
+        "observacoes": "Fornecimento de água e esgoto.",
+    },
+    {
+        "nome": "Kalunga",
+        "observacoes": "Material de escritório e limpeza.",
+    },
+    {
+        "nome": "Lojas Mila",
+        "observacoes": "Confecção de camisetas e brindes.",
+        "telefone": "(19) 3333-4444",
+        "site": "https://lojasmila.com.br",
+    },
+]
+
 # Membros
 MEMBERS_DATA = [
     {
@@ -45,56 +76,56 @@ MEMBERS_DATA = [
         "email": "ana.silva@lhc.net.br",
         "phone": "(19) 99911-2233",
         "has_key": True,
-        "start_date": "2023-06-01",
+        "start_date": "2026-06-01",
     },
     {
         "name": "Bruno Oliveira Santos",
         "email": "bruno.santos@lhc.net.br",
         "phone": "(19) 99922-3344",
         "has_key": True,
-        "start_date": "2023-07-15",
+        "start_date": "2026-07-15",
     },
     {
         "name": "Carlos Eduardo Lima",
         "email": "carlos.lima@lhc.net.br",
         "phone": "(19) 99933-4455",
         "has_key": False,
-        "start_date": "2023-08-01",
+        "start_date": "2026-01-01",
     },
     {
         "name": "Daniela Rodrigues",
         "email": "daniela.rodrigues@lhc.net.br",
         "phone": "(19) 99944-5566",
         "has_key": True,
-        "start_date": "2023-09-10",
+        "start_date": "2026-09-10",
     },
     {
         "name": "Eduardo Ferreira Costa",
         "email": "eduardo.costa@lhc.net.br",
         "phone": "(19) 99955-6677",
         "has_key": False,
-        "start_date": "2023-10-05",
+        "start_date": "2026-10-05",
     },
     {
         "name": "Fernanda Alves",
         "email": "fernanda.alves@lhc.net.br",
         "phone": "(19) 99966-7788",
         "has_key": True,
-        "start_date": "2023-11-20",
+        "start_date": "2026-11-20",
     },
     {
         "name": "Gabriel Martins",
         "email": "gabriel.martins@lhc.net.br",
         "phone": "(19) 99977-8899",
         "has_key": False,
-        "start_date": "2024-01-01",
+        "start_date": "2026-01-01",
     },
     {
         "name": "Helena Pereira",
         "email": "helena.pereira@lhc.net.br",
         "phone": "(19) 99988-9900",
         "has_key": True,
-        "start_date": "2024-01-15",
+        "start_date": "2026-01-15",
     },
 ]
 
@@ -150,200 +181,227 @@ CATEGORIZATION_RULES = [
     },
 ]
 
-# Transações de Janeiro 2024
+# Transações de Janeiro 2026
 JANUARY_TRANSACTIONS = [
     # MENSALIDADES
     {
-        "date": "2024-01-05",
+        "date": "2026-01-05",
         "description": "PIX - Mensalidade Ana Carolina Silva",
         "amount": 89.00,
     },
     {
-        "date": "2024-01-07",
+        "date": "2026-01-07",
         "description": "PIX - Mensalidade Bruno Oliveira Santos",
         "amount": 89.00,
     },
     {
-        "date": "2024-01-10",
+        "date": "2026-01-10",
         "description": "PIX - Mensalidade Carlos Eduardo Lima",
         "amount": 89.00,
     },
     {
-        "date": "2024-01-12",
+        "date": "2026-01-12",
         "description": "PIX - Mensalidade Daniela Rodrigues",
         "amount": 89.00,
     },
     {
-        "date": "2024-01-15",
+        "date": "2026-01-15",
         "description": "PIX - Mensalidade Eduardo Ferreira Costa",
         "amount": 89.00,
     },
     {
-        "date": "2024-01-18",
+        "date": "2026-01-18",
         "description": "PIX - Mensalidade Fernanda Alves",
         "amount": 89.00,
     },
     {
-        "date": "2024-01-20",
+        "date": "2026-01-20",
         "description": "PIX - Mensalidade Gabriel Martins",
         "amount": 89.00,
     },
     {
-        "date": "2024-01-22",
+        "date": "2026-01-22",
         "description": "PIX - Mensalidade Helena Pereira",
         "amount": 89.00,
     },
     # DOAÇÕES
     {
-        "date": "2024-01-08",
+        "date": "2026-01-01",
         "description": "PIX - Doação para equipamentos",
         "amount": 150.00,
     },
-    {"date": "2024-01-14", "description": "PIX - Doação anônima", "amount": 50.00},
+    {"date": "2026-01-14", "description": "PIX - Doação anônima", "amount": 50.00},
     {
-        "date": "2024-01-25",
+        "date": "2026-01-25",
         "description": "PIX - Doação para eventos",
         "amount": 200.00,
     },
-    {"date": "2024-01-28", "description": "Dinheiro - Doação caixa", "amount": 25.00},
+    {"date": "2026-01-28", "description": "Dinheiro - Doação caixa", "amount": 25.00},
     # GASTOS
     {
-        "date": "2024-01-03",
+        "date": "2026-01-03",
         "description": "Débito - Aluguel do espaço",
         "amount": -1200.00,
+        "supplier": "Imobiliária Campinas",
     },
     {
-        "date": "2024-01-05",
+        "date": "2026-01-05",
         "description": "Débito - Energia elétrica",
         "amount": -180.50,
+        "supplier": "CPFL Paulista",
     },
     {
-        "date": "2024-01-08",
+        "date": "2026-01-01",
         "description": "Débito - Internet fibra ótica",
         "amount": -89.90,
+        "supplier": "Vivo Empresas",
     },
-    {"date": "2024-01-10", "description": "Débito - Água", "amount": -45.20},
     {
-        "date": "2024-01-12",
+        "date": "2026-01-10",
+        "description": "Débito - Água",
+        "amount": -45.20,
+        "supplier": "SANASA",
+    },
+    {
+        "date": "2026-01-12",
         "description": "Débito - Material de limpeza",
         "amount": -67.80,
+        "supplier": "Kalunga",
     },
-    {"date": "2024-01-15", "description": "Débito - Tarifa bancária", "amount": -12.50},
+    {"date": "2026-01-15", "description": "Débito - Tarifa bancária", "amount": -12.50},
     {
-        "date": "2024-01-18",
+        "date": "2026-01-18",
         "description": "Débito - Manutenção equipamentos",
         "amount": -320.00,
     },
     {
-        "date": "2024-01-22",
+        "date": "2026-01-22",
         "description": "Débito - Coffee break evento",
         "amount": -156.40,
     },
     {
-        "date": "2024-01-25",
+        "date": "2026-01-25",
         "description": "Débito - Material para workshops",
         "amount": -89.90,
+        "supplier": "Kalunga",
     },
     {
-        "date": "2024-01-28",
+        "date": "2026-01-28",
         "description": "Débito - Taxa de processamento",
         "amount": -8.90,
     },
 ]
 
-# Transações de Fevereiro 2024
+# Transações de Fevereiro 2026
 FEBRUARY_TRANSACTIONS = [
     # MENSALIDADES
     {
-        "date": "2024-02-05",
+        "date": "2026-02-05",
         "description": "PIX - Mensalidade Ana Carolina Silva",
         "amount": 89.00,
     },
     {
-        "date": "2024-02-07",
+        "date": "2026-02-07",
         "description": "PIX - Mensalidade Bruno Oliveira Santos",
         "amount": 89.00,
     },
     {
-        "date": "2024-02-10",
+        "date": "2026-02-10",
         "description": "PIX - Mensalidade Carlos Eduardo Lima",
         "amount": 89.00,
     },
     {
-        "date": "2024-02-12",
+        "date": "2026-02-12",
         "description": "PIX - Mensalidade Daniela Rodrigues",
         "amount": 89.00,
     },
     {
-        "date": "2024-02-15",
+        "date": "2026-02-15",
         "description": "PIX - Mensalidade Eduardo Ferreira Costa",
         "amount": 89.00,
     },
     {
-        "date": "2024-02-18",
+        "date": "2026-02-18",
         "description": "PIX - Mensalidade Fernanda Alves",
         "amount": 89.00,
     },
     {
-        "date": "2024-02-20",
+        "date": "2026-02-20",
         "description": "PIX - Mensalidade Gabriel Martins",
         "amount": 89.00,
     },
     {
-        "date": "2024-02-22",
+        "date": "2026-02-22",
         "description": "PIX - Mensalidade Helena Pereira",
         "amount": 89.00,
     },
     # DOAÇÕES
     {
-        "date": "2024-02-02",
+        "date": "2026-02-02",
         "description": "PIX - Doação para melhorias",
         "amount": 100.00,
     },
     {
-        "date": "2024-02-14",
+        "date": "2026-02-14",
         "description": "PIX - Doação dia dos namorados",
         "amount": 75.00,
     },
-    {"date": "2024-02-20", "description": "PIX - Doação anônima", "amount": 120.00},
-    {"date": "2024-02-25", "description": "Dinheiro - Doação caixa", "amount": 30.00},
+    {"date": "2026-02-20", "description": "PIX - Doação anônima", "amount": 120.00},
+    {"date": "2026-02-25", "description": "Dinheiro - Doação caixa", "amount": 30.00},
     # GASTOS
     {
-        "date": "2024-02-03",
+        "date": "2026-02-03",
         "description": "Débito - Aluguel do espaço",
         "amount": -1200.00,
+        "supplier": "Imobiliária Campinas",
     },
     {
-        "date": "2024-02-05",
+        "date": "2026-02-05",
         "description": "Débito - Energia elétrica",
         "amount": -195.30,
+        "supplier": "CPFL Paulista",
     },
     {
-        "date": "2024-02-08",
+        "date": "2026-02-01",
         "description": "Débito - Internet fibra ótica",
         "amount": -89.90,
+        "supplier": "Vivo Empresas",
     },
-    {"date": "2024-02-10", "description": "Débito - Água", "amount": -52.10},
     {
-        "date": "2024-02-12",
+        "date": "2026-02-10",
+        "description": "Débito - Água",
+        "amount": -52.10,
+        "supplier": "SANASA",
+    },
+    {
+        "date": "2026-02-12",
         "description": "Débito - Material de escritório",
         "amount": -134.50,
+        "supplier": "Kalunga",
     },
-    {"date": "2024-02-15", "description": "Débito - Tarifa bancária", "amount": -12.50},
+    {"date": "2026-02-15", "description": "Débito - Tarifa bancária", "amount": -12.50},
     {
-        "date": "2024-02-18",
+        "date": "2026-02-18",
         "description": "Débito - Seguro do espaço",
         "amount": -89.90,
     },
     {
-        "date": "2024-02-22",
+        "date": "2026-02-22",
         "description": "Débito - Lanches para reunião",
         "amount": -87.60,
     },
     {
-        "date": "2024-02-25",
+        "date": "2026-02-25",
         "description": "Débito - Manutenção preventiva",
         "amount": -245.80,
+    },
+    # COMPRA CAMISETAS
+    {
+        "date": "2026-02-26",
+        "description": "Débito - Lote de 20 camisetas do LHC",
+        "amount": -700.00,
+        "supplier": "Lojas Mila",
+        "notes": "Compra de 20 camisetas para revenda e uso dos membros.",
     },
 ]
 
@@ -363,6 +421,9 @@ class Command(BaseCommand):
             # Criar dados básicos
             self.create_cash_books()
             self.create_categorization_rules()
+
+            # Criar fornecedores
+            self.create_suppliers()
 
             # Criar membros e mensalidades
             self.create_members_and_memberships()
@@ -388,6 +449,7 @@ class Command(BaseCommand):
         Membership.objects.all().delete()
         Member.objects.all().delete()
         Transaction.objects.all().delete()
+        Fornecedor.objects.all().delete()
         CategoryMatchRule.objects.all().delete()
         CashBook.objects.all().delete()
 
@@ -400,6 +462,14 @@ class Command(BaseCommand):
         for cash_book_data in CASH_BOOKS_DATA:
             cash_book = CashBook.objects.create(**cash_book_data)
             self.stdout.write(f"  ✅ {cash_book.name}")
+
+    def create_suppliers(self):
+        """Cria fornecedores"""
+        self.stdout.write("🏭 Criando fornecedores...")
+
+        for supplier_data in SUPPLIERS_DATA:
+            Fornecedor.objects.create(**supplier_data)
+            self.stdout.write(f"  ✅ Fornecedor: {supplier_data['nome']}")
 
     def create_categorization_rules(self):
         """Cria regras de categorização"""
@@ -485,6 +555,11 @@ class Command(BaseCommand):
             transaction_date = datetime.datetime.strptime(
                 transaction_data["date"], "%Y-%m-%d"
             ).date()
+
+            supplier = None
+            if "supplier" in transaction_data:
+                supplier = Fornecedor.objects.get(nome=transaction_data["supplier"])
+
             Transaction.objects.create(
                 reference=f"SEED-{transaction_data['date']}-{hash(transaction_data['description']) % 10000}",
                 date=transaction_date,
@@ -492,6 +567,8 @@ class Command(BaseCommand):
                 amount=Decimal(str(transaction_data["amount"])),
                 cash_book=main_cash_book,
                 created_by=admin_user,
+                fornecedor=supplier,
+                notes=transaction_data.get("notes", ""),
             )
 
         self.stdout.write(f"  ✅ {len(all_transactions)} transações criadas")
@@ -525,7 +602,7 @@ class Command(BaseCommand):
             # Transações de janeiro
             jan_transactions = Transaction.objects.filter(
                 description__icontains=member_first_name,
-                date__year=2024,
+                date__year=2026,
                 date__month=1,
                 amount=Decimal("89.00"),
             )
@@ -533,7 +610,7 @@ class Command(BaseCommand):
             # Transações de fevereiro
             feb_transactions = Transaction.objects.filter(
                 description__icontains=member_first_name,
-                date__year=2024,
+                date__year=2026,
                 date__month=2,
                 amount=Decimal("89.00"),
             )
@@ -543,7 +620,7 @@ class Command(BaseCommand):
                 # Buscar taxa a receber que corresponde a esta transação
                 receivable_fee = ReceivableFee.objects.filter(
                     membership=membership,
-                    start_date__year=2024,
+                    start_date__year=2026,
                     start_date__month=1,
                     status=FeePaymentStatus.UNPAID,
                 ).first()
@@ -556,7 +633,7 @@ class Command(BaseCommand):
                 # Buscar taxa a receber que corresponde a esta transação
                 receivable_fee = ReceivableFee.objects.filter(
                     membership=membership,
-                    start_date__year=2024,
+                    start_date__year=2026,
                     start_date__month=2,
                     status=FeePaymentStatus.UNPAID,
                 ).first()
@@ -576,6 +653,7 @@ class Command(BaseCommand):
         self.stdout.write("=" * 50)
         self.stdout.write(f"🏦 Livros de Caixa: {CashBook.objects.count()}")
         self.stdout.write(f"👥 Membros: {Member.objects.count()}")
+        self.stdout.write(f"🏭 Fornecedores: {Fornecedor.objects.count()}")
         self.stdout.write(f"💰 Transações: {Transaction.objects.count()}")
         self.stdout.write(f"🏷️ Categorias: {Category.objects.count()}")
         self.stdout.write(

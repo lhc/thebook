@@ -1,0 +1,144 @@
+{% extends "base/main.html" %}
+
+{% load i18n currency %}
+
+{% block content %}
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">
+        Vincular Transações a {{ fornecedor.nome }}
+    </h1>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">Selecione as transações para vincular</h6>
+
+        <div>
+            <h5 class="m-0 font-weight-bold">
+                <a
+                    href="?{{ previous_period }}{% if search_query %}&q={{ search_query }}{% endif %}{% if current_cash_book %}&cash_book={{ current_cash_book }}{% endif %}">
+                    <i class="fas fa-arrow-left" title="Mês Anterior"></i>
+                </a>
+
+                {% if month and year %}
+                {{ month }}/{{ year }}
+                {% else %}
+                Todos
+                {% endif %}
+
+                <a
+                    href="?{{ next_period }}{% if search_query %}&q={{ search_query }}{% endif %}{% if current_cash_book %}&cash_book={{ current_cash_book }}{% endif %}">
+                    <i class="fas fa-arrow-right" title="Próximo Mês"></i>
+                </a>
+            </h5>
+        </div>
+    </div>
+    <div class="card-body">
+
+        <!-- Filters -->
+        <form method="get" class="mb-4">
+            <input type="hidden" name="month" value="{{ month }}">
+            <input type="hidden" name="year" value="{{ year }}">
+            <div class="form-row align-items-center">
+                <div class="col-auto">
+                    <input type="text" name="q" class="form-control mb-2" placeholder="Buscar descrição ou valor..."
+                        value="{{ search_query }}">
+                </div>
+                <div class="col-auto">
+                    <select name="cash_book" class="form-control mb-2">
+                        <option value="">Todos Livros Caixa</option>
+                        {% for cb in cash_books %}
+                        <option value="{{ cb.slug }}" {% if current_cash_book == cb.slug %}selected{% endif %}>{{ cb.name
+                            }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary mb-2">Filtrar</button>
+                    <a href="{% url 'fornecedores:vincular-transacoes' fornecedor.id %}?month={{ month }}&year={{ year }}"
+                        class="btn btn-secondary mb-2 ml-1">Limpar</a>
+                </div>
+            </div>
+        </form>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="table-responsive">
+                <table class="table table-bordered" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th style="width: 40px;">
+                                <input type="checkbox" id="selectAll">
+                            </th>
+                            <th>Data</th>
+                            <th>Descrição</th>
+                            <th>Valor</th>
+                            <th>Fornecedor</th>
+                            <th>Livro Caixa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for t in transactions %}
+                        <tr {% if t.fornecedor_id == fornecedor.id %}class="table-success" {% endif %}>
+                            <td>
+                                <input type="checkbox" name="transaction_ids" value="{{ t.id }}"
+                                    class="transaction-checkbox" {% if t.fornecedor_id == fornecedor.id %}checked{% endif %}>
+                            </td>
+                            <td>{{ t.date|date:"d/m/Y" }}</td>
+                            <td>
+                                <strong>{{ t.description }}</strong>
+                                {% if t.category %}
+                                <br><small class="text-muted">{{ t.category.name }}</small>
+                                {% endif %}
+                            </td>
+                            <td class="{% if t.amount < 0 %}text-danger{% else %}text-success{% endif %}">
+                                {{ t.amount|money }}
+                            </td>
+                            <td>
+                                {% if t.fornecedor %}
+                                {% if t.fornecedor_id == fornecedor.id %}
+                                <strong>{{ t.fornecedor.nome }}</strong> (Atual)
+                                {% else %}
+                                <span class="text-warning" title="Ao vincular, substituirá este fornecedor">{{
+                                    t.fornecedor.nome }}</span>
+                                {% endif %}
+                                {% else %}
+                                <span class="text-muted">—</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ t.cash_book.name }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center text-muted">
+                                Nenhuma transação sem fornecedor encontrada com os filtros atuais.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-3">
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-link mr-1"></i> Vincular Selecionadas
+                </button>
+                <a href="{% url 'fornecedores:detalhar' fornecedor.id %}" class="btn btn-secondary ml-2">
+                    Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block js_scripts %}
+<script>
+    document.getElementById('selectAll').addEventListener('change', function (e) {
+        const checkboxes = document.getElementsByClassName('transaction-checkbox');
+        for (let checkbox of checkboxes) {
+            checkbox.checked = e.target.checked;
+        }
+    });
+</script>
+{% endblock %}
