@@ -11,6 +11,11 @@ urlpatterns = [
         name="bank-account",
     ),
     path(
+        "reports/cash_book",
+        views.ReportCashBookView.as_view(),
+        name="report-cash-book",
+    ),
+    path(
         "cb/<slug:bank_account_slug>/transactions",
         views.bank_account_transactions,
         name="bank-account-transactions",

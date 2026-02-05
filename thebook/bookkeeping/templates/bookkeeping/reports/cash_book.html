@@ -1,0 +1,23 @@
+{% extends "base/main.html" %}
+
+{% load currency i18n %}
+
+{% block content %}
+
+<div class="card shadow mb-4">
+  <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+    <h4 class="m-0 font-weight-bold text-primary">Cash Book</h4>
+    <h5 class="m-0 font-weight-bold">
+      <form method="post" action="{% url bookkeeping:report-cash-book %}">
+        <label for="start_date">{% translate "Start Date" %}</label>
+        <input type="date" id="start_date" name="start_date">
+
+        <label for="end_date">{% translate "End Date" %}</label>
+        <input type="date" id="end_date" name="end_date">
+        <button type="submit"><i class="fa fa-search" title='{% translate "Search"'></i></button>
+      </form>
+    </h5>
+  </div>
+</div>
+
+{% endblock content %}

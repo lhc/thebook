@@ -246,3 +246,17 @@ class BankAccountView(View):
                 "transactions": transactions,
             },
         )
+
+
+class ReportCashBookView(View):
+    def get(self, request):
+        return render(
+            request,
+            "bookkeeping/reports/cash_book.html",
+        )
+
+    def post(self, request):
+        return render(
+            request,
+            "bookkeeping/reports/cash_book.html",
+        )
