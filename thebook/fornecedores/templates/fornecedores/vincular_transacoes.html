@@ -48,7 +48,7 @@
                     <select name="bank_account" class="form-control mb-2">
                         <option value="">Todas as contas</option>
                         {% for ba in bank_accounts %}
-                        <option value="{{ ba.slug }}" {% if current_bank_account==ba.slug %}selected{% endif %}>{{
+                        <option value="{{ ba.slug }}" {% if current_bank_account == ba.slug %}selected{% endif %}>{{
                             ba.name }}</option>
                         {% endfor %}
                     </select>
@@ -79,11 +79,10 @@
                     </thead>
                     <tbody>
                         {% for t in transactions %}
-                        <tr {% if t.fornecedor_id==fornecedor.id %}class="table-success" {% endif %}>
+                        <tr {% if t.fornecedor_id == fornecedor.id %}class="table-success" {% endif %}>
                             <td>
                                 <input type="checkbox" name="transaction_ids" value="{{ t.id }}"
-                                    class="transaction-checkbox" {% if t.fornecedor_id==fornecedor.id %}checked{% endif
-                                    %}>
+                                    class="transaction-checkbox" {% if t.fornecedor_id == fornecedor.id %}checked{% endif %}>
                             </td>
                             <td>{{ t.date|date:"d/m/Y" }}</td>
                             <td>
