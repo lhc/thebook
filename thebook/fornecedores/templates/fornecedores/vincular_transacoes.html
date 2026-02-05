@@ -16,7 +16,7 @@
         <div>
             <h5 class="m-0 font-weight-bold">
                 <a
-                    href="?{{ previous_period }}{% if search_query %}&q={{ search_query }}{% endif %}{% if current_cash_book %}&cash_book={{ current_cash_book }}{% endif %}">
+                    href="?{{ previous_period }}{% if search_query %}&q={{ search_query }}{% endif %}{% if current_bank_account %}&bank_account={{ current_bank_account }}{% endif %}">
                     <i class="fas fa-arrow-left" title="Mês Anterior"></i>
                 </a>
 
@@ -27,7 +27,7 @@
                 {% endif %}
 
                 <a
-                    href="?{{ next_period }}{% if search_query %}&q={{ search_query }}{% endif %}{% if current_cash_book %}&cash_book={{ current_cash_book }}{% endif %}">
+                    href="?{{ next_period }}{% if search_query %}&q={{ search_query }}{% endif %}{% if current_bank_account %}&bank_account={{ current_bank_account }}{% endif %}">
                     <i class="fas fa-arrow-right" title="Próximo Mês"></i>
                 </a>
             </h5>
@@ -45,11 +45,11 @@
                         value="{{ search_query }}">
                 </div>
                 <div class="col-auto">
-                    <select name="cash_book" class="form-control mb-2">
-                        <option value="">Todos Livros Caixa</option>
-                        {% for cb in cash_books %}
-                        <option value="{{ cb.slug }}" {% if current_cash_book == cb.slug %}selected{% endif %}>{{ cb.name
-                            }}</option>
+                    <select name="bank_account" class="form-control mb-2">
+                        <option value="">Todas as contas</option>
+                        {% for ba in bank_accounts %}
+                        <option value="{{ ba.slug }}" {% if current_bank_account==ba.slug %}selected{% endif %}>{{
+                            ba.name }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -79,10 +79,11 @@
                     </thead>
                     <tbody>
                         {% for t in transactions %}
-                        <tr {% if t.fornecedor_id == fornecedor.id %}class="table-success" {% endif %}>
+                        <tr {% if t.fornecedor_id==fornecedor.id %}class="table-success" {% endif %}>
                             <td>
                                 <input type="checkbox" name="transaction_ids" value="{{ t.id }}"
-                                    class="transaction-checkbox" {% if t.fornecedor_id == fornecedor.id %}checked{% endif %}>
+                                    class="transaction-checkbox" {% if t.fornecedor_id==fornecedor.id %}checked{% endif
+                                    %}>
                             </td>
                             <td>{{ t.date|date:"d/m/Y" }}</td>
                             <td>
@@ -106,7 +107,7 @@
                                 <span class="text-muted">—</span>
                                 {% endif %}
                             </td>
-                            <td>{{ t.cash_book.name }}</td>
+                            <td>{{ t.bank_account.name }}</td>
                         </tr>
                         {% empty %}
                         <tr>

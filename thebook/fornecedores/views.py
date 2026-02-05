@@ -8,7 +8,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 
-from thebook.bookkeeping.models import CashBook, Transaction
+from thebook.bookkeeping.models import BankAccount, Transaction
 from thebook.fornecedores.forms import EntregaFornecedorForm, FornecedorForm
 from thebook.fornecedores.models import EntregaFornecedor, Fornecedor
 
@@ -313,13 +313,13 @@ def vincular_transacoes(request, fornecedor_id):
 
     # Filtros Adicionais
     search_query = request.GET.get("q", "")
-    cash_book_filter = request.GET.get("cash_book", "")
+    bank_account_filter = request.GET.get("bank_account", "")
 
     # Query Base - Todas as transações do período
     transactions = (
         Transaction.objects.filter(date__year=year, date__month=month)
         .order_by("-date")
-        .select_related("cash_book", "category", "fornecedor")
+        .select_related("bank_account", "category", "fornecedor")
     )
 
     if search_query:
@@ -327,10 +327,10 @@ def vincular_transacoes(request, fornecedor_id):
             Q(description__icontains=search_query) | Q(amount__icontains=search_query)
         )
 
-    if cash_book_filter:
-        transactions = transactions.filter(cash_book__slug=cash_book_filter)
+    if bank_account_filter:
+        transactions = transactions.filter(bank_account__slug=bank_account_filter)
 
-    cash_books = CashBook.objects.filter(active=True)
+    bank_accounts = BankAccount.objects.filter(active=True)
 
     return render(
         request,
@@ -338,9 +338,9 @@ def vincular_transacoes(request, fornecedor_id):
         {
             "fornecedor": fornecedor,
             "transactions": transactions,
-            "cash_books": cash_books,
+            "bank_accounts": bank_accounts,
             "search_query": search_query,
-            "current_cash_book": cash_book_filter,
+            "current_bank_account": bank_account_filter,
             "year": year,
             "month": month,
             "previous_period": previous_period,
