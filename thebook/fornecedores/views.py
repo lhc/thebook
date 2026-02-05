@@ -4,8 +4,8 @@ import datetime
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
 from thebook.bookkeeping.models import BankAccount, Transaction
@@ -72,7 +72,7 @@ def criar_fornecedor(request):
                 request,
                 f"Fornecedora(o) '{novo_fornecedor.nome}' criada(o) com sucesso!",
             )
-            return HttpResponseRedirect(reverse("fornecedores:listar"))
+            return redirect("fornecedores:listar")
     else:
         form = FornecedorForm()
 
@@ -102,7 +102,7 @@ def editar_fornecedor(request, fornecedor_id):
                 request,
                 f"Fornecedora(o) '{fornecedor_atualizado.nome}' atualizada(o) com sucesso!",
             )
-            return HttpResponseRedirect(reverse("fornecedores:listar"))
+            return redirect("fornecedores:listar")
     else:
         form = FornecedorForm(instance=fornecedor)
 
@@ -131,7 +131,7 @@ def excluir_fornecedor(request, fornecedor_id):
         nome = fornecedor.nome
         fornecedor.delete()
         messages.success(request, f"Fornecedora(o) '{nome}' removida(o) com sucesso!")
-        return HttpResponseRedirect(reverse("fornecedores:listar"))
+        return redirect("fornecedores:listar")
 
     return render(
         request,
@@ -173,9 +173,7 @@ def criar_entrega(request, fornecedor_id):
                 return response
 
             # Senão, redireciona normalmente
-            return HttpResponseRedirect(
-                reverse("fornecedores:detalhar", args=[fornecedor.id])
-            )
+            return redirect("fornecedores:detalhar", fornecedor.id)
     else:
         form = EntregaFornecedorForm()
 
@@ -219,9 +217,7 @@ def editar_entrega(request, fornecedor_id, entrega_id):
                 return response
 
             # Senão, redireciona normalmente
-            return HttpResponseRedirect(
-                reverse("fornecedores:detalhar", args=[fornecedor.id])
-            )
+            return redirect("fornecedores:detalhar", fornecedor.id)
     else:
         form = EntregaFornecedorForm(instance=entrega)
 
@@ -249,9 +245,7 @@ def excluir_entrega(request, fornecedor_id, entrega_id):
             request,
             f"Entrega '{titulo}' removida com sucesso!",
         )
-        return HttpResponseRedirect(
-            reverse("fornecedores:detalhar", args=[fornecedor.id])
-        )
+        return redirect("fornecedores:detalhar", fornecedor.id)
 
     return render(
         request,
@@ -271,23 +265,7 @@ def vincular_transacoes(request, fornecedor_id):
     """
     fornecedor = get_object_or_404(Fornecedor, pk=fornecedor_id)
 
-    # Processar o formulário de vinculação
-    if request.method == "POST":
-        transaction_ids = request.POST.getlist("transaction_ids")
-        if transaction_ids:
-            transactions_to_update = Transaction.objects.filter(id__in=transaction_ids)
-            updated_count = transactions_to_update.update(fornecedor=fornecedor)
-            messages.success(
-                request, f"{updated_count} transações vinculadas com sucesso!"
-            )
-            # Manter na mesma página com os mesmos filtros seria ideal
-            return HttpResponseRedirect(
-                f"{reverse('fornecedores:vincular-transacoes', args=[fornecedor.id])}?{request.GET.urlencode()}"
-            )
-        else:
-            messages.warning(request, "Nenhuma transação selecionada.")
-
-    # Filtros de Data
+    # Filtros de Data (usado tanto no POST quanto no GET)
     today = datetime.date.today()
     try:
         month = int(request.GET.get("month", today.month))
@@ -298,6 +276,70 @@ def vincular_transacoes(request, fornecedor_id):
         year = int(request.GET.get("year", today.year))
     except (ValueError, TypeError):
         year = today.year
+
+    # Processar o formulário de vinculação/desvinculação
+    if request.method == "POST":
+        selected_ids = set(request.POST.getlist("transaction_ids"))
+
+        # Buscar todas as transações do período atual que estão vinculadas a este fornecedor
+        # e que estão visíveis na página atual (com os filtros aplicados)
+        period_transactions = Transaction.objects.filter(
+            date__year=year, date__month=month, fornecedor=fornecedor
+        )
+
+        # Aplicar filtros adicionais se existirem
+        search_query = request.GET.get("q", "")
+        bank_account_filter = request.GET.get("bank_account", "")
+
+        if search_query:
+            period_transactions = period_transactions.filter(
+                Q(description__icontains=search_query)
+                | Q(amount__icontains=search_query)
+            )
+        if bank_account_filter:
+            period_transactions = period_transactions.filter(
+                bank_account__slug=bank_account_filter
+            )
+
+        # IDs das transações que devem estar vinculadas (marcadas)
+        selected_ids_int = {int(id) for id in selected_ids if id}
+
+        # IDs das transações que estão vinculadas mas foram desmarcadas
+        currently_linked_ids = set(period_transactions.values_list("id", flat=True))
+        to_unlink_ids = currently_linked_ids - selected_ids_int
+
+        # Vincular as selecionadas
+        linked_count = 0
+        if selected_ids_int:
+            transactions_to_link = Transaction.objects.filter(id__in=selected_ids_int)
+            linked_count = transactions_to_link.update(fornecedor=fornecedor)
+
+        # Desvincular as que foram desmarcadas
+        unlinked_count = 0
+        if to_unlink_ids:
+            transactions_to_unlink = Transaction.objects.filter(id__in=to_unlink_ids)
+            unlinked_count = transactions_to_unlink.update(fornecedor=None)
+
+        # Mensagem de sucesso
+        if linked_count > 0 or unlinked_count > 0:
+            msg_parts = []
+            if linked_count > 0:
+                msg_parts.append(f"{linked_count} transação(ões) vinculada(s)")
+            if unlinked_count > 0:
+                msg_parts.append(f"{unlinked_count} transação(ões) desvinculada(s)")
+            messages.success(request, f"{' e '.join(msg_parts)} com sucesso!")
+        else:
+            messages.info(request, "Nenhuma alteração realizada.")
+
+        # Construir URL com parâmetros preservados
+        url = reverse("fornecedores:vincular-transacoes", args=[fornecedor.id])
+        # Preservar todos os parâmetros GET
+        query_params = request.GET.copy()
+        if query_params:
+            url = f"{url}?{query_params.urlencode()}"
+
+        # Redirecionar mantendo os filtros (POST-redirect-GET pattern)
+        return redirect(url)
 
     # Navegação de períodos
     reference_date = datetime.date(year, month, 1)

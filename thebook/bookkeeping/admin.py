@@ -84,12 +84,8 @@ class TransactionAdmin(admin.ModelAdmin):
         "description",
         "amount",
         "category",
-<<<<<<< HEAD
         "bank_account",
-=======
         "fornecedor",
-        "cash_book",
->>>>>>> 781d48c (OK funcionando add fornecedores e vincular transacoes)
         "tag_list",
     ]
     list_filter = [
