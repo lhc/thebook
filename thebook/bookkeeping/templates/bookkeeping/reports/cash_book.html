@@ -12,10 +12,10 @@
       <form method="get" action="{% url 'bookkeeping:report-cash-book' %}">
         {% csrf_token %}
         <label for="start_date">{% translate "Start Date" %}</label>
-        <input type="date" id="start_date" name="start_date">
+        <input type="date" id="start_date" name="start_date" value="{{ start_date|date:'Y-m-d' }}">
 
         <label for="end_date">{% translate "End Date" %}</label>
-        <input type="date" id="end_date" name="end_date">
+        <input type="date" id="end_date" name="end_date" value="{{ end_date|date:'Y-m-d' }}">
         <button type="submit"><i class="fa fa-search" title='{% translate "Search"'></i></button>
       </form>
     </h5>
