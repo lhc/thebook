@@ -88,16 +88,15 @@
     <h4 class="m-0 font-weight-bold text-primary">{{ bank_account.name }}</h4>
 
       <h5 class="m-0 font-weight-bold">
-        <form method="get">
+        <form method="get" action="{{ bank_account.get_absolute_url }}">
           {% csrf_token %}
           <label for="start_date">{% translate "Start Date" %}</label>
           <input type="date" id="start_date" name="start_date" value="{{ start_date|date:'Y-m-d' }}">
 
           <label for="end_date">{% translate "End Date" %}</label>
           <input type="date" id="end_date" name="end_date" value="{{ end_date|date:'Y-m-d' }}">
-          <i class="fa fa-search" title='{% translate "Search"'></i>
+          <button type="submit"><i class="fa fa-search" title='{% translate "Search"'></i></button>
         </form>
-
       </h5>
 
 
