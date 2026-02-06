@@ -24,6 +24,13 @@
   </li>
 
   <li class="nav-item active">
+    <a class="nav-link" href="{% url 'bookkeeping:report-cash-book' %}">
+      <i class="fas fa-fw fa-book-open"></i>
+      <span>{% translate "Cash Book" %}</span>
+    </a>
+  </li>
+
+  <li class="nav-item active">
     <a class="nav-link" href="{% url 'members:members-list' %}">
       <i class="fas fa-fw fa-people-arrows"></i>
       <span>{% translate "Members" %}</span>
