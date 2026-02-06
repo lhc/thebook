@@ -276,9 +276,11 @@ class ReportCashBookView(View):
         opening_balance = Transaction.objects.filter(date__lt=start_date).aggregate(
             Sum("amount", default=0)
         )["amount__sum"]
-        transactions = Transaction.objects.within_period(
-            start_date=start_date, end_date=end_date
-        ).with_info_for_cash_book()
+        transactions = (
+            Transaction.objects.select_related("category", "bank_account")
+            .within_period(start_date=start_date, end_date=end_date)
+            .with_info_for_cash_book()
+        )
 
         return render(
             request,
