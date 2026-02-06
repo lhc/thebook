@@ -3,7 +3,18 @@ import decimal
 from dataclasses import dataclass
 
 from django.db import models
-from django.db.models import DateField, Exists, IntegerField, OuterRef, Q, Sum, Value
+from django.db.models import (
+    Case,
+    DateField,
+    Exists,
+    F,
+    IntegerField,
+    OuterRef,
+    Q,
+    Sum,
+    Value,
+    When,
+)
 
 
 class BankAccountQuerySet(models.QuerySet):
@@ -133,3 +144,15 @@ class TransactionQuerySet(models.QuerySet):
                 break
 
         return transaction
+
+    def with_info_for_cash_book(self):
+        return self.annotate(
+            income=Case(
+                When(amount__gte=decimal.Decimal("0"), then=F("amount")),
+                default=Value(None),
+            ),
+            expense=Case(
+                When(amount__lt=decimal.Decimal("0"), then=F("amount")),
+                default=Value(None),
+            ),
+        )

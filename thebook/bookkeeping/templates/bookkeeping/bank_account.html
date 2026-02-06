@@ -89,6 +89,7 @@
 
       <h5 class="m-0 font-weight-bold">
         <form method="get">
+          {% csrf_token %}
           <label for="start_date">{% translate "Start Date" %}</label>
           <input type="date" id="start_date" name="start_date">
 

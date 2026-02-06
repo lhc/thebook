@@ -3,6 +3,7 @@ import csv
 import datetime
 
 from django.contrib import messages
+from django.db.models import Sum
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.utils.translation import gettext as _
@@ -209,19 +210,38 @@ def partial_bank_accounts_dashboard(request):
     )
 
 
+def _get_date_range_from_request_query_strings(request):
+    """Return start and end date based on the provided query string of the request
+
+    If not provided, or partially provided, it must return the current month date range.
+    """
+    start_date = request.GET.get("start_date") or ""
+    end_date = request.GET.get("end_date") or ""
+
+    try:
+        start_date = datetime.datetime.strptime(start_date, "%Y-%m-%d").date()
+        end_date = datetime.datetime.strptime(end_date, "%Y-%m-%d").date()
+    except ValueError:
+        start_date, end_date = None, None
+
+    if start_date is None or end_date is None:
+        today = datetime.date.today()
+        current_month = today.month
+        current_year = today.year
+
+        start_date = datetime.date(current_year, current_month, 1)
+
+        _, last_day_of_month = calendar.monthrange(current_year, current_month)
+        end_date = datetime.date(
+            current_year, current_month, last_day_of_month
+        ) + datetime.timedelta(days=1)
+
+    return start_date, end_date
+
+
 class BankAccountView(View):
     def get(self, request, bank_account_slug):
-        start_date = request.GET.get("start_date")
-        end_date = request.GET.get("end_date")
-        if start_date is None or end_date is None:
-            today = datetime.date.today()
-            current_month = today.month
-            current_year = today.year
-            start_date = datetime.date(current_year, current_month, 1)
-            _, last_day_of_month = calendar.monthrange(current_year, current_month)
-            end_date = datetime.date(
-                current_year, current_month, last_day_of_month
-            ) + datetime.timedelta(days=1)
+        start_date, end_date = _get_date_range_from_request_query_strings(request)
 
         bank_account = get_object_or_404(
             BankAccount.objects.with_summary(start_date=start_date, end_date=end_date),
@@ -241,22 +261,32 @@ class BankAccountView(View):
             "bookkeeping/bank_account.html",
             context={
                 "bank_account": bank_account,
-                "start_date": start_date,
                 "end_date": end_date,
+                "start_date": start_date,
                 "transactions": transactions,
             },
         )
 
 
 class ReportCashBookView(View):
-    def get(self, request):
-        return render(
-            request,
-            "bookkeeping/reports/cash_book.html",
-        )
 
-    def post(self, request):
+    def get(self, request):
+        start_date, end_date = _get_date_range_from_request_query_strings(request)
+
+        opening_balance = Transaction.objects.filter(date__lt=start_date).aggregate(
+            Sum("amount", default=0)
+        )["amount__sum"]
+        transactions = Transaction.objects.within_period(
+            start_date=start_date, end_date=end_date
+        ).with_info_for_cash_book()
+
         return render(
             request,
             "bookkeeping/reports/cash_book.html",
+            context={
+                "end_date": end_date,
+                "opening_balance": opening_balance,
+                "start_date": start_date,
+                "transactions": transactions,
+            },
         )

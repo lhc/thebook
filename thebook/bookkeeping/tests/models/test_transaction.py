@@ -1,4 +1,5 @@
 import datetime
+import decimal
 
 import pytest
 from model_bakery import baker
@@ -91,3 +92,24 @@ def test_transaction_related_query_name_for_bank_account(db):
 
     assert bank_account_1 not in bank_accounts
     assert bank_account_2 in bank_accounts
+
+
+def test_transactions_with_cash_book_info__income_and_expense(db):
+    transaction_1 = baker.make(
+        Transaction, date=datetime.date(2026, 2, 5), amount=decimal.Decimal("42.12")
+    )
+    transaction_2 = baker.make(
+        Transaction, date=datetime.date(2026, 2, 6), amount=decimal.Decimal("-35.45")
+    )
+
+    transactions = Transaction.objects.with_info_for_cash_book()
+
+    assert len(transactions) == 2
+
+    assert transactions[0].id == transaction_1.id
+    assert transactions[0].income == decimal.Decimal("42.12")
+    assert transactions[0].expense is None
+
+    assert transactions[1].id == transaction_2.id
+    assert transactions[1].income is None
+    assert transactions[1].expense == decimal.Decimal("-35.45")
