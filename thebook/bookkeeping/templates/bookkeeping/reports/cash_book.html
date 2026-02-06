@@ -8,7 +8,6 @@
   <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
     <h4 class="m-0 font-weight-bold text-primary">{% translate "Cash Book" %} ({{ start_date|date:"SHORT_DATE_FORMAT" }} - {{ end_date|date:"SHORT_DATE_FORMAT" }})</h4>
     <h5 class="m-0 font-weight-bold">
-      -{{ start_date }}+
       <form method="get" action="{% url 'bookkeeping:report-cash-book' %}">
         {% csrf_token %}
         <label for="start_date">{% translate "Start Date" %}</label>
