@@ -204,7 +204,6 @@ class Member(models.Model):
     phone_number = models.CharField(
         max_length=32, blank=True, verbose_name=_("Phone number")
     )
-    cpf = BRCNPJField(blank=True, default="", verbose_name=_("CPF"))
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 

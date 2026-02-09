@@ -555,22 +555,6 @@ files = [
 python-ipware = ">=2.0.3"
 
 [[package]]
-name = "django-localflavor"
-version = "5.0"
-description = "Country-specific Django helpers"
-optional = false
-python-versions = ">=3.9"
-groups = ["main"]
-files = [
-    {file = "django_localflavor-5.0-py3-none-any.whl", hash = "sha256:ee32749420cc4a93b18667939fe7fa0da36d71024a0d9578b40809a71489cee7"},
-    {file = "django_localflavor-5.0.tar.gz", hash = "sha256:9ddcce5dac6a956d076f3134071c64d4c76e1c7063e8aa7730414a2a1c5ded59"},
-]
-
-[package.dependencies]
-django = ">=4.2"
-python-stdnum = ">=1.6"
-
-[[package]]
 name = "django-storages"
 version = "1.14.6"
 description = "Support for many storage backends in Django"
@@ -1969,21 +1953,6 @@ files = [
 dev = ["coverage[toml]", "coveralls (>=3.3,<4.0)", "ruff", "twine"]
 
 [[package]]
-name = "python-stdnum"
-version = "2.2"
-description = "Python module to handle standardized numbers and codes"
-optional = false
-python-versions = ">=3.8"
-groups = ["main"]
-files = [
-    {file = "python_stdnum-2.2-py3-none-any.whl", hash = "sha256:bdf98fd117a0ca152e4047aa8ad254bae63853d4e915ddd4e0effb33ba0e9260"},
-    {file = "python_stdnum-2.2.tar.gz", hash = "sha256:e95fcfa858a703d4a40130cb3eaac133c60d8808a7f3c98efeedac968c2479b9"},
-]
-
-[package.extras]
-soap = ["zeep"]
-
-[[package]]
 name = "pytokens"
 version = "0.4.1"
 description = "A Fast, spec compliant Python 3.14+ tokenizer that runs on older Pythons."
@@ -2550,4 +2519,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.12"
-content-hash = "976cb64ccea91c9dae0c4fa38831cb72d8fae8ea2f9c13b0f6e1a60ac6fa58ba"
+content-hash = "a2da86056d9db6bd835e5ba5397f3e96edeaf19f72ce09d8c69d72acc06d77c9"
