@@ -23,12 +23,14 @@ logger = structlog.get_logger(__name__)
 class ProcessingStatus:
     RECEIVED = 1
     PROCESSED = 2
+    UNPARSABLE = 3
 
     @classproperty
     def choices(cls):
         return (
             (cls.RECEIVED, _("Received")),
             (cls.PROCESSED, _("Processed")),
+            (cls.UNPARSABLE, _("Unparsable")),
         )
 
 
@@ -49,12 +51,17 @@ class OpenPixWebhookPayload(models.Model):
             return
 
         if bank_account is None:
-            bank_account = BankAccount.objects.get(name="OpenPix")
+            bank_account, _ = BankAccount.objects.get_or_create(name="OpenPix")
 
         if user is None:
             user = get_user_model().objects.get_or_create_automation_user()
 
-        payload = json.loads(self.payload)
+        try:
+            payload = json.loads(self.payload)
+        except json.decoder.JSONDecodeError:
+            self.status = ProcessingStatus.UNPARSABLE
+            self.save()
+            return
 
         if jmespath.search("event", payload) != "OPENPIX:TRANSACTION_RECEIVED":
             return

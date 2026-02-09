@@ -6,7 +6,7 @@ import pytest
 from django.test import Client
 from django.urls import reverse
 
-from thebook.webhooks.models import OpenPixWebhookPayload
+from thebook.webhooks.models import OpenPixWebhookPayload, ProcessingStatus
 
 
 def test_webhook_reachable(db, client):
@@ -78,7 +78,14 @@ def test_not_found_if_thebook_token_missing(client):
 
 def test_when_received_store_body_and_headers(db, client):
     thebook_token = "thebook-token"
-    webhook_payload = {"event": "OPENPIX:TRANSACTION_RECEIVED"}
+    webhook_payload = {
+        "event": "OPENPIX:TRANSACTION_RECEIVED",
+        "pix": {
+            "value": 8500,
+            "time": "2026-02-08T15:00:13.000Z",
+            "transactionID": "01KGNW1EDAG37C10WDY1759ZED",
+        },
+    }
 
     response = client.post(
         reverse("webhooks:openpix-webhook"),
@@ -93,3 +100,27 @@ def test_when_received_store_body_and_headers(db, client):
     assert OpenPixWebhookPayload.objects.filter(
         thebook_token=thebook_token, payload=json.dumps(webhook_payload)
     ).exists()
+
+
+def test_if_content_not_valid_json_set_as_unparsable(db, client):
+    thebook_token = "thebook-unparsable"
+    webhook_payload = "unparsable content"
+
+    response = client.post(
+        reverse("webhooks:openpix-webhook"),
+        webhook_payload,
+        headers={
+            "X-OpenPix-Signature": "openpix-signature-value",
+            "X-TheBook-Token": thebook_token,
+        },
+        content_type="application/json",
+    )
+
+    assert OpenPixWebhookPayload.objects.filter(
+        thebook_token=thebook_token, payload=webhook_payload
+    ).exists()
+
+    openpix_webhook_payload = OpenPixWebhookPayload.objects.get(
+        thebook_token=thebook_token, payload=webhook_payload
+    )
+    assert openpix_webhook_payload.status == ProcessingStatus.UNPARSABLE
