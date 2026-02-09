@@ -3,7 +3,7 @@ import datetime
 import itertools
 
 from dateutil.relativedelta import relativedelta
-from localflavor.br.models import BRCNPJField
+from localflavor.br.models import BRCPFField
 
 from django.conf import settings
 from django.db import models
@@ -204,6 +204,7 @@ class Member(models.Model):
     phone_number = models.CharField(
         max_length=32, blank=True, verbose_name=_("Phone number")
     )
+    cpf = BRCPFField(blank=True, default="", verbose_name=_("CPF"))
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
