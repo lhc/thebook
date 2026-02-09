@@ -15,49 +15,57 @@
 
         <label for="end_date">{% translate "End Date" %}</label>
         <input type="date" id="end_date" name="end_date" value="{{ end_date|date:'Y-m-d' }}">
-        <button type="submit"><i class="fa fa-search" title='{% translate "Search"'></i></button>
+        <button type="submit" class="btn-circle"><i class="fa fa-search" title='{% translate "Search"'></i></button>
       </form>
     </h5>
+  </div>
+  <div class="card-body">
+    <small>
+      <a href="{% querystring start_date=None end_date=None csrfmiddlewaretoken=None %}">
+        {% translate "Current Month" %}
+    </small>
+    <hr/>
+    <div class="table-responsive">
+      <table class="table table-sm table-bordered" id="transactions" width="100%" cellspacing="0">
+        <thead>
+          <tr>
+            <th>{% translate "Date" %}</th>
+            <th>{% translate "Description" %}</th>
+            <th>{% translate "Category" %}</th>
+            <th>{% translate "Bank Account" %}</th>
+            <th>{% translate "Income" %}</th>
+            <th>{% translate "Expense" %}</th>
+            <th>{% translate "Balance" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{ cash_book.start_date }}</td>
+            <td>Opening Balance</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td><strong>{{ opening_balance|money }}</strong></td>
+          </tr>
+          {% for transaction in transactions %}
+          <tr>
+            <td>{{ transaction.date|date:"SHORT_DATE_FORMAT" }}</td>
+            <td>{{ transaction.description }}</td>
+            <td>{{ transaction.category|default_if_none:"-" }}</td>
+            <td>{{ transaction.bank_account|default_if_none:"-" }}</td>
+            <td>{{ transaction.income|money }}</td>
+            <td>{{ transaction.expense|money }}</td>
+            <td></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 
 <div class="card-body">
-  <div class="table-responsive">
-    <table class="table table-sm table-bordered" id="transactions" width="100%" cellspacing="0">
-      <thead>
-        <tr>
-          <th>{% translate "Date" %}</th>
-          <th>{% translate "Description" %}</th>
-          <th>{% translate "Category" %}</th>
-          <th>{% translate "Bank Account" %}</th>
-          <th>{% translate "Income" %}</th>
-          <th>{% translate "Expense" %}</th>
-          <th>{% translate "Balance" %}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>{{ cash_book.start_date }}</td>
-          <td>Opening Balance</td>
-          <td>-</td>
-          <td>-</td>
-          <td>-</td>
-          <td>-</td>
-          <td><strong>{{ opening_balance|money }}</strong></td>
-        </tr>
-        {% for transaction in transactions %}
-        <tr>
-          <td>{{ transaction.date|date:"SHORT_DATE_FORMAT" }}</td>
-          <td>{{ transaction.description }}</td>
-          <td>{{ transaction.category|default_if_none:"-" }}</td>
-          <td>{{ transaction.bank_account|default_if_none:"-" }}</td>
-          <td>{{ transaction.income|money }}</td>
-          <td>{{ transaction.expense|money }}</td>
-          <td></td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
+
 </div>
 {% endblock content %}

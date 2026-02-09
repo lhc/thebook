@@ -86,7 +86,6 @@
 <div class="card shadow mb-4">
   <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
     <h4 class="m-0 font-weight-bold text-primary">{{ bank_account.name }}</h4>
-
       <h5 class="m-0 font-weight-bold">
         <form method="get" action="{{ bank_account.get_absolute_url }}">
           {% csrf_token %}
@@ -98,12 +97,15 @@
           <button type="submit"><i class="fa fa-search" title='{% translate "Search"'></i></button>
         </form>
       </h5>
-
-
-
   </div>
 
   <div class="card-body">
+    <small>
+      <a href="{% querystring start_date=None end_date=None csrfmiddlewaretoken=None %}">
+        {% translate "Current Month" %}
+      </a>
+    </small>
+    <hr/>
     <div class="table-responsive">
       <table class="table table-sm table-bordered" id="transactions" width="100%" cellspacing="0">
         <thead>
