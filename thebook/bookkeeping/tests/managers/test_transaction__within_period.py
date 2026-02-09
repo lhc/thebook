@@ -23,5 +23,5 @@ def test_get_transactions_with_period(db):
     assert transaction_2 in transactions
     assert transaction_3 in transactions
     assert transaction_4 in transactions
-    assert transaction_5 not in transactions
+    assert transaction_5 in transactions
     assert transaction_6 not in transactions

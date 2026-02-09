@@ -126,7 +126,7 @@ def test_has_start_and_end_date_of_current_month(db, client, user):
     assert response.context["start_date"] == datetime.date(2026, 2, 1)
 
     assert "end_date" in response.context
-    assert response.context["end_date"] == datetime.date(2026, 3, 1)
+    assert response.context["end_date"] == datetime.date(2026, 2, 28)
 
 
 @pytest.mark.freeze_time("2026-02-03")

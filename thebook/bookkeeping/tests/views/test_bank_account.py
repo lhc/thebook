@@ -133,7 +133,7 @@ def test_returns_transactions_date_range_in_context(db, client, bank_account, us
     assert "start_date" in response.context
     assert response.context["start_date"] == datetime.date(2026, 2, 1)
     assert "end_date" in response.context
-    assert response.context["end_date"] == datetime.date(2026, 3, 1)
+    assert response.context["end_date"] == datetime.date(2026, 2, 28)
 
 
 @pytest.mark.freeze_time("2026-02-03")
@@ -162,7 +162,7 @@ def test_returns_bank_account_transactions_filtered_by_date_range(
     assert t_1 not in response.context["transactions"]
     assert t_2 not in response.context["transactions"]
     assert t_3 in response.context["transactions"]
-    assert t_4 not in response.context["transactions"]
+    assert t_4 in response.context["transactions"]
     assert t_5 not in response.context["transactions"]
 
 

@@ -117,7 +117,8 @@ class BankAccountQuerySet(models.QuerySet):
 class TransactionQuerySet(models.QuerySet):
 
     def within_period(self, start_date, end_date):
-        return self.filter(date__gte=start_date, date__lt=end_date)
+        """Filter transactions by period (including start and end dates)"""
+        return self.filter(date__gte=start_date, date__lte=end_date)
 
     def find_match_for(self, receivable_fee):
         from thebook.members.models import ReceivableFee

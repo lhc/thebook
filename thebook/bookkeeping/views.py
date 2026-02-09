@@ -226,15 +226,9 @@ def _get_date_range_from_request_query_strings(request):
 
     if start_date is None or end_date is None:
         today = datetime.date.today()
-        current_month = today.month
-        current_year = today.year
-
-        start_date = datetime.date(current_year, current_month, 1)
-
-        _, last_day_of_month = calendar.monthrange(current_year, current_month)
-        end_date = datetime.date(
-            current_year, current_month, last_day_of_month
-        ) + datetime.timedelta(days=1)
+        start_date = datetime.date(today.year, today.month, 1)
+        _, last_day_of_month = calendar.monthrange(today.year, today.month)
+        end_date = datetime.date(today.year, today.month, last_day_of_month)
 
     return start_date, end_date
 
