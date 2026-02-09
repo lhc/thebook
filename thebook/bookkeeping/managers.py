@@ -14,6 +14,7 @@ from django.db.models import (
     Sum,
     Value,
     When,
+    Window,
 )
 
 
@@ -146,7 +147,7 @@ class TransactionQuerySet(models.QuerySet):
 
         return transaction
 
-    def with_info_for_cash_book(self):
+    def with_info_for_cash_book(self, base_value=decimal.Decimal("0")):
         return self.annotate(
             income=Case(
                 When(amount__gte=decimal.Decimal("0"), then=F("amount")),
@@ -156,4 +157,9 @@ class TransactionQuerySet(models.QuerySet):
                 When(amount__lt=decimal.Decimal("0"), then=F("amount")),
                 default=Value(None),
             ),
+            balance=Window(
+                expression=Sum("amount"),
+                order_by="date",
+            )
+            + base_value,
         )

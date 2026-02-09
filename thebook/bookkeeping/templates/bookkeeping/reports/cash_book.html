@@ -57,7 +57,7 @@
             <td>{{ transaction.bank_account|default_if_none:"-" }}</td>
             <td>{{ transaction.income|money }}</td>
             <td>{{ transaction.expense|money }}</td>
-            <td></td>
+            <td>{{ transaction.balance|money }}</td>
           </tr>
           {% endfor %}
         </tbody>

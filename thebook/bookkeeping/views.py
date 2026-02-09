@@ -273,7 +273,7 @@ class ReportCashBookView(View):
         transactions = (
             Transaction.objects.select_related("category", "bank_account")
             .within_period(start_date=start_date, end_date=end_date)
-            .with_info_for_cash_book()
+            .with_info_for_cash_book(base_value=opening_balance)
         )
 
         return render(

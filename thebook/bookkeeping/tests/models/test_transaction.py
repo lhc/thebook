@@ -113,3 +113,57 @@ def test_transactions_with_cash_book_info__income_and_expense(db):
     assert transactions[1].id == transaction_2.id
     assert transactions[1].income is None
     assert transactions[1].expense == decimal.Decimal("-35.45")
+
+
+def test_transactions_with_cash_book_info__accumulative_balance(db):
+    transaction_1 = baker.make(
+        Transaction, date=datetime.date(2026, 2, 5), amount=decimal.Decimal("42.12")
+    )
+    transaction_2 = baker.make(
+        Transaction, date=datetime.date(2026, 2, 6), amount=decimal.Decimal("-35.45")
+    )
+    transaction_3 = baker.make(
+        Transaction, date=datetime.date(2026, 2, 7), amount=decimal.Decimal("1.50")
+    )
+
+    transactions = Transaction.objects.with_info_for_cash_book()
+
+    assert len(transactions) == 3
+
+    assert transactions[0].id == transaction_1.id
+    assert transactions[0].balance == pytest.approx(decimal.Decimal("42.12"))
+
+    assert transactions[1].id == transaction_2.id
+    assert transactions[1].balance == pytest.approx(decimal.Decimal("6.67"))
+
+    assert transactions[2].id == transaction_3.id
+    assert transactions[2].balance == pytest.approx(decimal.Decimal("8.17"))
+
+
+def test_transactions_with_cash_book_info__accumulative_balance_plus_reference_value(
+    db,
+):
+    transaction_1 = baker.make(
+        Transaction, date=datetime.date(2026, 2, 5), amount=decimal.Decimal("42.12")
+    )
+    transaction_2 = baker.make(
+        Transaction, date=datetime.date(2026, 2, 6), amount=decimal.Decimal("-35.45")
+    )
+    transaction_3 = baker.make(
+        Transaction, date=datetime.date(2026, 2, 7), amount=decimal.Decimal("1.50")
+    )
+
+    transactions = Transaction.objects.with_info_for_cash_book(
+        base_value=decimal.Decimal("100")
+    )
+
+    assert len(transactions) == 3
+
+    assert transactions[0].id == transaction_1.id
+    assert transactions[0].balance == pytest.approx(decimal.Decimal("142.12"))
+
+    assert transactions[1].id == transaction_2.id
+    assert transactions[1].balance == pytest.approx(decimal.Decimal("106.67"))
+
+    assert transactions[2].id == transaction_3.id
+    assert transactions[2].balance == pytest.approx(decimal.Decimal("108.17"))
