@@ -30,6 +30,7 @@ jmespath = "^1.0.1"
 structlog = "^25.5.0"
 django-structlog = "^10.0.0"
 orjson = "^3.11.5"
+django-localflavor = "^5.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"
