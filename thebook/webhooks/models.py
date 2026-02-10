@@ -143,12 +143,17 @@ class PaypalWebhookPayload(models.Model):
             return
 
         if bank_account is None:
-            bank_account = BankAccount.objects.get(name="PayPal")
+            bank_account, _ = BankAccount.objects.get_or_create(name="PayPal")
 
         if user is None:
             user = get_user_model().objects.get_or_create_automation_user()
 
-        payload = json.loads(self.payload)
+        try:
+            payload = json.loads(self.payload)
+        except json.decoder.JSONDecodeError:
+            self.status = ProcessingStatus.UNPARSABLE
+            self.save()
+            return
 
         event_type = payload.get("event_type")
         if event_type != "PAYMENT.SALE.COMPLETED":
@@ -198,6 +203,11 @@ class PaypalWebhookPayload(models.Model):
 
         reference = jmespath.search("resource.id", payload)
 
+        membership_fee_category, _ = Category.objects.get_or_create(
+            name="Contribuição Associativa"
+        )
+        bank_fee_category, _ = Category.objects.get_or_create(name="Tarifas Bancárias")
+
         with transaction.atomic():
             Transaction.objects.create(
                 reference=reference,
@@ -205,6 +215,7 @@ class PaypalWebhookPayload(models.Model):
                 description=description,
                 amount=amount,
                 bank_account=bank_account,
+                category=membership_fee_category,
                 created_by=user,
             )
             Transaction.objects.create(
@@ -213,6 +224,7 @@ class PaypalWebhookPayload(models.Model):
                 description="Taxa PayPal - " + description,
                 amount=fee,
                 bank_account=bank_account,
+                category=bank_fee_category,
                 created_by=user,
             )
 
