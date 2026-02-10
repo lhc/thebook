@@ -11,7 +11,7 @@ from django.db import DatabaseError, models, transaction
 from django.utils.functional import classproperty
 from django.utils.translation import gettext as _
 
-from thebook.bookkeeping.models import BankAccount, Transaction
+from thebook.bookkeeping.models import BankAccount, Category, Transaction
 from thebook.webhooks.managers import (
     OpenPixWebhookPayloadManager,
     PayPalWebhookPayloadManager,
