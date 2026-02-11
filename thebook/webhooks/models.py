@@ -60,10 +60,14 @@ class OpenPixWebhookPayload(models.Model):
             payload = json.loads(self.payload)
         except json.decoder.JSONDecodeError:
             self.status = ProcessingStatus.UNPARSABLE
+            self.internal_notes = "webhooks.openpix.jsondecodeerror"
             self.save()
             return
 
         if jmespath.search("event", payload) != "OPENPIX:TRANSACTION_RECEIVED":
+            self.status = ProcessingStatus.UNPARSABLE
+            self.internal_notes = "webhooks.paypal.unparsable_event"
+            self.save()
             return
 
         amount = jmespath.search("pix.charge.value || pix.value", payload) / 100
@@ -134,6 +138,7 @@ class PaypalWebhookPayload(models.Model):
         default=ProcessingStatus.RECEIVED,
         verbose_name=_("Processing Status"),
     )
+    internal_notes = models.CharField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     objects = PayPalWebhookPayloadManager()
@@ -152,17 +157,24 @@ class PaypalWebhookPayload(models.Model):
             payload = json.loads(self.payload)
         except json.decoder.JSONDecodeError:
             self.status = ProcessingStatus.UNPARSABLE
+            self.internal_notes = "webhooks.paypal.jsondecodeerror"
             self.save()
             return
 
         event_type = payload.get("event_type")
         if event_type != "PAYMENT.SALE.COMPLETED":
+            self.status = ProcessingStatus.UNPARSABLE
+            self.internal_notes = "webhooks.paypal.unparsable_event"
+            self.save()
             return
 
         billing_agreement_id = (
             jmespath.search("resource.billing_agreement_id", payload) or ""
         )
         if not billing_agreement_id:
+            self.status = ProcessingStatus.UNPARSABLE
+            self.internal_notes = "webhooks.paypal.missing_billing_agreement_id"
+            self.save()
             return
 
         response = requests.post(
@@ -173,11 +185,6 @@ class PaypalWebhookPayload(models.Model):
             auth=(settings.PAYPAL_CLIENT_ID, settings.PAYPAL_CLIENT_SECRET),
         )
         auth_data = response.json()
-        logger.info(f"{auth_data=}")
-        logger.info(f"{settings.PAYPAL_CLIENT_ID=}")
-        logger.info(f"{settings.PAYPAL_CLIENT_SECRET=}")
-        logger.info(f"{settings.PAYPAL_API_BASE_URL=}")
-        logger.info(f"{billing_agreement_id=}")
 
         access_token = response.json().get("access_token") or ""
 
