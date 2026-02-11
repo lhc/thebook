@@ -166,6 +166,7 @@ def transaction_upload_document(request):
         transaction=transaction,
         document_file=request.FILES["transaction_document"],
         notes=request.POST["notes"],
+        content_object=transaction,
     )
     messages.add_message(request, messages.SUCCESS, _("File successfully uploaded."))
 
