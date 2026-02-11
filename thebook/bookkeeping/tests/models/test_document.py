@@ -4,6 +4,8 @@ import re
 import pytest
 from model_bakery import baker
 
+from django.contrib.contenttypes.models import ContentType
+
 from thebook.bookkeeping.models import (
     BankAccount,
     Document,
@@ -101,3 +103,18 @@ def test_document_representation():
         notes="Document Notes",
     )
     assert str(document) == "<Document Notes>"
+
+
+@pytest.mark.parametrize("model_class", [Transaction, BankAccount])
+def test_document_can_be_linked_to_any_models(db, model_class):
+    content_object = baker.make(model_class)
+    contenty_type = ContentType.objects.get_for_model(model_class)
+
+    document = Document.objects.create(
+        document_date=datetime.date(2026, 2, 11),
+        content_object=content_object,
+    )
+
+    assert document.content_type == contenty_type
+    assert document.object_id == content_object.id
+    assert document.content_object == content_object

@@ -6,6 +6,8 @@ from pathlib import Path
 from taggit.managers import TaggableManager
 
 from django.conf import settings
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.db.models import Sum
 from django.urls import reverse
@@ -207,6 +209,15 @@ class Document(models.Model):
     document_date = models.DateField()
     document_file = models.FileField(upload_to=document_upload_path)
     notes = models.CharField(max_length=128)
+
+    content_type = models.ForeignKey(ContentType, null=True, on_delete=models.CASCADE)
+    object_id = models.PositiveBigIntegerField(null=True)
+    content_object = GenericForeignKey("content_type", "object_id")
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["content_type", "object_id"]),
+        ]
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
