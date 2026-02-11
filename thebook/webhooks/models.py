@@ -102,6 +102,10 @@ class OpenPixWebhookPayload(models.Model):
         )
 
         with transaction.atomic():
+            bank_fee_category, _ = Category.objects.get_or_create(
+                name="Tarifas Bancárias"
+            )
+
             Transaction.objects.create(
                 reference=reference,
                 date=utc_transaction_date,
@@ -116,6 +120,7 @@ class OpenPixWebhookPayload(models.Model):
                 description="Taxa OpenPix - " + description,
                 amount=fee,
                 bank_account=bank_account,
+                category=bank_fee_category,
                 created_by=user,
             )
 
@@ -210,19 +215,17 @@ class PaypalWebhookPayload(models.Model):
 
         reference = jmespath.search("resource.id", payload)
 
-        membership_fee_category, _ = Category.objects.get_or_create(
-            name="Contribuição Associativa"
-        )
-        bank_fee_category, _ = Category.objects.get_or_create(name="Tarifas Bancárias")
-
         with transaction.atomic():
+            bank_fee_category, _ = Category.objects.get_or_create(
+                name="Tarifas Bancárias"
+            )
+
             Transaction.objects.create(
                 reference=reference,
                 date=utc_transaction_date,
                 description=description,
                 amount=amount,
                 bank_account=bank_account,
-                category=membership_fee_category,
                 created_by=user,
             )
             Transaction.objects.create(
