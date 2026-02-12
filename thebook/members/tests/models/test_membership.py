@@ -13,6 +13,7 @@ from thebook.members.models import (
     Member,
     Membership,
     ReceivableFee,
+    ReceivableFeeTransactionMatchRule,
 )
 
 
@@ -149,3 +150,115 @@ def test_when_membership_is_activated_add_first_receivable_fee(db):
 
     assert membership.receivable_fees.exists()
     assert membership.receivable_fees.count() == 1
+
+
+@pytest.mark.parametrize(
+    "cpf,expected_patterns",
+    [
+        ("123.456.789-10", (".*123.456.789-10.*", ".*12345678910.*")),
+        ("12345678910", (".*123.456.789-10.*", ".*12345678910.*")),
+    ],
+)
+def test_when_membership_is_created_add_receivable_fee_match_rule_with_their_cpf(
+    db, cpf, expected_patterns
+):
+    """Some transactions contains the CPF of the member, so this is the simplest rule to match a receivable fee payment"""
+    member = baker.make(Member, cpf=cpf)
+
+    membership = Membership.objects.create(
+        member=member,
+        start_date=date(2025, 8, 11),
+        membership_fee_amount=Decimal("85"),
+        payment_interval=FeeIntervals.MONTHLY,
+        active=False,
+    )
+
+    assert (
+        ReceivableFeeTransactionMatchRule.objects.filter(membership=membership).count()
+        == 2
+    )
+    for expected_pattern in expected_patterns:
+        assert ReceivableFeeTransactionMatchRule.objects.filter(
+            membership=membership, pattern=expected_pattern
+        ).exists()
+
+
+def test_when_membership_is_created_do_not_add_receivable_fee_match_rule_with_member_without_cpf(
+    db,
+):
+    """Some transactions contains the CPF of the member, so this is the simplest rule to match a receivable fee payment"""
+    member = baker.make(Member, cpf="")
+
+    membership = Membership.objects.create(
+        member=member,
+        start_date=date(2025, 8, 11),
+        membership_fee_amount=Decimal("85"),
+        payment_interval=FeeIntervals.MONTHLY,
+        active=False,
+    )
+
+    assert (
+        ReceivableFeeTransactionMatchRule.objects.filter(membership=membership).count()
+        == 0
+    )
+
+
+def test_when_membership_do_not_add_duplicated_receivable_fee_match_rule_if_already_exists(
+    db,
+):
+    """Some transactions contains the CPF of the member, so this is the simplest rule to match a receivable fee payment"""
+    member = baker.make(Member, cpf="123.456.789-10")
+
+    membership = Membership.objects.create(
+        member=member,
+        start_date=date(2025, 8, 11),
+        membership_fee_amount=Decimal("85"),
+        payment_interval=FeeIntervals.MONTHLY,
+        active=False,
+    )
+    assert (
+        ReceivableFeeTransactionMatchRule.objects.filter(membership=membership).count()
+        == 2
+    )
+
+    membership.membership_fee_amount = Decimal("110")
+    membership.save()
+
+    assert (
+        ReceivableFeeTransactionMatchRule.objects.filter(membership=membership).count()
+        == 2
+    )
+
+
+def test_keep_existing_receivable_fee_match_rule_that_exist(db):
+    """Some transactions contains the CPF of the member, so this is the simplest rule to match a receivable fee payment"""
+    member = baker.make(Member, cpf="")
+    membership = Membership.objects.create(
+        member=member,
+        start_date=date(2025, 8, 11),
+        membership_fee_amount=Decimal("85"),
+        payment_interval=FeeIntervals.MONTHLY,
+        active=False,
+    )
+    ReceivableFeeTransactionMatchRule.objects.create(
+        membership=membership, pattern=".*Member name.*"
+    )
+
+    member.cpf = "123.456.789-10"
+    member.save()
+
+    membership.save()
+
+    assert (
+        ReceivableFeeTransactionMatchRule.objects.filter(membership=membership).count()
+        == 3
+    )
+    assert ReceivableFeeTransactionMatchRule.objects.filter(
+        membership=membership, pattern=".*Member name.*"
+    ).exists()
+    assert ReceivableFeeTransactionMatchRule.objects.filter(
+        membership=membership, pattern=".*12345678910.*"
+    ).exists()
+    assert ReceivableFeeTransactionMatchRule.objects.filter(
+        membership=membership, pattern=".*123.456.789-10.*"
+    ).exists()

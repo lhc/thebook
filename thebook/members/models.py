@@ -1,6 +1,7 @@
 import calendar
 import datetime
 import itertools
+import re
 
 from dateutil.relativedelta import relativedelta
 from localflavor.br.models import BRCPFField
@@ -104,6 +105,10 @@ class Membership(models.Model):
         active_status = "Active" if self.active else "Inactive"
         return f"{active_status} membership of {self.member.name}"
 
+    def save(self, **kwargs):
+        self.create_receivable_fee_transaction_match_rules()
+        super().save(**kwargs)
+
     def create_next_receivable_fee(self, commit=True):
         if not self.active:
             return None
@@ -157,6 +162,23 @@ class Membership(models.Model):
             receivable_fee.save()
 
         return receivable_fee
+
+    def create_receivable_fee_transaction_match_rules(self):
+        member_cpf = self.member.cpf
+        member_cpf_only_digits = re.sub(r"[^\d]+", "", member_cpf)
+
+        if not member_cpf_only_digits:
+            return
+
+        pattern_1 = f".*{member_cpf_only_digits}.*"
+        ReceivableFeeTransactionMatchRule.objects.get_or_create(
+            membership=self, pattern=pattern_1
+        )
+
+        pattern_2 = f".*{member_cpf_only_digits[:3]}.{member_cpf_only_digits[3:6]}.{member_cpf_only_digits[6:9]}-{member_cpf_only_digits[9:]}.*"
+        ReceivableFeeTransactionMatchRule.objects.get_or_create(
+            membership=self, pattern=pattern_2
+        )
 
     @property
     def next_membership_fee_payment_date(self):

@@ -140,7 +140,7 @@ class CSVImporter:
                     # We don't process USD recurring here
                     continue
 
-                current_membership_fees = (75, 85, 110)
+                current_membership_fees = (75, 85, 110, 120)
                 recurring_fee_type = (
                     "Mensalidade"
                     if transaction_amount in current_membership_fees
@@ -166,7 +166,7 @@ class CSVImporter:
                     Transaction(
                         reference=f"{transaction_reference}T",
                         date=transaction_date,
-                        description=f"Taxa Intermediação - {recurring_fee_type} - {transaction_name}",
+                        description=f"Taxa PayPal - {recurring_fee_type} - {transaction_name}",
                         amount=transaction_tax,
                         bank_account=self.bank_account,
                         category=self.categories[BANK_FEES],
