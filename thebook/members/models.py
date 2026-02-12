@@ -167,17 +167,22 @@ class Membership(models.Model):
         member_cpf = self.member.cpf
         member_cpf_only_digits = re.sub(r"[^\d]+", "", member_cpf)
 
-        if not member_cpf_only_digits:
-            return
-
-        pattern_1 = f".*{member_cpf_only_digits}.*"
+        pattern_1 = f".*{self.member.name.lower()}.*"
         ReceivableFeeTransactionMatchRule.objects.get_or_create(
             membership=self, pattern=pattern_1
         )
 
-        pattern_2 = f".*{member_cpf_only_digits[:3]}.{member_cpf_only_digits[3:6]}.{member_cpf_only_digits[6:9]}-{member_cpf_only_digits[9:]}.*"
+        if not member_cpf_only_digits:
+            return
+
+        pattern_2 = f".*{member_cpf_only_digits}.*"
         ReceivableFeeTransactionMatchRule.objects.get_or_create(
             membership=self, pattern=pattern_2
+        )
+
+        pattern_3 = f".*{member_cpf_only_digits[:3]}.{member_cpf_only_digits[3:6]}.{member_cpf_only_digits[6:9]}-{member_cpf_only_digits[9:]}.*"
+        ReceivableFeeTransactionMatchRule.objects.get_or_create(
+            membership=self, pattern=pattern_3
         )
 
     @property

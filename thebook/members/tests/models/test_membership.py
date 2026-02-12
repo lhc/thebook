@@ -159,11 +159,10 @@ def test_when_membership_is_activated_add_first_receivable_fee(db):
         ("12345678910", (".*123.456.789-10.*", ".*12345678910.*")),
     ],
 )
-def test_when_membership_is_created_add_receivable_fee_match_rule_with_their_cpf(
+def test_when_membership_is_created_add_receivable_fee_match_rule_with_their_cpf_and_name(
     db, cpf, expected_patterns
 ):
-    """Some transactions contains the CPF of the member, so this is the simplest rule to match a receivable fee payment"""
-    member = baker.make(Member, cpf=cpf)
+    member = baker.make(Member, cpf=cpf, name="Guybrush Threepwood")
 
     membership = Membership.objects.create(
         member=member,
@@ -175,19 +174,23 @@ def test_when_membership_is_created_add_receivable_fee_match_rule_with_their_cpf
 
     assert (
         ReceivableFeeTransactionMatchRule.objects.filter(membership=membership).count()
-        == 2
+        == 3
     )
     for expected_pattern in expected_patterns:
         assert ReceivableFeeTransactionMatchRule.objects.filter(
             membership=membership, pattern=expected_pattern
         ).exists()
 
+    assert ReceivableFeeTransactionMatchRule.objects.filter(
+        membership=membership, pattern=".*guybrush threepwood.*"
+    ).exists()
+
 
 def test_when_membership_is_created_do_not_add_receivable_fee_match_rule_with_member_without_cpf(
     db,
 ):
     """Some transactions contains the CPF of the member, so this is the simplest rule to match a receivable fee payment"""
-    member = baker.make(Member, cpf="")
+    member = baker.make(Member, cpf="", name="Guybrush Threepwood")
 
     membership = Membership.objects.create(
         member=member,
@@ -199,8 +202,12 @@ def test_when_membership_is_created_do_not_add_receivable_fee_match_rule_with_me
 
     assert (
         ReceivableFeeTransactionMatchRule.objects.filter(membership=membership).count()
-        == 0
+        == 1
     )
+
+    assert ReceivableFeeTransactionMatchRule.objects.filter(
+        membership=membership, pattern=".*guybrush threepwood.*"
+    ).exists()
 
 
 def test_when_membership_do_not_add_duplicated_receivable_fee_match_rule_if_already_exists(
@@ -218,7 +225,7 @@ def test_when_membership_do_not_add_duplicated_receivable_fee_match_rule_if_alre
     )
     assert (
         ReceivableFeeTransactionMatchRule.objects.filter(membership=membership).count()
-        == 2
+        == 3
     )
 
     membership.membership_fee_amount = Decimal("110")
@@ -226,13 +233,13 @@ def test_when_membership_do_not_add_duplicated_receivable_fee_match_rule_if_alre
 
     assert (
         ReceivableFeeTransactionMatchRule.objects.filter(membership=membership).count()
-        == 2
+        == 3
     )
 
 
 def test_keep_existing_receivable_fee_match_rule_that_exist(db):
     """Some transactions contains the CPF of the member, so this is the simplest rule to match a receivable fee payment"""
-    member = baker.make(Member, cpf="")
+    member = baker.make(Member, cpf="", name="Guybrush Threepwood")
     membership = Membership.objects.create(
         member=member,
         start_date=date(2025, 8, 11),
@@ -251,7 +258,7 @@ def test_keep_existing_receivable_fee_match_rule_that_exist(db):
 
     assert (
         ReceivableFeeTransactionMatchRule.objects.filter(membership=membership).count()
-        == 3
+        == 4
     )
     assert ReceivableFeeTransactionMatchRule.objects.filter(
         membership=membership, pattern=".*Member name.*"
@@ -261,4 +268,7 @@ def test_keep_existing_receivable_fee_match_rule_that_exist(db):
     ).exists()
     assert ReceivableFeeTransactionMatchRule.objects.filter(
         membership=membership, pattern=".*123.456.789-10.*"
+    ).exists()
+    assert ReceivableFeeTransactionMatchRule.objects.filter(
+        membership=membership, pattern=".*guybrush threepwood.*"
     ).exists()
