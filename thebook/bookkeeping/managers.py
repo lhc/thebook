@@ -132,7 +132,7 @@ class TransactionQuerySet(models.QuerySet):
                 self.filter(
                     category__name="Contribuição Associativa",
                     amount=receivable_fee.amount,
-                    description__regex=rule.pattern,
+                    description__iregex=rule.pattern,
                     date__gte=receivable_fee.membership.start_date,
                 )
                 .exclude(

@@ -22,6 +22,7 @@ def membership_fee_category(db):
 def membership(db):
     return baker.make(
         Membership,
+        member__name="Guybrush Threepwood",
         start_date=datetime.date(2025, 1, 1),
         membership_fee_amount=Decimal("100.0"),
     )
@@ -55,6 +56,29 @@ def test_find_exact_transaction_match(db, unpaid_rf, membership_fee_category):
     )
     rf_match_rule = ReceivableFeeTransactionMatchRule.objects.create(
         pattern="Payment of membership fee",
+        membership=unpaid_rf.membership,
+    )
+
+    matched_transaction = Transaction.objects.find_match_for(unpaid_rf)
+
+    assert matched_transaction == transaction
+
+
+@pytest.mark.parametrize(
+    "name", ["Guybrush Threepwood", "guybrush threepwood", "GUYBRUSH THREEPWOOD"]
+)
+def test_match_transaction_by_name_with_case_insensitive_search(
+    db, unpaid_rf, membership_fee_category, name
+):
+    transaction = baker.make(
+        Transaction,
+        date=datetime.date(2025, 7, 10),
+        amount=Decimal("100.0"),
+        category=membership_fee_category,
+        description=f"Payment of membership for {name} fee",
+    )
+    rf_match_rule = ReceivableFeeTransactionMatchRule.objects.create(
+        pattern=".*guybrush threepwood.*",
         membership=unpaid_rf.membership,
     )
 
