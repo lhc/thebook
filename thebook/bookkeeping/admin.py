@@ -49,7 +49,6 @@ class CategoryAdmin(admin.ModelAdmin): ...
 @admin.register(CategoryMatchRule)
 class CategoryMatchRuleAdmin(admin.ModelAdmin):
     list_display = [
-        "priority",
         "pattern",
         "category",
     ]

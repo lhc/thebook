@@ -12,27 +12,16 @@ def category():
     return Category.objects.create(name="Test Category")
 
 
-def test_priority_must_be_unique(db, category):
-    _ = CategoryMatchRule.objects.create(
-        priority=100, pattern="test_pattern", category=category
-    )
-    with pytest.raises(IntegrityError):
-        CategoryMatchRule.objects.create(
-            priority=100, pattern="another_pattern", category=category
-        )
-
-
 def test_when_value_is_provided_comparison_function_is_also_required(db, category):
     with pytest.raises(IntegrityError):
         _ = CategoryMatchRule.objects.create(
-            priority=100, pattern="pattern", category=category, value=Decimal("42.0")
+            pattern="pattern", category=category, value=Decimal("42.0")
         )
 
 
 def test_when_comparison_function_is_provided_value_is_also_required(db, category):
     with pytest.raises(IntegrityError):
         _ = CategoryMatchRule.objects.create(
-            priority=100,
             pattern="pattern",
             category=category,
             comparison_function="EQ",
@@ -42,7 +31,6 @@ def test_when_comparison_function_is_provided_value_is_also_required(db, categor
 def test_valid_when_comparison_function_and_value_are_provided(db, category):
     try:
         category_match_rule = CategoryMatchRule.objects.create(
-            priority=100,
             pattern="pattern",
             category=category,
             value=Decimal("42.0"),
@@ -63,7 +51,6 @@ def test_valid_when_comparison_function_and_value_are_provided(db, category):
 def test_comparison_function_must_be_a_valid_value(db, category, comparison_function):
     try:
         category_match_rule = CategoryMatchRule.objects.create(
-            priority=100,
             pattern="pattern",
             category=category,
             value=Decimal("42.0"),
@@ -76,7 +63,6 @@ def test_comparison_function_must_be_a_valid_value(db, category, comparison_func
 def test_fail_when_comparison_function_is_not_a_valid_value(db, category):
     with pytest.raises(IntegrityError):
         _ = CategoryMatchRule.objects.create(
-            priority=100,
             pattern="pattern",
             category=category,
             value=Decimal("42.0"),

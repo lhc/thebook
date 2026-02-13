@@ -8,7 +8,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         uncategorized_transactions = Transaction.objects.filter(category__isnull=True)
-        category_match_rules = CategoryMatchRule.objects.order_by("priority")
+        category_match_rules = CategoryMatchRule.objects.all()
 
         for transaction in uncategorized_transactions:
             transaction.categorize(rules=category_match_rules)

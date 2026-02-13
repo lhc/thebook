@@ -15,7 +15,7 @@ def test_can_not_apply_rule_in_not_persisted_transaction(
     bank_fee_category,
 ):
     category_rule = CategoryMatchRule.objects.create(
-        priority=100, pattern="bank fee", category=bank_fee_category, tags="bank"
+        pattern="bank fee", category=bank_fee_category, tags="bank"
     )
     transaction = baker.prepare(Transaction, description="bank fee")
     with pytest.raises(ValueError):
@@ -34,7 +34,6 @@ def test_can_not_apply_rule_in_not_persisted_transaction(
 )
 def test_apply_rule_by_regex_pattern(db, bank_fee_category, pattern, description):
     category_rule = CategoryMatchRule.objects.create(
-        priority=100,
         pattern=pattern,
         category=bank_fee_category,
     )
@@ -60,7 +59,6 @@ def test_do_not_apply_rule_when_regex_not_a_match(
     db, bank_fee_category, pattern, description
 ):
     category_rule = CategoryMatchRule.objects.create(
-        priority=100,
         pattern=pattern,
         category=bank_fee_category,
     )
@@ -85,7 +83,6 @@ def test_apply_tags_to_matched_transactions(
     db, bank_fee_category, pattern, description, tags
 ):
     category_rule = CategoryMatchRule.objects.create(
-        priority=100,
         pattern=pattern,
         category=bank_fee_category,
         tags=tags,
@@ -122,7 +119,6 @@ def test_apply_rule_considering_value(
     expected_applied,
 ):
     category_rule = CategoryMatchRule.objects.create(
-        priority=100,
         pattern="bank fee",
         category=bank_fee_category,
         value=rule_value,

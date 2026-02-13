@@ -71,7 +71,6 @@ def test_transactions_description_rules_over_donation_threshold(
     db, mocker, settings, accountant
 ):
     CategoryMatchRule.objects.create(
-        priority=100,
         pattern="NOT DONATION",
         category=accountant,
     ),
@@ -94,12 +93,10 @@ def test_consider_match_rule_priority_when_categorizing(
     db, mocker, settings, accountant, bank_fees
 ):
     CategoryMatchRule.objects.create(
-        priority=200,
         pattern="PAYMENT",
         category=accountant,
     )
     CategoryMatchRule.objects.create(
-        priority=100,
         pattern="PAYMENT",
         category=bank_fees,
     )

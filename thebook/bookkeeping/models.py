@@ -113,7 +113,6 @@ class Category(models.Model):
 
 
 class CategoryMatchRule(models.Model):
-    priority = models.IntegerField(unique=True)
     pattern = models.CharField(max_length=512)
     category = models.ForeignKey("bookkeeping.Category", on_delete=models.CASCADE)
     value = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
@@ -131,7 +130,7 @@ class CategoryMatchRule(models.Model):
     tags = models.CharField(max_length=512, blank=True, null=True)
 
     def __str__(self):
-        return f"{self.pattern} ({self.priority})"
+        return f"{self.pattern}"
 
     class Meta:
         constraints = [
@@ -282,7 +281,7 @@ class Transaction(models.Model):
 
     def categorize(self, rules=None):
         if rules is None:
-            rules = CategoryMatchRule.objects.order_by("priority")
+            rules = CategoryMatchRule.objects.all()
 
         for rule in rules:
             self, applied = rule.apply_rule(self)
