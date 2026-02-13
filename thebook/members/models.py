@@ -47,6 +47,20 @@ class FeePaymentStatus:
         )
 
 
+class MemberMetadataKeys:
+    CPF = 1
+    HAS_KEY = 2
+    PAYPAL_PAYER_ID = 3
+
+    @classproperty
+    def choices(cls):
+        return (
+            (cls.CPF, _("Paid")),
+            (cls.HAS_KEY, _("Unpaid")),
+            (cls.PAYPAL_PAYER_ID, _("Due")),
+        )
+
+
 class PaymentMethod:
     PAYPAL = 1
     PIX = 2
@@ -246,6 +260,41 @@ class Member(models.Model):
         return self.membership.start_date < datetime.date.today() - relativedelta(
             months=3
         )
+
+
+class MemberMetadata(models.Model):
+    member = models.ForeignKey(
+        "members.Member",
+        on_delete=models.CASCADE,
+        related_name="metadata",
+    )
+
+    key = models.CharField(
+        choices=MemberMetadataKeys.choices,
+        verbose_name=_("Metadata Keys"),
+    )
+    value = models.CharField()
+
+    class Meta:
+        unique_together = (
+            "member",
+            "key",
+        )
+
+    def save(self, **kwargs):
+        from thebook.bookkeeping.models import Category, CategoryMatchRule
+
+        membership_fee_category, _ = Category.objects.get_or_create(
+            name="Contribuição Associativa"
+        )
+
+        if self.key == MemberMetadataKeys.PAYPAL_PAYER_ID:
+            CategoryMatchRule.objects.create(
+                pattern=f".*{self.value}.*",
+                category=membership_fee_category,
+                value=self.member.membership.membership_fee_amount,
+                comparison_function="EQ",
+            )
 
 
 class ReceivableFee(models.Model):
