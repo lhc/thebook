@@ -1,0 +1,60 @@
+{
+  "id": "WH-1V687369MX9539434-92W42652NP1695409",
+  "event_version": "1.0",
+  "create_time": "2026-02-12T10:28:09.645Z",
+  "resource_type": "sale",
+  "event_type": "PAYMENT.SALE.COMPLETED",
+  "summary": "Payment completed for $ 50.0 USD",
+  "resource": {
+    "id": "0PAAAAAAAAAAAAAAA",
+    "state": "completed",
+    "amount": {
+      "total": "50.00",
+      "currency": "USD",
+      "details": {
+        "subtotal": "50.00"
+      }
+    },
+    "payment_mode": "INSTANT_TRANSFER",
+    "protection_eligibility": "ELIGIBLE",
+    "protection_eligibility_type": "ITEM_NOT_RECEIVED_ELIGIBLE,UNAUTHORIZED_PAYMENT_ELIGIBLE",
+    "transaction_fee": {
+      "value": "3.50",
+      "currency": "USD"
+    },
+    "receivable_amount": {
+      "value": "231.93",
+      "currency": "BRL"
+    },
+    "exchange_rate": "4.98780515",
+    "invoice_number": "",
+    "billing_agreement_id": "I-AAAAAAAAAAAA",
+    "create_time": "2026-02-12T10:28:05Z",
+    "update_time": "2026-02-12T10:28:05Z",
+    "links": [
+      {
+        "href": "https://api.paypal.com/v1/payments/sale/0PAAAAAAAAAAAAAAA",
+        "rel": "self",
+        "method": "GET"
+      },
+      {
+        "href": "https://api.paypal.com/v1/payments/sale/0PAAAAAAAAAAAAAAA/refund",
+        "rel": "refund",
+        "method": "POST"
+      }
+    ],
+    "soft_descriptor": "PAYPAL *LHCCAMPINAS"
+  },
+  "links": [
+    {
+      "href": "https://api.paypal.com/v1/notifications/webhooks-events/WH-1V687369MX9539434-92W42652NP1695409",
+      "rel": "self",
+      "method": "GET"
+    },
+    {
+      "href": "https://api.paypal.com/v1/notifications/webhooks-events/WH-1V687369MX9539434-92W42652NP1695409/resend",
+      "rel": "resend",
+      "method": "POST"
+    }
+  ]
+}

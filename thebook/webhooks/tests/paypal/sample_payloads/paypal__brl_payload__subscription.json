@@ -1,0 +1,72 @@
+{
+  "status": "ACTIVE",
+  "status_update_time": "2026-02-13T10:10:12Z",
+  "id": "I-BBBBBBBBBBBB",
+  "start_time": "2025-03-13T16:04:09Z",
+  "shipping_amount": {
+    "currency_code": "BRL",
+    "value": "0.0"
+  },
+  "subscriber": {
+    "email_address": "douglas.brsoftware@gmail.com",
+    "payer_id": "L4AVQLJR8GMZY",
+    "name": {
+      "given_name": "Bruce",
+      "surname": "Wayne"
+    },
+    "tenant": "PAYPAL"
+  },
+  "billing_info": {
+    "outstanding_balance": {
+      "currency_code": "BRL",
+      "value": "0.0"
+    },
+    "cycle_executions": [
+      {
+        "tenure_type": "REGULAR",
+        "sequence": 1,
+        "cycles_completed": 12,
+        "cycles_remaining": 0,
+        "total_cycles": 0
+      }
+    ],
+    "last_payment": {
+      "amount": {
+        "currency_code": "BRL",
+        "value": "85.0"
+      },
+      "time": "2026-02-13T10:10:10Z"
+    },
+    "next_billing_time": "2026-03-13T10:00:00Z",
+    "failed_payments_count": 0
+  },
+  "create_time": "2025-03-13T16:04:36Z",
+  "update_time": "2026-02-13T10:10:12Z",
+  "links": [
+    {
+      "href": "https://api.paypal.com/v1/billing/subscriptions/I-BBBBBBBBBBBB/cancel",
+      "rel": "cancel",
+      "method": "POST"
+    },
+    {
+      "href": "https://api.paypal.com/v1/billing/subscriptions/I-BBBBBBBBBBBB",
+      "rel": "edit",
+      "method": "PATCH"
+    },
+    {
+      "href": "https://api.paypal.com/v1/billing/subscriptions/I-BBBBBBBBBBBB",
+      "rel": "self",
+      "method": "GET"
+    },
+    {
+      "href": "https://api.paypal.com/v1/billing/subscriptions/I-BBBBBBBBBBBB/suspend",
+      "rel": "suspend",
+      "method": "POST"
+    },
+    {
+      "href": "https://api.paypal.com/v1/billing/subscriptions/I-BBBBBBBBBBBB/capture",
+      "rel": "capture",
+      "method": "POST"
+    }
+  ]
+}

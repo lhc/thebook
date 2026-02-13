@@ -1,0 +1,81 @@
+{
+  "status": "ACTIVE",
+  "status_update_time": "2026-02-12T10:28:06Z",
+  "id": "I-AAAAAAAAAAAA",
+  "start_time": "2020-01-12T02:00:00Z",
+  "shipping_amount": {
+    "currency_code": "USD",
+    "value": "0.0"
+  },
+  "subscriber": {
+    "email_address": "elvis.presley@example.com",
+    "payer_id": "Q64J6VDR3DBHN",
+    "name": {
+      "given_name": "Elvis",
+      "surname": "Presley"
+    },
+    "tenant": "PAYPAL",
+    "shipping_address": {
+      "address": {
+        "address_line_1": "3734 Elvis Presley Boulevard",
+        "admin_area_2": "Memphis",
+        "admin_area_1": "TN",
+        "postal_code": "38116",
+        "country_code": "US"
+      }
+    }
+  },
+  "billing_info": {
+    "outstanding_balance": {
+      "currency_code": "USD",
+      "value": "0.0"
+    },
+    "cycle_executions": [
+      {
+        "tenure_type": "REGULAR",
+        "sequence": 1,
+        "cycles_completed": 74,
+        "cycles_remaining": 0,
+        "total_cycles": 0
+      }
+    ],
+    "last_payment": {
+      "amount": {
+        "currency_code": "USD",
+        "value": "50.0"
+      },
+      "time": "2026-02-12T10:28:05Z"
+    },
+    "next_billing_time": "2026-03-12T10:00:00Z",
+    "failed_payments_count": 3
+  },
+  "create_time": "2020-01-12T14:23:37Z",
+  "update_time": "2026-02-12T10:28:06Z",
+  "links": [
+    {
+      "href": "https://api.paypal.com/v1/billing/subscriptions/I-AAAAAAAAAAAA/cancel",
+      "rel": "cancel",
+      "method": "POST"
+    },
+    {
+      "href": "https://api.paypal.com/v1/billing/subscriptions/I-AAAAAAAAAAAA",
+      "rel": "edit",
+      "method": "PATCH"
+    },
+    {
+      "href": "https://api.paypal.com/v1/billing/subscriptions/I-AAAAAAAAAAAA",
+      "rel": "self",
+      "method": "GET"
+    },
+    {
+      "href": "https://api.paypal.com/v1/billing/subscriptions/I-AAAAAAAAAAAA/suspend",
+      "rel": "suspend",
+      "method": "POST"
+    },
+    {
+      "href": "https://api.paypal.com/v1/billing/subscriptions/I-AAAAAAAAAAAA/capture",
+      "rel": "capture",
+      "method": "POST"
+    }
+  ]
+}
