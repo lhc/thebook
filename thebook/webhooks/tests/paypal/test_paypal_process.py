@@ -75,7 +75,7 @@ def test_payment_sale_completed__usd_transaction(
 
     transaction = Transaction.objects.get(reference="0PAAAAAAAAAAAAAAA")
     assert transaction.date == datetime.date(2026, 2, 12)
-    assert transaction.description == "Elvis Presley - Q64J6VDR3DBHN"
+    assert transaction.description == "Elvis Presley - USD 50.00 - Q64J6VDR3DBHN"
     assert transaction.amount == Decimal("231.93")
 
     # Do not create transaction with bank fees. Total received amount already in transaction above

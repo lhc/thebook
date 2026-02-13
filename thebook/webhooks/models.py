@@ -247,7 +247,13 @@ class PaypalWebhookPayload(models.Model):
         full_name = " ".join([given_name, surname]).strip()
         payer_id = jmespath.search("subscriber.payer_id", subscription) or ""
 
-        description = " - ".join([part for part in (full_name, payer_id) if part])
+        description_parts = (full_name, payer_id)
+        currency = jmespath.search("resource.amount.currency", payload)
+        if currency == "USD":
+            usd_amount = jmespath.search("resource.amount.total", payload)
+            description_parts = (full_name, f"USD {usd_amount}", payer_id)
+
+        description = " - ".join([part for part in description_parts if part])
 
         reference = jmespath.search("resource.id", payload)
 
