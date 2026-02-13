@@ -3,6 +3,7 @@ from django.contrib import admin
 
 from thebook.members.models import (
     Member,
+    MemberMetadata,
     Membership,
     ReceivableFee,
     ReceivableFeeTransactionMatchRule,
@@ -35,6 +36,10 @@ class MemberAdmin(admin.ModelAdmin):
         "membership",
         "user",
     ]
+
+
+@admin.register(MemberMetadata)
+class MemberMetadataAdmin(admin.ModelAdmin): ...
 
 
 @admin.register(ReceivableFee)

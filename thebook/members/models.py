@@ -55,9 +55,9 @@ class MemberMetadataKeys:
     @classproperty
     def choices(cls):
         return (
-            (cls.CPF, _("Paid")),
-            (cls.HAS_KEY, _("Unpaid")),
-            (cls.PAYPAL_PAYER_ID, _("Due")),
+            (cls.CPF, _("CPF")),
+            (cls.HAS_KEY, _("Has physical key")),
+            (cls.PAYPAL_PAYER_ID, _("PayPal Payer ID")),
         )
 
 
@@ -269,7 +269,7 @@ class MemberMetadata(models.Model):
         related_name="metadata",
     )
 
-    key = models.CharField(
+    key = models.IntegerField(
         choices=MemberMetadataKeys.choices,
         verbose_name=_("Metadata Keys"),
     )
@@ -280,6 +280,9 @@ class MemberMetadata(models.Model):
             "member",
             "key",
         )
+
+    def __str__(self):
+        return f"{self.key}: {self.value}"
 
     def save(self, **kwargs):
         from thebook.bookkeeping.models import Category, CategoryMatchRule
