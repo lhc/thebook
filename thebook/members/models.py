@@ -284,7 +284,7 @@ class MemberMetadata(models.Model):
     def __str__(self):
         return f"{self.key}: {self.value}"
 
-    def save(self, **kwargs):
+    def save(self, *args, **kwargs):
         from thebook.bookkeeping.models import Category, CategoryMatchRule
 
         membership_fee_category, _ = Category.objects.get_or_create(
@@ -298,6 +298,8 @@ class MemberMetadata(models.Model):
                 value=self.member.membership.membership_fee_amount,
                 comparison_function="EQ",
             )
+
+        super().save(*args, **kwargs)
 
 
 class ReceivableFee(models.Model):

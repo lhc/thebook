@@ -39,7 +39,11 @@ class MemberAdmin(admin.ModelAdmin):
 
 
 @admin.register(MemberMetadata)
-class MemberMetadataAdmin(admin.ModelAdmin): ...
+class MemberMetadataAdmin(admin.ModelAdmin):
+    list_display = [
+        "key",
+        "value",
+    ]
 
 
 @admin.register(ReceivableFee)
