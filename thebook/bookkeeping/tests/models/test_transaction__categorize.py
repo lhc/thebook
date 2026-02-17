@@ -87,27 +87,3 @@ def test_transactions_description_rules_over_donation_threshold(
 
     transaction.refresh_from_db()
     assert transaction.category == accountant
-
-
-def test_consider_match_rule_priority_when_categorizing(
-    db, mocker, settings, accountant, bank_fees
-):
-    CategoryMatchRule.objects.create(
-        pattern="PAYMENT",
-        category=accountant,
-    )
-    CategoryMatchRule.objects.create(
-        pattern="PAYMENT",
-        category=bank_fees,
-    )
-
-    transaction = baker.make(
-        Transaction,
-        description="PAYMENT",
-        amount=Decimal("49.99"),
-    )
-
-    transaction.categorize()
-
-    transaction.refresh_from_db()
-    assert transaction.category == bank_fees

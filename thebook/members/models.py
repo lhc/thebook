@@ -292,8 +292,25 @@ class MemberMetadata(models.Model):
         )
 
         if self.key == MemberMetadataKeys.PAYPAL_PAYER_ID:
-            CategoryMatchRule.objects.create(
+            CategoryMatchRule.objects.get_or_create(
                 pattern=f".*{self.value}.*",
+                category=membership_fee_category,
+                value=self.member.membership.membership_fee_amount,
+                comparison_function="EQ",
+            )
+
+        if self.key == MemberMetadataKeys.CPF:
+            cpf_only_digits = re.sub(r"[^\d]+", "", self.value)
+            CategoryMatchRule.objects.get_or_create(
+                pattern=f".*{cpf_only_digits}.*",
+                category=membership_fee_category,
+                value=self.member.membership.membership_fee_amount,
+                comparison_function="EQ",
+            )
+
+            formatted_cpf = f"{cpf_only_digits[:3]}.{cpf_only_digits[3:6]}.{cpf_only_digits[6:9]}-{cpf_only_digits[9:]}"
+            CategoryMatchRule.objects.get_or_create(
+                pattern=f".*{formatted_cpf}.*",
                 category=membership_fee_category,
                 value=self.member.membership.membership_fee_amount,
                 comparison_function="EQ",

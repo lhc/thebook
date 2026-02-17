@@ -40,3 +40,33 @@ def test_when_paypal_payer_id_is_set_for_member_create_category_matching_rule(
         value=membership.membership_fee_amount,
         comparison_function="EQ",
     ).exists()
+
+
+@pytest.mark.parametrize("cpf", ["689.368.948-97", "68936894897"])
+def test_when_cpf_is_set_for_member_create_category_matching_rules(
+    db, membership_fee_category, cpf
+):
+    member = baker.make(Member)
+    membership = baker.make(
+        Membership, member=member, membership_fee_amount=Decimal("42.12")
+    )
+
+    MemberMetadata.objects.create(
+        member=member,
+        key=MemberMetadataKeys.CPF,
+        value=cpf,
+    )
+
+    assert CategoryMatchRule.objects.filter(
+        pattern=f".*689.368.948-97.*",
+        category=membership_fee_category,
+        value=membership.membership_fee_amount,
+        comparison_function="EQ",
+    ).exists()
+
+    assert CategoryMatchRule.objects.filter(
+        pattern=f".*68936894897.*",
+        category=membership_fee_category,
+        value=membership.membership_fee_amount,
+        comparison_function="EQ",
+    ).exists()
