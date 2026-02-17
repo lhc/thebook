@@ -169,7 +169,7 @@
             <td class="dt-control" data-transaction-details-url="{% url 'bookkeeping:partial-transaction-details' transaction.id %}">
               {{ transaction.id }}
             </td>
-            <td>{{ transaction.date|date:"SHORT_DATE_FORMAT" }}</td>
+            <td>{{ transaction.date|date:"Y-m-d" }}</td>
             <td {% if transaction.amount < 0 %}class="text-danger"{% endif %}>
               {{ transaction.amount|money }}
             </td>
