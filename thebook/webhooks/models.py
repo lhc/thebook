@@ -115,7 +115,7 @@ class OpenPixWebhookPayload(models.Model):
                 created_by=user,
             )
             Transaction.objects.create(
-                reference="T" + reference,
+                reference=f"{reference}-T",
                 date=utc_transaction_date,
                 description="Taxa OpenPix - " + description,
                 amount=fee,
@@ -273,7 +273,7 @@ class PaypalWebhookPayload(models.Model):
 
             if transaction_fee is not None:
                 Transaction.objects.create(
-                    reference="T" + reference,
+                    reference=f"{reference}-T",
                     date=utc_transaction_date,
                     description="Taxa PayPal - " + description,
                     amount=fee,
