@@ -260,9 +260,16 @@ EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
 DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL")
 
+PAYPAL_BANK_ACCOUNT = "PayPal"
 PAYPAL_API_BASE_URL = config("PAYPAL_API_BASE_URL", default="https://api-m.paypal.com")
 PAYPAL_CLIENT_ID = config("PAYPAL_CLIENT_ID", default="")
 PAYPAL_CLIENT_SECRET = config("PAYPAL_CLIENT_SECRET", default="")
+
+OPENPIX_BANK_ACCOUNT = "OpenPix"
+OPENPIX_API_BASE_URL = config(
+    "OPENPIX_API_BASE_URL", default="https://api.openpix.com.br"
+)
+OPENPIX_APP_ID = config("OPENPIX_APP_ID", default="")
 
 
 def show_callback(request):
