@@ -106,6 +106,7 @@ def test_payment_sale_completed__brl_transaction(
     webhook_payload.process()
     webhook_payload.refresh_from_db()
     assert webhook_payload.status == ProcessingStatus.PROCESSED
+    assert webhook_payload.webhook_id == "WH-4FS819489P2570542-82M42736RY4782436"
 
     transaction = Transaction.objects.get(reference="35R35201NA4015510")
     assert transaction.date == datetime.date(2026, 2, 13)
@@ -113,9 +114,41 @@ def test_payment_sale_completed__brl_transaction(
     assert transaction.amount == Decimal("85")
 
     # Transactions in BRL must have a bank fee extra transaction
-    bank_fee_transaction = Transaction.objects.get(reference="T35R35201NA4015510")
+    bank_fee_transaction = Transaction.objects.get(reference="35R35201NA4015510-T")
     assert bank_fee_transaction.date == datetime.date(2026, 2, 13)
     assert (
         bank_fee_transaction.description == "Taxa PayPal - Bruce Wayne - L4AVQLJR8GMZY"
     )
     assert bank_fee_transaction.amount == Decimal("-4.67")
+
+
+@responses.activate
+def test_do_not_process_duplicated_webhook_twice(
+    db, webhook__brl_payload, paypal__oauth2_token, paypal__brl_payload__subscription
+):
+    responses.add(
+        responses.POST,
+        f"{settings.PAYPAL_API_BASE_URL}/v1/oauth2/token",
+        json=paypal__oauth2_token,
+    )
+    responses.add(
+        responses.GET,
+        f"{settings.PAYPAL_API_BASE_URL}/v1/billing/subscriptions/I-BBBBBBBBBBBB",
+        body=paypal__brl_payload__subscription,
+        content_type="application/json",
+    )
+
+    webhook_payload = baker.make(
+        PaypalWebhookPayload,
+        payload=webhook__brl_payload,
+    )
+    webhook_payload.process()
+
+    duplicated_webhook = baker.make(
+        PaypalWebhookPayload,
+        payload=webhook__brl_payload,
+    )
+    duplicated_webhook.process()
+    duplicated_webhook.refresh_from_db()
+
+    assert duplicated_webhook.status == ProcessingStatus.DUPLICATED

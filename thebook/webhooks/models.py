@@ -24,6 +24,7 @@ class ProcessingStatus:
     RECEIVED = 1
     PROCESSED = 2
     UNPARSABLE = 3
+    DUPLICATED = 4
 
     @classproperty
     def choices(cls):
@@ -31,6 +32,7 @@ class ProcessingStatus:
             (cls.RECEIVED, _("Received")),
             (cls.PROCESSED, _("Processed")),
             (cls.UNPARSABLE, _("Unparsable")),
+            (cls.DUPLICATED, _("Duplicated")),
         )
 
 
@@ -143,6 +145,7 @@ class PaypalWebhookPayload(models.Model):
         default=ProcessingStatus.RECEIVED,
         verbose_name=_("Processing Status"),
     )
+    webhook_id = models.CharField()
     internal_notes = models.CharField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -189,6 +192,14 @@ class PaypalWebhookPayload(models.Model):
             logger.warning("paypalwebhookpayload.process.unparsable_event", id=self.id)
             self.status = ProcessingStatus.UNPARSABLE
             self.internal_notes = "webhooks.paypal.jsondecodeerror"
+            self.save()
+            return
+
+        self.webhook_id = payload.get("id") or ""
+        if PaypalWebhookPayload.objects.filter(webhook_id=self.webhook_id).exists():
+            logger.warning("paypalwebhookpayload.process.duplicated_event", id=self.id)
+            self.status = ProcessingStatus.DUPLICATED
+            self.internal_notes = "webhooks.paypal.duplicated_event"
             self.save()
             return
 
