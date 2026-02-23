@@ -1,0 +1,17 @@
+name: 💰 Fetch bank account transfers
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 8 * * *"
+
+jobs:
+  schedule:
+    name: 💰 Fetch bank account transfers
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - run: flyctl ssh console -C "python manage.py fetch_paypal_bank_account_transfers"
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
