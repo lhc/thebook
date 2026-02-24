@@ -10,39 +10,6 @@ from django.contrib.auth import get_user_model
 from thebook.bookkeeping.models import BankAccount, Category, Transaction
 
 
-def fetch_bank_account_transfer_transactions(
-    start_date: datetime.date, end_date: datetime.date
-):
-    bank_account_transfer_category, _ = Category.objects.get_or_create(
-        name="Transferência entre contas bancárias"
-    )
-    # https://developer.paypal.com/docs/transaction-search/transaction-event-codes/#t04nn-bank-withdrawal-from-paypal-account
-    transaction_codes = (
-        "T0400",
-        "T0403",
-    )
-
-    for transaction_type in transaction_codes:
-        transactions = fetch_transactions(start_date, end_date, transaction_type)
-
-        references = [transaction.reference for transaction in transactions]
-        existing_references = [
-            transaction.reference
-            for transaction in Transaction.objects.filter(reference__in=references)
-        ]
-
-        for transaction in transactions:
-            if transaction.reference in existing_references:
-                # Do not try to include a transaction already included
-                continue
-
-            transaction.description = (
-                f"Transferência entre contas bancárias - {transaction.reference}",
-            )
-            transaction.category = bank_account_transfer_category
-            transaction.save()
-
-
 def _get_paypal_access_token():
     response = requests.post(
         f"{settings.PAYPAL_API_BASE_URL}/v1/oauth2/token",
