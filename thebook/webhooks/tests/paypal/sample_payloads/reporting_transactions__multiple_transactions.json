@@ -1,0 +1,76 @@
+{
+  "transaction_details": [
+    {
+      "transaction_info": {
+        "paypal_account_id": "9XYM6492UZTXG",
+        "transaction_id": "5EM753922G985452E",
+        "paypal_reference_id": "I-9JFT766E248R",
+        "paypal_reference_id_type": "RP",
+        "transaction_event_code": "T0002",
+        "transaction_initiation_date": "2026-02-01T11:31:22Z",
+        "transaction_updated_date": "2026-02-01T11:31:22Z",
+        "transaction_amount": {
+          "currency_code": "BRL",
+          "value": "110.00"
+        },
+        "fee_amount": {
+          "currency_code": "BRL",
+          "value": "-7.64"
+        },
+        "transaction_status": "S",
+        "transaction_subject": "Regular Donation",
+        "ending_balance": {
+          "currency_code": "BRL",
+          "value": "102.36"
+        },
+        "available_balance": {
+          "currency_code": "BRL",
+          "value": "102.36"
+        },
+        "protection_eligibility": "01",
+        "instrument_type": "PayPal",
+        "instrument_sub_type": "PayPal Wallet"
+      }
+    },
+    {
+      "transaction_info": {
+        "transaction_id": "70Y35009P3781470Y",
+        "transaction_event_code": "T0403",
+        "transaction_initiation_date": "2026-02-02T08:52:02Z",
+        "transaction_updated_date": "2026-02-02T08:52:02Z",
+        "transaction_amount": {
+          "currency_code": "BRL",
+          "value": "-80.33"
+        },
+        "transaction_status": "S",
+        "bank_reference_id": "1047990944180",
+        "ending_balance": {
+          "currency_code": "BRL",
+          "value": "0.00"
+        },
+        "available_balance": {
+          "currency_code": "BRL",
+          "value": "0.00"
+        },
+        "protection_eligibility": "02",
+        "instrument_type": "PayPal",
+        "instrument_sub_type": "PayPal Wallet"
+      }
+    }
+
+  ],
+  "account_number": "2LBBYEY3XL7P8",
+  "start_date": "2026-02-01T00:00:00Z",
+  "end_date": "2026-02-11T00:00:00Z",
+  "last_refreshed_datetime": "2026-02-24T08:59:59Z",
+  "page": 1,
+  "total_items": 2,
+  "total_pages": 1,
+  "links": [
+    {
+      "href": "https://api.paypal.com/v1/reporting/transactions?end_date=2026-02-11T00%3A00%3A00-00%3A00&start_date=2026-02-01T00%3A00%3A00-00%3A00&page_size=100&page=1",
+      "rel": "self",
+      "method": "GET"
+    }
+  ]
+}

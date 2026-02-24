@@ -271,6 +271,8 @@ OPENPIX_API_BASE_URL = config(
 )
 OPENPIX_APP_ID = config("OPENPIX_APP_ID", default="")
 
+BANK_FEE_CATEGORY_NAME = "Tarifas Bancárias"
+
 
 def show_callback(request):
     return True

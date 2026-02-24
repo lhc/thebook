@@ -1,0 +1,44 @@
+{
+  "transaction_details": [
+    {
+      "transaction_info": {
+        "transaction_id": "66M65178H3633912M",
+        "paypal_reference_id": "5V543419453274324",
+        "paypal_reference_id_type": "TXN",
+        "transaction_event_code": "T0200",
+        "transaction_initiation_date": "2026-02-01T11:00:45Z",
+        "transaction_updated_date": "2026-02-01T11:00:45Z",
+        "transaction_amount": {
+          "currency_code": "USD",
+          "value": "-46.50"
+        },
+        "transaction_status": "S",
+        "ending_balance": {
+          "currency_code": "USD",
+          "value": "0.00"
+        },
+        "available_balance": {
+          "currency_code": "USD",
+          "value": "0.00"
+        },
+        "protection_eligibility": "02",
+        "instrument_type": "PayPal",
+        "instrument_sub_type": "PayPal Wallet"
+      }
+    }
+  ],
+  "account_number": "2LBBYEY3XL7P8",
+  "start_date": "2026-02-01T00:00:00Z",
+  "end_date": "2026-02-11T00:00:00Z",
+  "last_refreshed_datetime": "2026-02-24T08:59:59Z",
+  "page": 1,
+  "total_items": 1,
+  "total_pages": 1,
+  "links": [
+    {
+      "href": "https://api.paypal.com/v1/reporting/transactions?end_date=2026-02-11T00%3A00%3A00-00%3A00&start_date=2026-02-01T00%3A00%3A00-00%3A00&page_size=100&page=1",
+      "rel": "self",
+      "method": "GET"
+    }
+  ]
+}

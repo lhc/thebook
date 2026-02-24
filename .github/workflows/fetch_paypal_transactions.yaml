@@ -1,4 +1,4 @@
-name: 💰 Fetch bank account transfers
+name: 💰 Fetch Paypal transactions
 
 on:
   workflow_dispatch:
@@ -7,11 +7,11 @@ on:
 
 jobs:
   schedule:
-    name: 💰 Fetch bank account transfers
+    name: 💰 Fetch Paypal transactions
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: flyctl ssh console -C "python manage.py fetch_paypal_bank_account_transfers"
+      - run: flyctl ssh console -C "python manage.py fetch_paypal_transactions"
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
