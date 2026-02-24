@@ -1,0 +1,321 @@
+{% extends "base/main.html" %}
+
+{% block content %}
+  <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <div>
+      <h1 class="h3 mb-0 text-gray-800">{{ titulo }}</h1>
+      <p class="text-muted mt-2 mb-0">
+        Preencha os dados passando por 3 etapas simples. Só salvamos no fim, então fique à vontade para revisar antes de confirmar.
+      </p>
+    </div>
+    <a class="btn btn-secondary" href="{% url 'fornecedores:listar' %}">
+      <i class="fas fa-times mr-1"></i> Cancelar
+    </a>
+  </div>
+
+  <div class="card shadow mb-4">
+    <div class="card-body">
+      <!-- Stepper visual -->
+      <div class="stepper mb-4">
+        <div class="stepper-item active" data-step="0">
+          <div class="step-counter">1</div>
+          <div class="step-name">Identificação</div>
+        </div>
+        <div class="stepper-item" data-step="1">
+          <div class="step-counter">2</div>
+          <div class="step-name">Contato</div>
+        </div>
+        <div class="stepper-item" data-step="2">
+          <div class="step-counter">3</div>
+          <div class="step-name">Observações</div>
+        </div>
+      </div>
+
+      <form method="post" novalidate id="fornecedorStepperForm">
+        {% csrf_token %}
+
+        <div class="step-pane active" data-step="0">
+          <div class="card shadow-sm border-left-primary mb-4">
+            <div class="card-header py-3">
+              <h5 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-building mr-2"></i>Dados do fornecedor
+              </h5>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="form-group col-lg-8">
+                  <label for="{{ form.nome.id_for_label }}">{{ form.nome.label }} *</label>
+                  {{ form.nome }}
+                  {% include "fornecedores/partials/_help_and_errors.html" with field=form.nome %}
+                </div>
+                <div class="form-group col-lg-4">
+                  <label for="{{ form.documento.id_for_label }}">{{ form.documento.label }}</label>
+                  {{ form.documento }}
+                  {% include "fornecedores/partials/_help_and_errors.html" with field=form.documento %}
+                </div>
+              </div>
+              <div class="row align-items-center">
+                <div class="col-md-6">
+                  <div class="form-group mb-0">
+                    <span class="d-block font-weight-bold mb-2">Status do cadastro</span>
+                    <div class="custom-control custom-switch">
+                      {{ form.ativo }}
+                      <label class="custom-control-label" for="{{ form.ativo.id_for_label }}">
+                        {{ form.ativo.help_text }}
+                      </label>
+                    </div>
+                    {% for error in form.ativo.errors %}
+                      <div class="invalid-feedback d-block">{{ error }}</div>
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-pane" data-step="1">
+          <div class="card shadow-sm border-left-info mb-4">
+            <div class="card-header py-3">
+              <h5 class="m-0 font-weight-bold text-info">
+                <i class="fas fa-headset mr-2"></i>Como entrar em contato
+              </h5>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="form-group col-md-6">
+                  <label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+                  {{ form.email }}
+                  {% include "fornecedores/partials/_help_and_errors.html" with field=form.email %}
+                </div>
+                <div class="form-group col-md-6">
+                  <label for="{{ form.telefone.id_for_label }}">{{ form.telefone.label }}</label>
+                  {{ form.telefone }}
+                  {% include "fornecedores/partials/_help_and_errors.html" with field=form.telefone %}
+                </div>
+                <div class="form-group col-md-12">
+                  <label for="{{ form.site.id_for_label }}">{{ form.site.label }}</label>
+                  {{ form.site }}
+                  {% include "fornecedores/partials/_help_and_errors.html" with field=form.site %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-pane" data-step="2">
+          <div class="card shadow-sm border-left-warning mb-4">
+            <div class="card-header py-3">
+              <h5 class="m-0 font-weight-bold text-warning">
+                <i class="fas fa-clipboard-list mr-2"></i>Notas gerais
+              </h5>
+            </div>
+            <div class="card-body">
+              <div class="form-group">
+                <label for="{{ form.observacoes.id_for_label }}">{{ form.observacoes.label }}</label>
+                {{ form.observacoes }}
+                {% include "fornecedores/partials/_help_and_errors.html" with field=form.observacoes %}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Navegação entre passos -->
+        <div class="d-flex justify-content-between align-items-center mt-4">
+          <button type="button" class="btn btn-light" id="stepperPrev">
+            <i class="fas fa-arrow-left mr-1"></i> Voltar
+          </button>
+          <button type="button" class="btn btn-primary" id="stepperNext">
+            Próximo <i class="fas fa-arrow-right ml-1"></i>
+          </button>
+          <button type="submit" class="btn btn-success d-none" id="stepperSubmit">
+            <i class="fas fa-save mr-1"></i> Salvar fornecedor
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <style>
+    .stepper {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+
+    .stepper-item {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1 1 140px;
+      text-align: center;
+    }
+
+    .stepper-item::before,
+    .stepper-item::after {
+      content: "";
+      position: absolute;
+      top: 18px;
+      border-top: 2px solid #d1d3e2;
+      width: 50%;
+    }
+
+    .stepper-item::before {
+      left: -50%;
+    }
+
+    .stepper-item::after {
+      left: 50%;
+    }
+
+    .stepper-item:first-child::before {
+      display: none;
+    }
+
+    .stepper-item:last-child::after {
+      display: none;
+    }
+
+    .step-counter {
+      z-index: 1;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #e9ecef;
+      color: #6c757d;
+      font-weight: bold;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .step-name {
+      margin-top: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #6c757d;
+      text-transform: uppercase;
+    }
+
+    .stepper-item.active .step-counter {
+      background: #4e73df;
+      color: #fff;
+    }
+
+    .stepper-item.completed .step-counter {
+      background: #1cc88a;
+      color: #fff;
+    }
+
+    .stepper-item.active .step-name,
+    .stepper-item.completed .step-name {
+      color: #4e73df;
+    }
+
+    .stepper-item.completed::after,
+    .stepper-item.completed::before {
+      border-color: #1cc88a;
+    }
+
+    .step-pane {
+      display: none;
+    }
+
+    .step-pane.active {
+      display: block;
+    }
+
+    @media (max-width: 768px) {
+      .stepper {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .stepper-item {
+        align-items: flex-start;
+        text-align: left;
+      }
+
+      .stepper-item::before,
+      .stepper-item::after {
+        display: none;
+      }
+
+      .step-name {
+        font-size: 0.8rem;
+      }
+    }
+  </style>
+
+  <script>
+    (function () {
+      const form = document.getElementById("fornecedorStepperForm");
+      const panes = Array.from(form.querySelectorAll(".step-pane"));
+      const items = Array.from(document.querySelectorAll(".stepper-item"));
+      const prevBtn = document.getElementById("stepperPrev");
+      const nextBtn = document.getElementById("stepperNext");
+      const submitBtn = document.getElementById("stepperSubmit");
+
+      let currentStep = 0;
+
+      function showStep(index) {
+        panes.forEach((pane, i) => {
+          pane.classList.toggle("active", i === index);
+        });
+
+        items.forEach((item, i) => {
+          item.classList.toggle("active", i === index);
+          item.classList.toggle("completed", i < index);
+        });
+
+        prevBtn.disabled = index === 0;
+        nextBtn.classList.toggle("d-none", index === panes.length - 1);
+        submitBtn.classList.toggle("d-none", index !== panes.length - 1);
+      }
+
+      function validateStep(index) {
+        const fields = panes[index].querySelectorAll("input, textarea, select");
+        for (const field of fields) {
+          if (field.type === "hidden") {
+            continue;
+          }
+          if (!field.checkValidity()) {
+            field.reportValidity();
+            return false;
+          }
+        }
+        return true;
+      }
+
+      prevBtn.addEventListener("click", () => {
+        if (currentStep === 0) {
+          return;
+        }
+        currentStep -= 1;
+        showStep(currentStep);
+      });
+
+      nextBtn.addEventListener("click", () => {
+        if (!validateStep(currentStep)) {
+          return;
+        }
+        if (currentStep < panes.length - 1) {
+          currentStep += 1;
+          showStep(currentStep);
+        }
+      });
+
+      form.addEventListener("submit", (event) => {
+        if (!validateStep(currentStep)) {
+          event.preventDefault();
+        }
+      });
+
+      showStep(currentStep);
+    })();
+  </script>
+{% endblock content %}

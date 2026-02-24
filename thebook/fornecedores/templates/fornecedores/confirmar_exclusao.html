@@ -1,0 +1,27 @@
+{% extends "base/main.html" %}
+
+{% block content %}
+  <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Remover fornecedor</h1>
+    <a class="btn btn-secondary" href="{% url 'fornecedores:listar' %}">
+      Voltar
+    </a>
+  </div>
+
+  <div class="card shadow mb-4 border-left-danger">
+    <div class="card-body">
+      <p>
+        Tem certeza de que deseja excluir <strong>{{ fornecedor.nome }}</strong>?
+        Essa ação não pode ser desfeita.
+      </p>
+
+      <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Sim, excluir</button>
+        <a class="btn btn-outline-secondary" href="{% url 'fornecedores:listar' %}">
+          Cancelar
+        </a>
+      </form>
+    </div>
+  </div>
+{% endblock content %}
