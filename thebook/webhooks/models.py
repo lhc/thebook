@@ -76,7 +76,9 @@ class OpenPixWebhookPayload(models.Model):
 
         raw_fee = jmespath.search("pix.charge.fee", payload)
         if not raw_fee:
-            raw_fee = round(amount * 100 * 0.0080, 2)
+            # Minimum fee of R$0.50
+            raw_fee = max(round(amount * 100 * 0.0080, 2), 0.5)
+
         fee = (-1 * raw_fee) / 100
 
         # Original in UTC time
