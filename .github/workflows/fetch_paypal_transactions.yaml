@@ -1,4 +1,4 @@
-name: 💰 Fetch Paypal transactions
+name: 💰 Fetch transactions (PayPal and OpenPix)
 
 on:
   workflow_dispatch:
@@ -7,11 +7,14 @@ on:
 
 jobs:
   schedule:
-    name: 💰 Fetch Paypal transactions
+    name: 💰 Fetch transactions (PayPal and OpenPix)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: superfly/flyctl-actions/setup-flyctl@master
       - run: flyctl ssh console -C "python manage.py fetch_paypal_transactions"
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+      - run: flyctl ssh console -C "python manage.py fetch_openpix_transactions"
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
