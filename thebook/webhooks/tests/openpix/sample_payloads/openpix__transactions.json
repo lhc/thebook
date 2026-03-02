@@ -1,0 +1,202 @@
+{
+  "pageInfo": {
+    "skip": 0,
+    "limit": 100,
+    "totalCount": 3,
+    "hasPreviousPage": false,
+    "hasNextPage": false
+  },
+  "status": "OK",
+  "transactions": [
+    {
+      "payer": {
+        "name": "NED LUDD",
+        "email": "ned@ludd.com.br",
+        "phone": "+4412345678",
+        "address": {
+          "zipcode": "12345",
+          "street": "XXX",
+          "number": "121",
+          "neighborhood": "XXX",
+          "city": "XXX",
+          "state": "SP",
+          "complement": "",
+          "country": "BR",
+          "location": {
+            "coordinates": []
+          },
+          "_id": "698bc54aa654ef626776576a"
+        },
+        "taxID": {
+          "taxID": "12345678910",
+          "type": "BR:CPF"
+        },
+        "correlationID": "c00435ef-334c-4434-94343-e43asdfe62e"
+      },
+      "value": 11000,
+      "time": "2026-02-15T15:00:46.000Z",
+      "endToEndId": "E54843980984242151500EqEkgXhBQPb",
+      "transactionID": "01KH7WTFXGGFDSJKHFKJSDHGDG",
+      "status": "CONFIRMED",
+      "type": "PAYMENT",
+      "subType": "PIX_AUTOMATIC",
+      "debitParty": {
+        "account": {
+          "branch": "4342",
+          "account": "00064420",
+          "accountType": "CACC"
+        },
+        "psp": {
+          "id": "43243240",
+          "name": "XXXX"
+        },
+        "holder": {
+          "name": "NED LUDD",
+          "taxID": {
+            "taxID": "12345678910",
+            "type": "BR:CPF"
+          }
+        }
+      },
+      "creditParty": {
+        "account": {
+          "branch": "0001",
+          "account": "00000000000000965650",
+          "accountType": "CACC"
+        },
+        "psp": {
+          "id": "54816543",
+          "name": "WOOVI IP LTDA."
+        },
+        "holder": {
+          "taxID": {
+            "taxID": "12345678000111",
+            "type": "BR:CNPJ"
+          }
+        }
+      },
+      "createdAt": "2026-02-15T10:43:46.071Z"
+    },
+    {
+      "value": 51187,
+      "time": "2026-02-20T13:01:44.571Z",
+      "endToEndId": "E54811417202602091301r0gglTvTqLN",
+      "infoPagador": "Saque Woovi",
+      "status": "CONFIRMED",
+      "type": "WITHDRAW",
+      "subType": "WITHDRAW",
+      "debitParty": {
+        "account": {
+          "branch": "0001",
+          "account": "00000000000000976890",
+          "accountType": "TRAN"
+        },
+        "psp": {
+          "id": "54811417",
+          "name": "WOOVI IP LTDA",
+          "code": "54811417"
+        },
+        "holder": {
+          "name": "Laboratório Hacker de Campinas",
+          "nameFriendly": "Laboratorio Hacker de Campinas",
+          "taxID": {
+            "taxID": "12345678000110",
+            "type": "BR:CNPJ"
+          }
+        }
+      },
+      "creditParty": {
+        "pixKey": {
+          "pixKey": "batman@lhc.net.br",
+          "type": "EMAIL"
+        },
+        "account": {
+          "branch": "1",
+          "account": "40656948",
+          "accountType": "TRAN"
+        },
+        "psp": {
+          "id": "37880206",
+          "name": "CORA SCFI"
+        },
+        "holder": {
+          "name": "LABORATORIO HACKER DE CAMPINAS",
+          "nameFriendly": "LABORATORIO HACKER DE CAMPINAS",
+          "taxID": {
+            "taxID": "12345678000110",
+            "type": "BR:CNPJ"
+          }
+        }
+      },
+      "createdAt": "2026-02-20T13:01:44.580Z"
+    },
+    {
+      "payer": {
+        "name": "LUIZ ANTONIO",
+        "taxID": {
+          "taxID": "12345678910",
+          "type": "BR:CPF"
+        },
+        "correlationID": "bd204dcb-2008-4395-aa4e-5ee5fc6bad63"
+      },
+      "value": 4200,
+      "time": "2026-02-28T15:12:37.000Z",
+      "endToEndId": "E00416968202602281512zy3bbOcj3IJ",
+      "transactionID": "MTBQL",
+      "infoPagador": "good",
+      "status": "CONFIRMED",
+      "type": "PAYMENT",
+      "pixQrCode": {
+        "name": "MTBQL",
+        "value": 4200,
+        "comment": "good",
+        "identifier": "MTBQL",
+        "correlationID": "MTBQL",
+        "paymentLinkID": "0cd8bf71-88e7-4b9d-8b5d-4a0b3514b97f",
+        "createdAt": "2026-02-28T15:11:44.902Z",
+        "updatedAt": "2026-02-28T15:11:44.902Z"
+      },
+      "subType": "QR_CODE_STATIC_PAYMENT",
+      "debitParty": {
+        "account": {
+          "branch": "0001",
+          "account": "0014709376",
+          "accountType": "CACC"
+        },
+        "psp": {
+          "id": "00416968",
+          "name": "BANCO INTER"
+        },
+        "holder": {
+          "name": "LUIZ ANTONIO",
+          "taxID": {
+            "taxID": "12345678910",
+            "type": "BR:CPF"
+          }
+        }
+      },
+      "creditParty": {
+        "pixKey": {
+          "pixKey": "45e321ce-d321-4312-95f4-5c4234328ce4",
+          "type": "RANDOM"
+        },
+        "account": {
+          "branch": "0001",
+          "account": "00000000000000976430",
+          "accountType": "TRAN"
+        },
+        "psp": {
+          "id": "54811417",
+          "name": "WOOVI IP LTDA."
+        },
+        "holder": {
+          "taxID": {
+            "taxID": "12345678000110",
+            "type": "BR:CNPJ"
+          }
+        }
+      },
+      "createdAt": "2026-02-28T15:12:37.306Z"
+    }
+  ]
+}

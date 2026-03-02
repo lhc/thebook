@@ -1,6 +1,8 @@
+from decimal import Decimal
+
 import pytest
 
-from thebook.webhooks.models import calculate_openpix_fee
+from thebook.webhooks.openpix.services import calculate_openpix_fee
 
 
 @pytest.mark.parametrize(
@@ -24,4 +26,4 @@ def test_calculate_openpix_fee_based_on_selected_plan(
     settings, openpix_plan, amount, expected_fee
 ):
     settings.OPENPIX_PLAN = openpix_plan
-    assert calculate_openpix_fee(amount) == expected_fee
+    assert calculate_openpix_fee(amount) == round(Decimal(expected_fee), 2)
