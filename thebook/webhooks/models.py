@@ -23,8 +23,8 @@ logger = structlog.get_logger(__name__)
 def calculate_openpix_fee(amount):
     """OpenPix doesn't provide the fee in the Webhook payload so we need to calculate it based on the amount received and the active account plan"""
     if settings.OPENPIX_PLAN == "FIXO":
-        return 0.85
-    return round(min(max(0.008 * amount, 0.5), 5), 2)
+        return -0.85
+    return -1 * round(min(max(0.008 * amount, 0.5), 5), 2)
 
 
 class ProcessingStatus:
