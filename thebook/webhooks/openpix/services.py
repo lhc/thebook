@@ -1,6 +1,7 @@
 import datetime
 import decimal
 
+import jmespath
 import requests
 
 from django.conf import settings
@@ -30,7 +31,7 @@ def fetch_transactions(start_date: datetime.date, end_date: datetime.date):
     )
     data = response.json()
 
-    transactions = jmespath("transactions", data)
+    transactions = jmespath.search("transactions", data)
     for transaction in transactions:
         transaction_type = jmespath.search("type", transaction)
         if transaction_type != "WITHDRAW":
@@ -41,10 +42,6 @@ def fetch_transactions(start_date: datetime.date, end_date: datetime.date):
             jmespath.search("time", transaction), "%Y-%m-%dT%H:%M:%S.%fZ"
         ).date()
         transaction_amount = -1 * jmespath.search("value", transaction) / 100
-
-        utc_transaction_date = datetime.datetime.strptime(
-            raw_date, "%Y-%m-%dT%H:%M:%SZ"
-        )
 
         Transaction.objects.create(
             reference=transaction_id,
