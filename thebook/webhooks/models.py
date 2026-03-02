@@ -20,6 +20,13 @@ from thebook.webhooks.managers import (
 logger = structlog.get_logger(__name__)
 
 
+def calculate_openpix_fee(amount):
+    """OpenPix doesn't provide the fee in the Webhook payload so we need to calculate it based on the amount received and the active account plan"""
+    if settings.OPENPIX_PLAN == "FIXO":
+        return 0.85
+    return round(min(max(0.008 * amount, 0.5), 5), 2)
+
+
 class ProcessingStatus:
     RECEIVED = 1
     PROCESSED = 2
@@ -73,13 +80,7 @@ class OpenPixWebhookPayload(models.Model):
             return
 
         amount = jmespath.search("pix.charge.value || pix.value", payload) / 100
-
-        raw_fee = jmespath.search("pix.charge.fee", payload)
-        if not raw_fee:
-            # Minimum fee of R$0.50
-            raw_fee = max(round(amount * 100 * 0.0080, 2), 0.5)
-
-        fee = (-1 * raw_fee) / 100
+        openpix_fee = calculate_openpix_fee(amount)
 
         # Original in UTC time
         paid_at = jmespath.search("pix.charge.paidAt || pix.time", payload)
@@ -122,7 +123,7 @@ class OpenPixWebhookPayload(models.Model):
                 reference=f"{reference}-T",
                 date=utc_transaction_date,
                 description="Taxa OpenPix - " + description,
-                amount=fee,
+                amount=openpix_fee,
                 bank_account=bank_account,
                 category=bank_fee_category,
                 created_by=user,

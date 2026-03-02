@@ -270,6 +270,7 @@ OPENPIX_API_BASE_URL = config(
     "OPENPIX_API_BASE_URL", default="https://api.openpix.com.br"
 )
 OPENPIX_APP_ID = config("OPENPIX_APP_ID", default="")
+OPENPIX_PLAN = "PERCENTUAL"
 
 BANK_FEE_CATEGORY_NAME = "Tarifas Bancárias"
 
