@@ -10,6 +10,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 
 from thebook.bookkeeping.models import BankAccount, Category, Transaction
+from thebook.webhooks.models import OpenPixWebhookPayload
 from thebook.webhooks.openpix.services import fetch_transactions
 
 SAMPLE_PAYLOADS_DIR = Path(__file__).parent / "sample_payloads"
@@ -47,6 +48,23 @@ def openpix__transactions():
         return payload.read()
 
 
+@pytest.fixture
+def openpix_webhook__one_transaction():
+    with open(
+        Path(SAMPLE_PAYLOADS_DIR / "openpix_webhook__one_transaction.json"), "r"
+    ) as payload:
+        return payload.read()
+
+
+@pytest.fixture
+def openpix_fetch_transactions__one_transaction():
+    with open(
+        Path(SAMPLE_PAYLOADS_DIR / "openpix_fetch_transactions__one_transaction.json"),
+        "r",
+    ) as payload:
+        return payload.read()
+
+
 @responses.activate
 def test_fetch_multiple_transactions(
     db,
@@ -71,7 +89,7 @@ def test_fetch_multiple_transactions(
 
     assert len(transactions) == 5
 
-    assert transactions[0].reference == "E54843980984242151500EqEkgXhBQPb"
+    assert transactions[0].reference == "01KH7WTFXGGFDSJKHFKJSDHGDG"
     assert transactions[0].date == datetime.date(2026, 2, 15)
     assert transactions[0].description == "NED LUDD - 12345678910"
     assert transactions[0].amount == Decimal("110")
@@ -79,7 +97,7 @@ def test_fetch_multiple_transactions(
     assert transactions[0].category is None
     assert transactions[0].created_by == user
 
-    assert transactions[1].reference == "E54843980984242151500EqEkgXhBQPb-T"
+    assert transactions[1].reference == "01KH7WTFXGGFDSJKHFKJSDHGDG-T"
     assert transactions[1].date == datetime.date(2026, 2, 15)
     assert transactions[1].description == "Taxa OpenPix - NED LUDD - 12345678910"
     assert transactions[1].amount == Decimal("-0.88")
@@ -98,7 +116,7 @@ def test_fetch_multiple_transactions(
     assert transactions[2].category == bank_account_transfer_category
     assert transactions[2].created_by == user
 
-    assert transactions[3].reference == "E00416968202602281512zy3bbOcj3IJ"
+    assert transactions[3].reference == "MTBQL"
     assert transactions[3].date == datetime.date(2026, 2, 28)
     assert transactions[3].description == "LUIZ ANTONIO - 12345678910"
     assert transactions[3].amount == Decimal("42")
@@ -106,7 +124,7 @@ def test_fetch_multiple_transactions(
     assert transactions[3].category == None
     assert transactions[3].created_by == user
 
-    assert transactions[4].reference == "E00416968202602281512zy3bbOcj3IJ-T"
+    assert transactions[4].reference == "MTBQL-T"
     assert transactions[4].date == datetime.date(2026, 2, 28)
     assert transactions[4].description == "Taxa OpenPix - LUIZ ANTONIO - 12345678910"
     assert transactions[4].amount == Decimal("-0.50")
@@ -126,9 +144,9 @@ def test_fetch_already_existing_transactions(
         body=openpix__transactions,
         content_type="application/json",
     )
-    baker.make(Transaction, reference="E54843980984242151500EqEkgXhBQPb")
+    baker.make(Transaction, reference="01KH7WTFXGGFDSJKHFKJSDHGDG")
     baker.make(Transaction, reference="E54811417202602091301r0gglTvTqLN")
-    baker.make(Transaction, reference="E00416968202602281512zy3bbOcj3IJ")
+    baker.make(Transaction, reference="MTBQL")
 
     transactions = fetch_transactions(
         start_date=datetime.date(2026, 2, 1), end_date=datetime.date(2026, 2, 28)
@@ -148,7 +166,7 @@ def test_only_fetch_new_transactions(
         body=openpix__transactions,
         content_type="application/json",
     )
-    baker.make(Transaction, reference="E54843980984242151500EqEkgXhBQPb")
+    baker.make(Transaction, reference="01KH7WTFXGGFDSJKHFKJSDHGDG")
     baker.make(Transaction, reference="E54811417202602091301r0gglTvTqLN")
 
     transactions = fetch_transactions(
@@ -157,5 +175,27 @@ def test_only_fetch_new_transactions(
 
     assert len(transactions) == 2
 
-    assert transactions[0].reference == "E00416968202602281512zy3bbOcj3IJ"
-    assert transactions[1].reference == "E00416968202602281512zy3bbOcj3IJ-T"
+    assert transactions[0].reference == "MTBQL"
+    assert transactions[1].reference == "MTBQL-T"
+
+
+@responses.activate
+def test_do_not_return_webhook_processed_transactions(
+    db, openpix_webhook__one_transaction, openpix_fetch_transactions__one_transaction
+):
+    responses.add(
+        responses.GET,
+        f"{settings.OPENPIX_API_BASE_URL}/api/v1/transaction",
+        body=openpix_fetch_transactions__one_transaction,
+        content_type="application/json",
+    )
+    openpix_webhook_payload = baker.make(
+        OpenPixWebhookPayload, payload=openpix_webhook__one_transaction
+    )
+    openpix_webhook_payload.process()
+
+    transactions = fetch_transactions(
+        start_date=datetime.date(2026, 2, 1), end_date=datetime.date(2026, 2, 28)
+    )
+
+    assert len(transactions) == 0

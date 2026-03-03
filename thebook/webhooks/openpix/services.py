@@ -50,7 +50,9 @@ def fetch_transactions(start_date: datetime.date, end_date: datetime.date):
 
     transactions = jmespath.search("transactions", data) or []
     for transaction in transactions:
-        transaction_id = jmespath.search("endToEndId", transaction)
+        transaction_id = jmespath.search(
+            "transactionID", transaction
+        ) or jmespath.search("endToEndId", transaction)
         if Transaction.objects.filter(reference=transaction_id).exists():
             continue
 
