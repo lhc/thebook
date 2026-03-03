@@ -10,7 +10,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         """If we miss some webhook payload, this command should ensure that we don't lose any transaction"""
-        end_date = datetime.date.today()
+        end_date = datetime.date.today() + datetime.timedelta(days=1)
         start_date = end_date - datetime.timedelta(days=2)
 
         transactions = fetch_transactions(start_date, end_date)

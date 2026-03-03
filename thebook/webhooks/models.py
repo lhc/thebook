@@ -67,14 +67,15 @@ class OpenPixWebhookPayload(models.Model):
             self.save()
             return
 
-        if jmespath.search("event", payload) != "OPENPIX:TRANSACTION_RECEIVED":
+        transaction_type = jmespath.search("event", payload)
+        if transaction_type != "OPENPIX:TRANSACTION_RECEIVED":
             self.status = ProcessingStatus.UNPARSABLE
             self.internal_notes = "webhooks.paypal.unparsable_event"
             self.save()
             return
 
         amount = jmespath.search("pix.charge.value || pix.value", payload) / 100
-        openpix_fee = calculate_openpix_fee(amount)
+        openpix_fee = calculate_openpix_fee(amount, transaction_type)
 
         # Original in UTC time
         paid_at = jmespath.search("pix.charge.paidAt || pix.time", payload)

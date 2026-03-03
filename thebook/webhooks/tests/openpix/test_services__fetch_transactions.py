@@ -65,6 +65,18 @@ def openpix_fetch_transactions__one_transaction():
         return payload.read()
 
 
+@pytest.fixture
+def openpix_fetch_transactions__withdraw_transaction():
+    with open(
+        Path(
+            SAMPLE_PAYLOADS_DIR
+            / "openpix_fetch_transactions__withdraw_transaction.json"
+        ),
+        "r",
+    ) as payload:
+        return payload.read()
+
+
 @responses.activate
 def test_fetch_multiple_transactions(
     db,
@@ -87,7 +99,7 @@ def test_fetch_multiple_transactions(
         start_date=datetime.date(2026, 2, 1), end_date=datetime.date(2026, 2, 28)
     )
 
-    assert len(transactions) == 5
+    assert len(transactions) == 6
 
     assert transactions[0].reference == "01KH7WTFXGGFDSJKHFKJSDHGDG"
     assert transactions[0].date == datetime.date(2026, 2, 15)
@@ -111,26 +123,37 @@ def test_fetch_multiple_transactions(
         transactions[2].description
         == "Transferência entre contas bancárias - E54811417202602091301r0gglTvTqLN"
     )
-    assert transactions[2].amount == Decimal("511.87")
+    assert transactions[2].amount == Decimal("-511.87")
     assert transactions[2].bank_account == openpix_bank_account
     assert transactions[2].category == bank_account_transfer_category
     assert transactions[2].created_by == user
 
-    assert transactions[3].reference == "MTBQL"
-    assert transactions[3].date == datetime.date(2026, 2, 28)
-    assert transactions[3].description == "LUIZ ANTONIO - 12345678910"
-    assert transactions[3].amount == Decimal("42")
+    assert transactions[3].reference == "E54811417202602091301r0gglTvTqLN-T"
+    assert transactions[3].date == datetime.date(2026, 2, 20)
+    assert (
+        transactions[3].description
+        == "Taxa OpenPix - Transferência entre contas bancárias - E54811417202602091301r0gglTvTqLN"
+    )
+    assert transactions[3].amount == Decimal("-1")
     assert transactions[3].bank_account == openpix_bank_account
-    assert transactions[3].category == None
+    assert transactions[3].category == bank_fee_category
     assert transactions[3].created_by == user
 
-    assert transactions[4].reference == "MTBQL-T"
+    assert transactions[4].reference == "MTBQL"
     assert transactions[4].date == datetime.date(2026, 2, 28)
-    assert transactions[4].description == "Taxa OpenPix - LUIZ ANTONIO - 12345678910"
-    assert transactions[4].amount == Decimal("-0.50")
+    assert transactions[4].description == "LUIZ ANTONIO - 12345678910"
+    assert transactions[4].amount == Decimal("42")
     assert transactions[4].bank_account == openpix_bank_account
-    assert transactions[4].category == bank_fee_category
+    assert transactions[4].category == None
     assert transactions[4].created_by == user
+
+    assert transactions[5].reference == "MTBQL-T"
+    assert transactions[5].date == datetime.date(2026, 2, 28)
+    assert transactions[5].description == "Taxa OpenPix - LUIZ ANTONIO - 12345678910"
+    assert transactions[5].amount == Decimal("-0.50")
+    assert transactions[5].bank_account == openpix_bank_account
+    assert transactions[5].category == bank_fee_category
+    assert transactions[5].created_by == user
 
 
 @responses.activate
@@ -199,3 +222,48 @@ def test_do_not_return_webhook_processed_transactions(
     )
 
     assert len(transactions) == 0
+
+
+@responses.activate
+def test_fetch_withdraw_transaction(
+    db,
+    openpix_fetch_transactions__withdraw_transaction,
+    openpix_bank_account,
+    bank_account_transfer_category,
+    bank_fee_category,
+    user,
+):
+    responses.add(
+        responses.GET,
+        f"{settings.OPENPIX_API_BASE_URL}/api/v1/transaction",
+        body=openpix_fetch_transactions__withdraw_transaction,
+        content_type="application/json",
+    )
+
+    transactions = fetch_transactions(
+        start_date=datetime.date(2026, 2, 1), end_date=datetime.date(2026, 2, 28)
+    )
+
+    assert len(transactions) == 2
+
+    assert transactions[0].reference == "E54811417202602091301r0gglTvTqLN"
+    assert transactions[0].date == datetime.date(2026, 2, 20)
+    assert (
+        transactions[0].description
+        == "Transferência entre contas bancárias - E54811417202602091301r0gglTvTqLN"
+    )
+    assert transactions[0].amount == Decimal("-511.87")
+    assert transactions[0].bank_account == openpix_bank_account
+    assert transactions[0].category == bank_account_transfer_category
+    assert transactions[0].created_by == user
+
+    assert transactions[1].reference == "E54811417202602091301r0gglTvTqLN-T"
+    assert transactions[1].date == datetime.date(2026, 2, 20)
+    assert (
+        transactions[1].description
+        == "Taxa OpenPix - Transferência entre contas bancárias - E54811417202602091301r0gglTvTqLN"
+    )
+    assert transactions[1].amount == Decimal("-1")
+    assert transactions[1].bank_account == openpix_bank_account
+    assert transactions[1].category == bank_fee_category
+    assert transactions[1].created_by == user

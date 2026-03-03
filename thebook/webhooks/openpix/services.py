@@ -10,11 +10,16 @@ from django.contrib.auth import get_user_model
 from thebook.bookkeeping.models import BankAccount, Category, Transaction
 
 
-def calculate_openpix_fee(amount):
-    """OpenPix doesn't provide the fee in the Webhook payload so we need to calculate it based on the amount received and the active account plan"""
+def calculate_openpix_fee(amount, transaction_type):
+    """
+    OpenPix doesn't provide the fee in the Webhook payload so we need to calculate it based
+    on the amount received, the active account plan and the type of the transaction
+    """
     fee = 0.0
 
-    if settings.OPENPIX_PLAN == "FIXO":
+    if transaction_type == "WITHDRAW":
+        fee = -1
+    elif settings.OPENPIX_PLAN == "FIXO":
         fee = -0.85
     elif settings.OPENPIX_PLAN == "PERCENTUAL":
         fee = -1 * round(min(max(0.008 * amount, 0.5), 5), 2)
@@ -68,6 +73,7 @@ def fetch_transactions(start_date: datetime.date, end_date: datetime.date):
             transaction_description = (
                 f"Transferência entre contas bancárias - {transaction_id}"
             )
+            transaction_amount = -1 * transaction_amount
         else:
             transaction_category = None
             payer_name = jmespath.search("payer.name", transaction) or ""
@@ -86,19 +92,20 @@ def fetch_transactions(start_date: datetime.date, end_date: datetime.date):
             )
         )
 
-        if not is_bank_account_transfer:
-            transaction_fee_amount = calculate_openpix_fee(transaction_amount)
+        transaction_fee_amount = calculate_openpix_fee(
+            transaction_amount, transaction_type
+        )
 
-            results.append(
-                Transaction(
-                    reference=f"{transaction_id}-T",
-                    date=transaction_date,
-                    description=f"Taxa OpenPix - {transaction_description}",
-                    amount=transaction_fee_amount,
-                    bank_account=bank_account,
-                    category=bank_fee_category,
-                    created_by=user,
-                )
+        results.append(
+            Transaction(
+                reference=f"{transaction_id}-T",
+                date=transaction_date,
+                description=f"Taxa OpenPix - {transaction_description}",
+                amount=transaction_fee_amount,
+                bank_account=bank_account,
+                category=bank_fee_category,
+                created_by=user,
             )
+        )
 
     return results
