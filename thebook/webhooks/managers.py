@@ -9,8 +9,12 @@ class OpenPixWebhookPayloadManager(models.Manager):
     def process_received_payloads(self):
         from thebook.webhooks.models import ProcessingStatus
 
-        for payload in self.filter(status=ProcessingStatus.RECEIVED):
+        for processed, payload in enumerate(
+            self.filter(status=ProcessingStatus.RECEIVED), start=1
+        ):
             payload.process()
+
+        return processed
 
 
 class PayPalWebhookPayloadManager(models.Manager):
@@ -18,8 +22,12 @@ class PayPalWebhookPayloadManager(models.Manager):
     def process_received_payloads(self):
         from thebook.webhooks.models import ProcessingStatus
 
-        for payload in self.filter(status=ProcessingStatus.RECEIVED):
+        for processed, payload in enumerate(
+            self.filter(status=ProcessingStatus.RECEIVED), start=1
+        ):
             payload.process()
+
+        return processed
 
 
 def fetch_transactions(start_date: datetime.date, end_date: datetime.date):
