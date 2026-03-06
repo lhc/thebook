@@ -244,6 +244,11 @@ class Transaction(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     notes = models.TextField(blank=True)
 
+    source = models.CharField(
+        blank=True,
+        default="",
+        help_text="Source of the transaction (e.g. manual, paypal-webhook, etc.)",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

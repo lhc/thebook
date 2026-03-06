@@ -104,6 +104,7 @@ def fetch_transactions(start_date: datetime.date, end_date: datetime.date):
                 amount=transaction_amount + transaction_fee_amount,
                 bank_account=bank_account,
                 category=transaction_category,
+                source="paypal-fetch-transactions",
                 created_by=user,
             )
         )
@@ -117,6 +118,7 @@ def fetch_transactions(start_date: datetime.date, end_date: datetime.date):
                     amount=transaction_fee_amount,
                     bank_account=bank_account,
                     category=bank_fee_category,
+                    source="paypal-fetch-transactions",
                     created_by=user,
                 )
             )

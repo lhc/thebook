@@ -112,6 +112,7 @@ class OpenPixWebhookPayload(models.Model):
                 description=description,
                 amount=amount,
                 bank_account=bank_account,
+                source="openpix-webhook",
                 created_by=user,
             )
             Transaction.objects.create(
@@ -121,6 +122,7 @@ class OpenPixWebhookPayload(models.Model):
                 amount=openpix_fee,
                 bank_account=bank_account,
                 category=bank_fee_category,
+                source="openpix-webhook",
                 created_by=user,
             )
 
@@ -277,6 +279,7 @@ class PaypalWebhookPayload(models.Model):
                 description=description,
                 amount=amount,
                 bank_account=bank_account,
+                source="paypal-webhook",
                 created_by=user,
             )
 
@@ -288,6 +291,7 @@ class PaypalWebhookPayload(models.Model):
                     amount=fee,
                     bank_account=bank_account,
                     category=bank_fee_category,
+                    source="paypal-webhook",
                     created_by=user,
                 )
 

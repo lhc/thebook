@@ -88,5 +88,6 @@ def fetch_transactions(start_date: datetime.date, end_date: datetime.date):
                 amount=amount,
                 bank_account=bank_account,
                 category=bank_account_transfer_category,
+                source="paypal-fetch-transactions",
                 created_by=user,
             )
