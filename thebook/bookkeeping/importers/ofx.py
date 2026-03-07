@@ -74,6 +74,7 @@ class OFXImporter:
                     description=transaction.memo,
                     amount=transaction.amount,
                     bank_account=self.bank_account,
+                    source="ofx-import",
                     created_by=self.user,
                 )
             )

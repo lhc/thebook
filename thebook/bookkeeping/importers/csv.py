@@ -93,6 +93,7 @@ class CSVImporter:
                         amount=transaction_amount,
                         bank_account=self.bank_account,
                         category=self.categories[BANK_ACCOUNT_TRANSFER],
+                        source="paypal-csv-import",
                         created_by=self.user,
                     )
                 )
@@ -109,6 +110,7 @@ class CSVImporter:
                         amount=transaction_amount,
                         bank_account=self.bank_account,
                         category=self.categories[MEMBERSHIP_FEE],
+                        source="paypal-csv-import",
                         created_by=self.user,
                     )
                 )
@@ -121,17 +123,19 @@ class CSVImporter:
                         amount=transaction_amount,
                         bank_account=self.bank_account,
                         category=self.categories[DONATION],
+                        source="paypal-csv-import",
                         created_by=self.user,
                     )
                 )
                 self.new_transactions.append(
                     Transaction(
-                        reference=f"{transaction_reference}T",
+                        reference=f"{transaction_reference}-T",
                         date=transaction_date,
                         description=f"Taxa Intermediação - Doação Recebida de {transaction_name}",
                         amount=transaction_tax,
                         bank_account=self.bank_account,
                         category=self.categories[BANK_FEES],
+                        source="paypal-csv-import",
                         created_by=self.user,
                     )
                 )
@@ -159,17 +163,19 @@ class CSVImporter:
                         amount=transaction_amount,
                         bank_account=self.bank_account,
                         category=category,
+                        source="paypal-csv-import",
                         created_by=self.user,
                     )
                 )
                 self.new_transactions.append(
                     Transaction(
-                        reference=f"{transaction_reference}T",
+                        reference=f"{transaction_reference}-T",
                         date=transaction_date,
                         description=f"Taxa PayPal - {recurring_fee_type} - {transaction_name}",
                         amount=transaction_tax,
                         bank_account=self.bank_account,
                         category=self.categories[BANK_FEES],
+                        source="paypal-csv-import",
                         created_by=self.user,
                     )
                 )
@@ -185,17 +191,19 @@ class CSVImporter:
                         description=f"{transaction_type} - {transaction_name}",
                         amount=transaction_amount,
                         bank_account=self.bank_account,
+                        source="paypal-csv-import",
                         created_by=self.user,
                     )
                 )
                 self.new_transactions.append(
                     Transaction(
-                        reference=f"{transaction_reference}T",
+                        reference=f"{transaction_reference}-T",
                         date=transaction_date,
                         description=f"Taxa Intermediação - {transaction_type} - {transaction_name}",
                         amount=transaction_tax,
                         bank_account=self.bank_account,
                         category=self.categories[BANK_FEES],
+                        source="paypal-csv-import",
                         created_by=self.user,
                     )
                 )
@@ -241,6 +249,7 @@ class CSVCoraCreditCardImporter:
                     amount=transaction_amount,
                     notes=transaction_notes,
                     bank_account=self.bank_account,
+                    source="cora-csv-import",
                     created_by=self.user,
                 )
             )
