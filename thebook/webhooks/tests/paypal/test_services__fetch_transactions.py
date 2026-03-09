@@ -47,6 +47,14 @@ def paypal__oauth2_token():
 
 
 @pytest.fixture
+def paypal__brl_payload__subscription():
+    with open(
+        Path(SAMPLE_PAYLOADS_DIR / "paypal__brl_payload__subscription.json"), "r"
+    ) as payload:
+        return payload.read()
+
+
+@pytest.fixture
 def reporting_transactions__one_transaction():
     with open(
         Path(SAMPLE_PAYLOADS_DIR / "reporting_transactions__one_transaction.json"), "r"
@@ -95,6 +103,7 @@ def test_fetch_one_transaction(
     bank_fee_category,
     paypal__oauth2_token,
     reporting_transactions__one_transaction,
+    paypal__brl_payload__subscription,
 ):
     responses.add(
         responses.POST,
@@ -107,6 +116,12 @@ def test_fetch_one_transaction(
         body=reporting_transactions__one_transaction,
         content_type="application/json",
     )
+    responses.add(
+        responses.GET,
+        f"{settings.PAYPAL_API_BASE_URL}/v1/billing/subscriptions/I-BBBBBBBBBBBB",
+        body=paypal__brl_payload__subscription,
+        content_type="application/json",
+    )
 
     transactions = fetch_transactions(
         start_date=datetime.date(2026, 2, 1), end_date=datetime.date(2026, 2, 2)
@@ -117,8 +132,8 @@ def test_fetch_one_transaction(
     assert transactions[0].id is None
     assert transactions[0].reference == "5EM753922G985452E"
     assert transactions[0].date == datetime.date(2026, 2, 1)
-    assert transactions[0].description == "Regular Donation"
-    assert transactions[0].amount == Decimal("110")
+    assert transactions[0].description == "Bruce Wayne - L4AVQLJR8GMZY"
+    assert transactions[0].amount == Decimal("85")
     assert transactions[0].bank_account == paypal_bank_account
     assert transactions[0].category is None
     assert transactions[0].created_by == user
@@ -126,8 +141,8 @@ def test_fetch_one_transaction(
     assert transactions[1].id is None
     assert transactions[1].reference == "5EM753922G985452E-T"
     assert transactions[1].date == datetime.date(2026, 2, 1)
-    assert transactions[1].description == "Taxa Paypal - Regular Donation"
-    assert transactions[1].amount == Decimal("-7.64")
+    assert transactions[1].description == "Taxa Paypal - Bruce Wayne - L4AVQLJR8GMZY"
+    assert transactions[1].amount == Decimal("-4.67")
     assert transactions[1].bank_account == paypal_bank_account
     assert transactions[1].category == bank_fee_category
     assert transactions[1].created_by == user
@@ -142,6 +157,7 @@ def test_fetch_multiple_transactions(
     bank_account_transfer_category,
     paypal__oauth2_token,
     reporting_transactions__multiple_transactions,
+    paypal__brl_payload__subscription,
 ):
     responses.add(
         responses.POST,
@@ -154,6 +170,12 @@ def test_fetch_multiple_transactions(
         body=reporting_transactions__multiple_transactions,
         content_type="application/json",
     )
+    responses.add(
+        responses.GET,
+        f"{settings.PAYPAL_API_BASE_URL}/v1/billing/subscriptions/I-BBBBBBBBBBBB",
+        body=paypal__brl_payload__subscription,
+        content_type="application/json",
+    )
 
     transactions = fetch_transactions(
         start_date=datetime.date(2026, 2, 1), end_date=datetime.date(2026, 2, 2)
@@ -164,8 +186,8 @@ def test_fetch_multiple_transactions(
     assert transactions[0].id is None
     assert transactions[0].reference == "5EM753922G985452E"
     assert transactions[0].date == datetime.date(2026, 2, 1)
-    assert transactions[0].description == "Regular Donation"
-    assert transactions[0].amount == Decimal("110")
+    assert transactions[0].description == "Bruce Wayne - L4AVQLJR8GMZY"
+    assert transactions[0].amount == Decimal("85")
     assert transactions[0].bank_account == paypal_bank_account
     assert transactions[0].category is None
     assert transactions[0].created_by == user
@@ -173,8 +195,8 @@ def test_fetch_multiple_transactions(
     assert transactions[1].id is None
     assert transactions[1].reference == "5EM753922G985452E-T"
     assert transactions[1].date == datetime.date(2026, 2, 1)
-    assert transactions[1].description == "Taxa Paypal - Regular Donation"
-    assert transactions[1].amount == Decimal("-7.64")
+    assert transactions[1].description == "Taxa Paypal - Bruce Wayne - L4AVQLJR8GMZY"
+    assert transactions[1].amount == Decimal("-4.67")
     assert transactions[1].bank_account == paypal_bank_account
     assert transactions[1].category == bank_fee_category
     assert transactions[1].created_by == user

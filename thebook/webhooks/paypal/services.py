@@ -66,6 +66,7 @@ def fetch_transactions(start_date: datetime.date, end_date: datetime.date):
             "transaction_info.transaction_amount.currency_code", transaction
         )
         if transaction_currency_code == "USD":
+            # TODO - Process USD transactions
             continue
         transaction_amount = decimal.Decimal(
             jmespath.search("transaction_info.transaction_amount.value", transaction)
@@ -94,6 +95,27 @@ def fetch_transactions(start_date: datetime.date, end_date: datetime.date):
             transaction_category = None
             transaction_description = jmespath.search(
                 "transaction_info.transaction_subject", transaction
+            )
+
+        paypal_reference_id = jmespath.search(
+            "transaction_info.paypal_reference_id", transaction
+        )
+        if paypal_reference_id:
+            # This flow only applies to membership subscriptions
+            response = requests.get(
+                f"{settings.PAYPAL_API_BASE_URL}/v1/billing/subscriptions/{paypal_reference_id}",
+                headers={"Authorization": f"Bearer {access_token}"},
+            )
+            subscription = response.json()
+            given_name = (
+                jmespath.search("subscriber.name.given_name", subscription) or ""
+            )
+            surname = jmespath.search("subscriber.name.surname", subscription) or ""
+            full_name = " ".join([given_name, surname]).strip()
+            payer_id = jmespath.search("subscriber.payer_id", subscription) or ""
+            description_parts = (full_name, payer_id)
+            transaction_description = " - ".join(
+                [part for part in description_parts if part]
             )
 
         results.append(

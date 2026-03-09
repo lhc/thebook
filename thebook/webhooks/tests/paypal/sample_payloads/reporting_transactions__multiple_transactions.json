@@ -4,28 +4,28 @@
       "transaction_info": {
         "paypal_account_id": "9XYM6492UZTXG",
         "transaction_id": "5EM753922G985452E",
-        "paypal_reference_id": "I-9JFT766E248R",
+        "paypal_reference_id": "I-BBBBBBBBBBBB",
         "paypal_reference_id_type": "RP",
         "transaction_event_code": "T0002",
         "transaction_initiation_date": "2026-02-01T11:31:22Z",
         "transaction_updated_date": "2026-02-01T11:31:22Z",
         "transaction_amount": {
           "currency_code": "BRL",
-          "value": "110.00"
+          "value": "85.00"
         },
         "fee_amount": {
           "currency_code": "BRL",
-          "value": "-7.64"
+          "value": "-4.67"
         },
         "transaction_status": "S",
         "transaction_subject": "Regular Donation",
         "ending_balance": {
           "currency_code": "BRL",
-          "value": "102.36"
+          "value": "80.33"
         },
         "available_balance": {
           "currency_code": "BRL",
-          "value": "102.36"
+          "value": "80.33"
         },
         "protection_eligibility": "01",
         "instrument_type": "PayPal",
