@@ -1,0 +1,51 @@
+{
+  "transaction_details": [
+    {
+      "transaction_info": {
+        "paypal_account_id": "XPZJRN6WX8Q7Y",
+        "transaction_id": "3DJ715755L433650N",
+        "paypal_reference_id": "11J12750B64965920",
+        "paypal_reference_id_type": "TXN",
+        "transaction_event_code": "T0006",
+        "transaction_initiation_date": "2026-03-09T18:41:22Z",
+        "transaction_updated_date": "2026-03-09T18:41:22Z",
+        "transaction_amount": {
+          "currency_code": "BRL",
+          "value": "51.00"
+        },
+        "fee_amount": {
+          "currency_code": "BRL",
+          "value": "-3.04"
+        },
+        "transaction_status": "S",
+        "transaction_subject": "Order 97XKB for Tosconf[6]",
+        "ending_balance": {
+          "currency_code": "BRL",
+          "value": "47.96"
+        },
+        "available_balance": {
+          "currency_code": "BRL",
+          "value": "47.96"
+        },
+        "custom_field": "Order 2026-97XKB",
+        "protection_eligibility": "01",
+        "instrument_type": "PayPal",
+        "instrument_sub_type": "PayPal Wallet"
+      }
+    }
+  ],
+  "account_number": "2LBBYEY3XL7P8",
+  "start_date": "2026-03-09T00:00:00Z",
+  "end_date": "2026-03-09T20:29:59Z",
+  "last_refreshed_datetime": "2026-03-09T20:29:59Z",
+  "page": 1,
+  "total_items": 1,
+  "total_pages": 1,
+  "links": [
+    {
+      "href": "https://api.paypal.com/v1/reporting/transactions?start_date=2026-03-09T00%3A00%3A00-00%3A00&end_date=2026-03-10T00%3A00%3A00-00%3A00&page_size=100&page=1",
+      "rel": "self",
+      "method": "GET"
+    }
+  ]
+}

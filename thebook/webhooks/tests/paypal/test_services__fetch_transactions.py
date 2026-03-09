@@ -47,6 +47,17 @@ def paypal__oauth2_token():
 
 
 @pytest.fixture
+def reporting_transactions__one_common_transaction():
+    with open(
+        Path(
+            SAMPLE_PAYLOADS_DIR / "reporting_transactions__one_common_transaction.json"
+        ),
+        "r",
+    ) as payload:
+        return payload.read()
+
+
+@pytest.fixture
 def paypal__brl_payload__subscription():
     with open(
         Path(SAMPLE_PAYLOADS_DIR / "paypal__brl_payload__subscription.json"), "r"
@@ -143,6 +154,52 @@ def test_fetch_one_transaction(
     assert transactions[1].date == datetime.date(2026, 2, 1)
     assert transactions[1].description == "Taxa Paypal - Bruce Wayne - L4AVQLJR8GMZY"
     assert transactions[1].amount == Decimal("-4.67")
+    assert transactions[1].bank_account == paypal_bank_account
+    assert transactions[1].category == bank_fee_category
+    assert transactions[1].created_by == user
+
+
+@responses.activate
+def test_fetch_one_common_transaction(
+    db,
+    paypal_bank_account,
+    user,
+    bank_fee_category,
+    paypal__oauth2_token,
+    reporting_transactions__one_common_transaction,
+):
+    responses.add(
+        responses.POST,
+        f"{settings.PAYPAL_API_BASE_URL}/v1/oauth2/token",
+        json=paypal__oauth2_token,
+    )
+    responses.add(
+        responses.GET,
+        f"{settings.PAYPAL_API_BASE_URL}/v1/reporting/transactions",
+        body=reporting_transactions__one_common_transaction,
+        content_type="application/json",
+    )
+
+    transactions = fetch_transactions(
+        start_date=datetime.date(2026, 3, 9), end_date=datetime.date(2026, 3, 10)
+    )
+
+    assert len(transactions) == 2
+
+    assert transactions[0].id is None
+    assert transactions[0].reference == "3DJ715755L433650N"
+    assert transactions[0].date == datetime.date(2026, 3, 9)
+    assert transactions[0].description == "Order 97XKB for Tosconf[6]"
+    assert transactions[0].amount == Decimal("51")
+    assert transactions[0].bank_account == paypal_bank_account
+    assert transactions[0].category is None
+    assert transactions[0].created_by == user
+
+    assert transactions[1].id is None
+    assert transactions[1].reference == "3DJ715755L433650N-T"
+    assert transactions[1].date == datetime.date(2026, 3, 9)
+    assert transactions[1].description == "Taxa Paypal - Order 97XKB for Tosconf[6]"
+    assert transactions[1].amount == Decimal("-3.04")
     assert transactions[1].bank_account == paypal_bank_account
     assert transactions[1].category == bank_fee_category
     assert transactions[1].created_by == user

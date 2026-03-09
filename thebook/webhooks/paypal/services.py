@@ -97,11 +97,12 @@ def fetch_transactions(start_date: datetime.date, end_date: datetime.date):
                 "transaction_info.transaction_subject", transaction
             )
 
-        paypal_reference_id = jmespath.search(
-            "transaction_info.paypal_reference_id", transaction
-        )
-        if paypal_reference_id:
-            # This flow only applies to membership subscriptions
+        if transaction_type == "T0002":
+            # This flow only applies to Subscription payment
+            # https://developer.paypal.com/docs/transaction-search/transaction-event-codes/
+            paypal_reference_id = jmespath.search(
+                "transaction_info.paypal_reference_id", transaction
+            )
             response = requests.get(
                 f"{settings.PAYPAL_API_BASE_URL}/v1/billing/subscriptions/{paypal_reference_id}",
                 headers={"Authorization": f"Bearer {access_token}"},
