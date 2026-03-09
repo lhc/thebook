@@ -118,7 +118,7 @@ def test_fetch_one_transaction(
     assert transactions[0].reference == "5EM753922G985452E"
     assert transactions[0].date == datetime.date(2026, 2, 1)
     assert transactions[0].description == "Regular Donation"
-    assert transactions[0].amount == Decimal("102.36")
+    assert transactions[0].amount == Decimal("110")
     assert transactions[0].bank_account == paypal_bank_account
     assert transactions[0].category is None
     assert transactions[0].created_by == user
@@ -165,7 +165,7 @@ def test_fetch_multiple_transactions(
     assert transactions[0].reference == "5EM753922G985452E"
     assert transactions[0].date == datetime.date(2026, 2, 1)
     assert transactions[0].description == "Regular Donation"
-    assert transactions[0].amount == Decimal("102.36")
+    assert transactions[0].amount == Decimal("110")
     assert transactions[0].bank_account == paypal_bank_account
     assert transactions[0].category is None
     assert transactions[0].created_by == user
