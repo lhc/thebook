@@ -91,4 +91,6 @@ class PaypalWebhook(View):
             id_=paypal_webhook_payload.id,
         )
 
+        paypal_webhook_payload.process()
+
         return HttpResponse(status=HTTPStatus.OK)
