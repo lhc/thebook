@@ -12,29 +12,15 @@ from django.utils.functional import classproperty
 from django.utils.translation import gettext as _
 
 from thebook.bookkeeping.models import BankAccount, Category, Transaction
+from thebook.webhooks.constants import ProcessingStatus
 from thebook.webhooks.managers import (
     OpenPixWebhookPayloadManager,
     PayPalWebhookPayloadManager,
 )
 from thebook.webhooks.openpix.services import calculate_openpix_fee
+from thebook.webhooks.paypal.services import process_webhook_payload
 
 logger = structlog.get_logger(__name__)
-
-
-class ProcessingStatus:
-    RECEIVED = 1
-    PROCESSED = 2
-    UNPARSABLE = 3
-    DUPLICATED = 4
-
-    @classproperty
-    def choices(cls):
-        return (
-            (cls.RECEIVED, _("Received")),
-            (cls.PROCESSED, _("Processed")),
-            (cls.UNPARSABLE, _("Unparsable")),
-            (cls.DUPLICATED, _("Duplicated")),
-        )
 
 
 class OpenPixWebhookPayload(models.Model):
@@ -151,151 +137,5 @@ class PaypalWebhookPayload(models.Model):
 
     objects = PayPalWebhookPayloadManager()
 
-    def _extract_amount(self, payload):
-        currency = jmespath.search("resource.amount.currency", payload)
-
-        if currency == "BRL":
-            amount = float(jmespath.search("resource.amount.total", payload))
-        elif currency == "USD":
-            amount = float(jmespath.search("resource.receivable_amount.value", payload))
-
-        return amount
-
-    def _extract_transaction_fee(self, payload):
-        currency = jmespath.search("resource.transaction_fee.currency", payload)
-
-        if currency == "BRL":
-            transaction_fee = -1 * float(
-                jmespath.search("resource.transaction_fee.value", payload)
-            )
-        elif currency == "USD":
-            transaction_fee = None
-
-        return transaction_fee
-
-    def process(self, bank_account=None, user=None):
-        logger.info("paypalwebhookpayload.process.start", id=self.id)
-
-        if self.status == ProcessingStatus.PROCESSED:
-            logger.info("paypalwebhookpayload.process.already_processed", id=self.id)
-            return
-
-        if bank_account is None:
-            bank_account, _ = BankAccount.objects.get_or_create(name="PayPal")
-
-        if user is None:
-            user = get_user_model().objects.get_or_create_automation_user()
-
-        try:
-            payload = json.loads(self.payload)
-        except json.decoder.JSONDecodeError:
-            logger.warning("paypalwebhookpayload.process.unparsable_event", id=self.id)
-            self.status = ProcessingStatus.UNPARSABLE
-            self.internal_notes = "webhooks.paypal.jsondecodeerror"
-            self.save()
-            return
-
-        self.webhook_id = payload.get("id") or ""
-        if PaypalWebhookPayload.objects.filter(webhook_id=self.webhook_id).exists():
-            logger.warning("paypalwebhookpayload.process.duplicated_event", id=self.id)
-            self.status = ProcessingStatus.DUPLICATED
-            self.internal_notes = "webhooks.paypal.duplicated_event"
-            self.save()
-            return
-
-        event_type = payload.get("event_type")
-        if event_type != "PAYMENT.SALE.COMPLETED":
-            logger.warning("paypalwebhookpayload.process.unparsable_event", id=self.id)
-            self.status = ProcessingStatus.UNPARSABLE
-            self.internal_notes = "webhooks.paypal.unparsable_event"
-            self.save()
-            return
-
-        billing_agreement_id = (
-            jmespath.search("resource.billing_agreement_id", payload) or ""
-        )
-        if not billing_agreement_id:
-            logger.warning(
-                "paypalwebhookpayload.process.missing_billing_agreement_id", id=self.id
-            )
-            self.status = ProcessingStatus.UNPARSABLE
-            self.internal_notes = "webhooks.paypal.missing_billing_agreement_id"
-            self.save()
-            return
-
-        response = requests.post(
-            f"{settings.PAYPAL_API_BASE_URL}/v1/oauth2/token",
-            data={
-                "grant_type": "client_credentials",
-            },
-            auth=(settings.PAYPAL_CLIENT_ID, settings.PAYPAL_CLIENT_SECRET),
-        )
-        auth_data = response.json()
-
-        access_token = response.json().get("access_token") or ""
-
-        response = requests.get(
-            f"{settings.PAYPAL_API_BASE_URL}/v1/billing/subscriptions/{billing_agreement_id}",
-            headers={"Authorization": f"Bearer {access_token}"},
-        )
-        subscription = response.json()
-        logger.info(
-            "paypalwebhookpayload.process.subscription",
-            id=self.id,
-            subscription=subscription,
-        )
-
-        amount = self._extract_amount(payload)
-        transaction_fee = self._extract_transaction_fee(payload)
-
-        fee = -1 * float(jmespath.search("resource.transaction_fee.value", payload))
-
-        paid_at = jmespath.search("resource.create_time", payload)
-        utc_transaction_date = datetime.datetime.strptime(paid_at, "%Y-%m-%dT%H:%M:%SZ")
-
-        given_name = jmespath.search("subscriber.name.given_name", subscription) or ""
-        surname = jmespath.search("subscriber.name.surname", subscription) or ""
-        full_name = " ".join([given_name, surname]).strip()
-        payer_id = jmespath.search("subscriber.payer_id", subscription) or ""
-
-        description_parts = (full_name, payer_id)
-        currency = jmespath.search("resource.amount.currency", payload)
-        if currency == "USD":
-            usd_amount = jmespath.search("resource.amount.total", payload)
-            description_parts = (full_name, f"USD {usd_amount}", payer_id)
-
-        description = " - ".join([part for part in description_parts if part])
-
-        reference = jmespath.search("resource.id", payload)
-
-        with transaction.atomic():
-            bank_fee_category, _ = Category.objects.get_or_create(
-                name="Tarifas Bancárias"
-            )
-
-            Transaction.objects.create(
-                reference=reference,
-                date=utc_transaction_date,
-                description=description,
-                amount=amount,
-                bank_account=bank_account,
-                source="paypal-webhook",
-                created_by=user,
-            )
-
-            if transaction_fee is not None:
-                Transaction.objects.create(
-                    reference=f"{reference}-T",
-                    date=utc_transaction_date,
-                    description="Taxa PayPal - " + description,
-                    amount=fee,
-                    bank_account=bank_account,
-                    category=bank_fee_category,
-                    source="paypal-webhook",
-                    created_by=user,
-                )
-
-            self.status = ProcessingStatus.PROCESSED
-            self.save()
-
-        logger.info("paypalwebhookpayload.process.finished", id=self.id)
+    def process(self):
+        process_webhook_payload(self)
