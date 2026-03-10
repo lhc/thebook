@@ -152,3 +152,20 @@ def test_do_not_process_duplicated_webhook_twice(
     duplicated_webhook.refresh_from_db()
 
     assert duplicated_webhook.status == ProcessingStatus.DUPLICATED
+
+
+@responses.activate
+def test_do_not_reprocess_existing_transaction(db, webhook__brl_payload):
+    transaction = baker.make(
+        Transaction,
+        reference="35R35201NA4015510",
+    )
+
+    webhook_with_duplicated_transaction = baker.make(
+        PaypalWebhookPayload,
+        payload=webhook__brl_payload,
+    )
+    webhook_with_duplicated_transaction.process()
+    webhook_with_duplicated_transaction.refresh_from_db()
+
+    assert webhook_with_duplicated_transaction.status == ProcessingStatus.DUPLICATED

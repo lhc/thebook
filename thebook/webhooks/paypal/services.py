@@ -211,7 +211,22 @@ def process_webhook_payload(webhook):
             id=webhook.id,
         )
         webhook.status = ProcessingStatus.UNPARSABLE
-        webhook.internal_notes = "webhooks.paypal.jsondecodeerror"
+        webhook.internal_notes = (
+            "webhooks.paypal.services.process_webhook_payload.unparsable_event"
+        )
+        webhook.save()
+        return
+
+    reference = jmespath.search("resource.id", payload)
+    if Transaction.objects.filter(reference=reference).exists():
+        logger.info(
+            "webhooks.paypal.services.process_webhook_payload.duplicated_transaction",
+            id=webhook.id,
+        )
+        webhook.status = ProcessingStatus.DUPLICATED
+        webhook.internal_notes = (
+            "webhooks.paypal.services.process_webhook_payload.duplicated_transaction",
+        )
         webhook.save()
         return
 
@@ -277,8 +292,6 @@ def process_webhook_payload(webhook):
         description_parts = (full_name, f"USD {usd_amount}", payer_id)
 
     description = " - ".join([part for part in description_parts if part])
-
-    reference = jmespath.search("resource.id", payload)
 
     with transaction.atomic():
         bank_fee_category, _ = Category.objects.get_or_create(name="Tarifas Bancárias")
