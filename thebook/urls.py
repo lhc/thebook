@@ -31,4 +31,8 @@ urlpatterns = [
         include("thebook.reimbursements.urls", namespace="reimbursements"),
     ),
     path("webhooks/", include("thebook.webhooks.urls", namespace="webhooks")),
+    path(
+        "fornecedores/",
+        include("thebook.fornecedores.urls", namespace="fornecedores"),
+    ),
 ] + debug_toolbar_urls()
