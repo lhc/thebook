@@ -56,7 +56,7 @@ build-backend = "poetry.core.masonry.api"
 collectstatic = "python manage.py collectstatic"
 makemigrations = "python manage.py makemigrations"
 migrate = "python manage.py migrate"
-run = "OTEL_PYTHON_DJANGO_INSTRUMENT=False python manage.py runserver --nostatic"
+run = "OTEL_PYTHON_DJANGO_INSTRUMENT=False python manage.py runserver"
 shell = "python manage.py shell"
 test = "pytest -s --cov=thebook"
 
