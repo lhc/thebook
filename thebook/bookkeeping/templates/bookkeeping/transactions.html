@@ -389,6 +389,7 @@
       let table = $("#transactions").DataTable(
         {
           pageLength: 150,
+          order: [], // Keep original ordering
           columnDefs: [
             { type: "custom-brl-sort", targets: 2 },
             { orderable: false, targets: 5 }

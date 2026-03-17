@@ -232,6 +232,33 @@ def test_bank_account_transactions_context_without_year_and_valid_month(
     assert transaction_3 in context["transactions"]
 
 
+def test_bank_account_transactions_context__transactions_ordered_by_date_by_default(
+    db, bank_account_1
+):
+    transaction_1 = baker.make(
+        Transaction, bank_account=bank_account_1, date=datetime.date(2026, 3, 10)
+    )
+    transaction_2 = baker.make(
+        Transaction, bank_account=bank_account_1, date=datetime.date(2026, 3, 12)
+    )
+    transaction_3 = baker.make(
+        Transaction, bank_account=bank_account_1, date=datetime.date(2026, 3, 5)
+    )
+    transaction_4 = baker.make(
+        Transaction, bank_account=bank_account_1, date=datetime.date(2026, 3, 11)
+    )
+
+    context = _get_bank_account_transactions_context(bank_account_1, month=1)
+
+    assert len(context["transactions"]) == 4
+    transactions = context["transactions"]
+
+    assert transactions[0] == transaction_3
+    assert transactions[1] == transaction_1
+    assert transactions[2] == transaction_4
+    assert transactions[3] == transaction_2
+
+
 @pytest.mark.parametrize(
     "year,month,expected_year,expected_month",
     [
