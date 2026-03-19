@@ -2,7 +2,7 @@ import logging
 
 from django.utils.translation import gettext as _
 
-from thebook.bookkeeping.importers.csv import CSVCoraCreditCardImporter, CSVImporter
+from thebook.bookkeeping.importers.csv import CSVImporter
 from thebook.bookkeeping.importers.ofx import OFXImporter
 from thebook.bookkeeping.models import Transaction
 from thebook.integrations.cora.credit_card_invoice import CoraCreditCardInvoiceImporter
