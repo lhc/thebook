@@ -106,6 +106,7 @@ INSTALLED_APPS = [
     "django_structlog",
     "taggit",
     "thebook.bookkeeping",
+    "thebook.integrations",
     "thebook.members",
     "thebook.reimbursements",
     "thebook.users",
@@ -264,6 +265,8 @@ PAYPAL_BANK_ACCOUNT = "PayPal"
 PAYPAL_API_BASE_URL = config("PAYPAL_API_BASE_URL", default="https://api-m.paypal.com")
 PAYPAL_CLIENT_ID = config("PAYPAL_CLIENT_ID", default="")
 PAYPAL_CLIENT_SECRET = config("PAYPAL_CLIENT_SECRET", default="")
+
+CORA_CREDIT_CARD_BANK_ACCOUNT = "Cora - Cartão de Crédito"
 
 OPENPIX_BANK_ACCOUNT = "OpenPix"
 OPENPIX_API_BASE_URL = config(
