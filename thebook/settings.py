@@ -266,6 +266,7 @@ PAYPAL_API_BASE_URL = config("PAYPAL_API_BASE_URL", default="https://api-m.paypa
 PAYPAL_CLIENT_ID = config("PAYPAL_CLIENT_ID", default="")
 PAYPAL_CLIENT_SECRET = config("PAYPAL_CLIENT_SECRET", default="")
 
+CORA_BANK_ACCOUNT = "Cora"
 CORA_CREDIT_CARD_BANK_ACCOUNT = "Cora - Cartão de Crédito"
 
 OPENPIX_BANK_ACCOUNT = "OpenPix"

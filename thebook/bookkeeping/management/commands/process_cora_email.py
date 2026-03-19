@@ -4,6 +4,7 @@ import io
 
 from decouple import config
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand, CommandError
 
@@ -15,10 +16,7 @@ class Command(BaseCommand):
     help = "Check inbox for Cora OFX files and import them"
 
     def handle(self, *args, **options):
-        cora_bank_account = BankAccount.objects.get(name="Cora")
-        User = get_user_model()
-
-        user = User.objects.get_or_create_automation_user()
+        user = get_user_model().objects.get_or_create_automation_user()
 
         M = imaplib.IMAP4_SSL(config("CORA_EMAIL_HOST_IMAP"))
         M.login(config("CORA_EMAIL_HOST_USER"), config("CORA_EMAIL_HOST_PASSWORD"))
@@ -30,14 +28,27 @@ class Command(BaseCommand):
             typ, data = M.fetch(msgnum, "(RFC822)")
             raw_email_string = data[0][1].decode("utf-8")
             message = email.message_from_string(raw_email_string)
-
             for part in message.walk():
-                is_attachment = part.get_filename()
-                if is_attachment:
+                attachment_filename = part.get_filename()
+                if attachment_filename is not None:
+                    if attachment_filename.endswith(".ofx"):
+                        file_type = "ofx"
+                        bank_account, _ = BankAccount.objects.get_or_create(
+                            name=settings.CORA_BANK_ACCOUNT
+                        )
+                    elif attachment_filename.endswith(".csv"):
+                        file_type = "csv_cora_credit_card"
+                        bank_account, _ = BankAccount.objects.get_or_create(
+                            name=settings.CORA_CREDIT_CARD_BANK_ACCOUNT
+                        )
+                    else:
+                        # Unable to process this attachment
+                        continue
+
                     attachment_content = part.get_payload(decode=True)
-                    ofx_file = io.BytesIO(attachment_content)
+                    file_content = io.BytesIO(attachment_content)
                     import_transactions(
-                        ofx_file, "ofx", cora_bank_account, user, None, None
+                        file_content, file_type, bank_account, user, None, None
                     )
 
                     M.copy(msgnum, "CoraProcessed")
