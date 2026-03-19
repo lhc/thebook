@@ -59,7 +59,7 @@ class CoraCreditCardInvoiceImporter:
     ) -> list[Transaction]:
         transactions = []
 
-        csv_content = self.invoice_file.read()
+        csv_content = self.invoice_file.read().decode()
         reader = csv.DictReader(io.StringIO(csv_content))
 
         if set(reader.fieldnames) != self._expected_field_names:
@@ -82,7 +82,10 @@ class CoraCreditCardInvoiceImporter:
             if (
                 exclude_existing
                 and Transaction.objects.filter(
-                    date=transaction_date, description=description, amount=amount
+                    date=transaction_date,
+                    description=description,
+                    amount=amount,
+                    bank_account=self.bank_account,
                 ).exists()
             ):
                 continue

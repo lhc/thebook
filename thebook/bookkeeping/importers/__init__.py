@@ -4,6 +4,8 @@ from django.utils.translation import gettext as _
 
 from thebook.bookkeeping.importers.csv import CSVCoraCreditCardImporter, CSVImporter
 from thebook.bookkeeping.importers.ofx import OFXImporter
+from thebook.bookkeeping.models import Transaction
+from thebook.integrations.cora.credit_card_invoice import CoraCreditCardInvoiceImporter
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +25,7 @@ def import_transactions(
 ):
     importers = {
         "csv": CSVImporter,
-        "csv_cora_credit_card": CSVCoraCreditCardImporter,
+        "csv_cora_credit_card": CoraCreditCardInvoiceImporter,
         "ofx": OFXImporter,
     }
     importer = importers.get(file_type) or None
@@ -33,7 +35,19 @@ def import_transactions(
         )
 
     try:
-        importer(transactions_file, bank_account, user).run(start_date, end_date)
+        if file_type == "csv_cora_credit_card":
+            csv_importer = importer(transactions_file)
+            transactions = csv_importer.get_transactions(
+                start_date, end_date, exclude_existing=True
+            )
+            Transaction.objects.bulk_create(
+                transactions,
+                update_conflicts=True,
+                update_fields=["description", "amount"],
+                unique_fields=["reference"],
+            )
+        else:
+            importer(transactions_file, bank_account, user).run(start_date, end_date)
     except Exception as err:
         logger.exception(err)
         raise ImportTransactionsError(_("Something wrong happened during file import."))

@@ -42,7 +42,7 @@ class TestCoraCreditCardInvoiceImporter:
         invoice_file_path = (
             request.path.parent / "data" / "empty-cora-credit-card-invoice.csv"
         )
-        with open(invoice_file_path, "r") as invoice_file:
+        with open(invoice_file_path, "rb") as invoice_file:
             importer = CoraCreditCardInvoiceImporter(invoice_file)
             transactions = importer.get_transactions()
             assert transactions == []
@@ -51,7 +51,7 @@ class TestCoraCreditCardInvoiceImporter:
         invoice_file_path = (
             request.path.parent / "data" / "invalid-cora-credit-card-invoice.csv"
         )
-        with open(invoice_file_path, "r") as invoice_file:
+        with open(invoice_file_path, "rb") as invoice_file:
             importer = CoraCreditCardInvoiceImporter(invoice_file)
 
             with pytest.raises(InvalidCoraCreditCardInvoice):
@@ -65,7 +65,7 @@ class TestCoraCreditCardInvoiceImporter:
             / "data"
             / "cora-credit-card-invoice-one-transaction.csv"
         )
-        with open(invoice_file_path, "r") as invoice_file:
+        with open(invoice_file_path, "rb") as invoice_file:
             importer = CoraCreditCardInvoiceImporter(invoice_file)
             transactions = importer.get_transactions()
 
@@ -81,7 +81,30 @@ class TestCoraCreditCardInvoiceImporter:
             assert transactions[0].source == "cora-credit-card-invoice-importer"
             assert transactions[0].created_by == user
 
-    def test_one_transaction_excluding_existing_true(self, db, request):
+    def test_one_transaction_excluding_existing_true(
+        self, db, request, cora_credit_card_bank_account
+    ):
+        baker.make(
+            Transaction,
+            date=datetime.date(2026, 2, 21),
+            description="BACKBLAZE INC",
+            amount=decimal.Decimal("-8.91"),
+            bank_account=cora_credit_card_bank_account,
+        )
+
+        invoice_file_path = (
+            request.path.parent
+            / "data"
+            / "cora-credit-card-invoice-one-transaction.csv"
+        )
+        with open(invoice_file_path, "rb") as invoice_file:
+            importer = CoraCreditCardInvoiceImporter(invoice_file)
+            transactions = importer.get_transactions(exclude_existing=True)
+            assert len(transactions) == 0
+
+    def test_one_transaction_from_different_bank_account(
+        self, db, request, cora_credit_card_bank_account
+    ):
         baker.make(
             Transaction,
             date=datetime.date(2026, 2, 21),
@@ -94,17 +117,20 @@ class TestCoraCreditCardInvoiceImporter:
             / "data"
             / "cora-credit-card-invoice-one-transaction.csv"
         )
-        with open(invoice_file_path, "r") as invoice_file:
+        with open(invoice_file_path, "rb") as invoice_file:
             importer = CoraCreditCardInvoiceImporter(invoice_file)
             transactions = importer.get_transactions(exclude_existing=True)
-            assert len(transactions) == 0
+            assert len(transactions) == 1
 
-    def test_two_transactions_excluding_existing_true(self, db, request):
+    def test_two_transactions_excluding_existing_true(
+        self, db, request, cora_credit_card_bank_account
+    ):
         baker.make(
             Transaction,
             date=datetime.date(2026, 2, 21),
             description="BACKBLAZE INC",
             amount=decimal.Decimal("-8.91"),
+            bank_account=cora_credit_card_bank_account,
         )
 
         invoice_file_path = (
@@ -112,19 +138,22 @@ class TestCoraCreditCardInvoiceImporter:
             / "data"
             / "cora-credit-card-invoice-two-transactions.csv"
         )
-        with open(invoice_file_path, "r") as invoice_file:
+        with open(invoice_file_path, "rb") as invoice_file:
             importer = CoraCreditCardInvoiceImporter(invoice_file)
             transactions = importer.get_transactions(exclude_existing=True)
 
             assert len(transactions) == 1
             assert transactions[0].description == "VULTR BY CONSTANT"
 
-    def test_two_transactions_excluding_existing_false(self, db, request):
+    def test_two_transactions_excluding_existing_false(
+        self, db, request, cora_credit_card_bank_account
+    ):
         baker.make(
             Transaction,
             date=datetime.date(2026, 2, 21),
             description="BACKBLAZE INC",
             amount=decimal.Decimal("-8.91"),
+            bank_account=cora_credit_card_bank_account,
         )
 
         invoice_file_path = (
@@ -132,7 +161,7 @@ class TestCoraCreditCardInvoiceImporter:
             / "data"
             / "cora-credit-card-invoice-two-transactions.csv"
         )
-        with open(invoice_file_path, "r") as invoice_file:
+        with open(invoice_file_path, "rb") as invoice_file:
             importer = CoraCreditCardInvoiceImporter(invoice_file)
             transactions = importer.get_transactions(exclude_existing=False)
 
@@ -173,7 +202,7 @@ class TestCoraCreditCardInvoiceImporter:
             / "data"
             / "cora-credit-card-invoice-multiple-transactions.csv"
         )
-        with open(invoice_file_path, "r") as invoice_file:
+        with open(invoice_file_path, "rb") as invoice_file:
             importer = CoraCreditCardInvoiceImporter(invoice_file)
             transactions = importer.get_transactions(
                 start_date=start_date, end_date=end_date
