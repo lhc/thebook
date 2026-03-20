@@ -4,10 +4,14 @@ import decimal
 import io
 import uuid
 
+import structlog
+
 from django.conf import settings
 from django.contrib.auth import get_user_model
 
 from thebook.bookkeeping.models import BankAccount, Transaction
+
+logger = structlog.get_logger(__name__)
 
 
 class InvalidCoraCreditCardInvoice(Exception): ...
@@ -57,12 +61,25 @@ class CoraCreditCardInvoiceImporter:
         end_date: datetime.date = None,
         exclude_existing: bool = True,
     ) -> list[Transaction]:
+        logger.info(
+            "CoraCreditCardInvoiceImporter.get_transactions.start",
+            start_date=start_date,
+            end_date=end_date,
+            exclude_existing=exclude_existing,
+        )
+
         transactions = []
 
         csv_content = self.invoice_file.read().decode()
         reader = csv.DictReader(io.StringIO(csv_content))
 
         if set(reader.fieldnames) != self._expected_field_names:
+            logger.error(
+                "CoraCreditCardInvoiceImporter.get_transactions.invalid_cora_credit_card_invoice",
+                start_date=start_date,
+                end_date=end_date,
+                exclude_existing=exclude_existing,
+            )
             raise InvalidCoraCreditCardInvoice
 
         for transaction in reader:
@@ -103,4 +120,8 @@ class CoraCreditCardInvoiceImporter:
                 )
             )
 
+        logger.info(
+            "CoraCreditCardInvoiceImporter.get_transactions.completed",
+            num_transactions=len(transactions),
+        )
         return transactions
