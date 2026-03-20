@@ -1,11 +1,13 @@
 import logging
 
+from django.conf import settings
 from django.utils.translation import gettext as _
 
 from thebook.bookkeeping.importers.csv import CSVImporter
 from thebook.bookkeeping.importers.ofx import OFXImporter
-from thebook.bookkeeping.models import Transaction
+from thebook.bookkeeping.models import BankAccount, Transaction
 from thebook.integrations.cora.credit_card_invoice import CoraCreditCardInvoiceImporter
+from thebook.integrations.cora.ofx_importer import CoraOFXImporter
 
 logger = logging.getLogger(__name__)
 
@@ -23,12 +25,21 @@ class InvalidOFXFile(Exception):
 def import_transactions(
     transactions_file, file_type, bank_account, user, start_date, end_date
 ):
-    importers = {
-        "csv": CSVImporter,
-        "csv_cora_credit_card": CoraCreditCardInvoiceImporter,
-        "ofx": OFXImporter,
-    }
-    importer = importers.get(file_type) or None
+    cora_bank_account, _ = BankAccount.objects.get_or_create(
+        name=settings.CORA_BANK_ACCOUNT
+    )
+
+    importer = None
+    if file_type == "csv":
+        importer = CSVImporter
+    elif file_type == "csv_cora_credit_card":
+        importer = CoraCreditCardInvoiceImporter
+    elif file_type == "ofx":
+        if bank_account == cora_bank_account:
+            importer = CoraOFXImporter
+        else:
+            importer = OFXImporter
+
     if importer is None:
         raise ImportTransactionsError(
             _("Unable to find a suitable file importer for this file.")
@@ -38,6 +49,17 @@ def import_transactions(
         if file_type == "csv_cora_credit_card":
             csv_importer = importer(transactions_file)
             transactions = csv_importer.get_transactions(
+                start_date, end_date, exclude_existing=True
+            )
+            Transaction.objects.bulk_create(
+                transactions,
+                update_conflicts=True,
+                update_fields=["description", "amount"],
+                unique_fields=["reference"],
+            )
+        elif file_type == "ofx" and bank_account == cora_bank_account:
+            ofx_importer = importer(transactions_file)
+            transactions = ofx_importer.get_transactions(
                 start_date, end_date, exclude_existing=True
             )
             Transaction.objects.bulk_create(

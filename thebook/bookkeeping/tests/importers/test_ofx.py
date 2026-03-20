@@ -28,25 +28,6 @@ def test_raise_error_when_providing_invalid_ofx_file(db, bank_account, user):
         ofx_importer = OFXImporter(invalid_ofx_file, bank_account, user)
 
 
-def test_cora_ofx_file_with_one_transaction(db, request, bank_account, user):
-    ofx_file_path = request.path.parent / "data" / "cora-one-transaction.ofx"
-    with open(ofx_file_path, "r") as ofx_file:
-        ofx_importer = OFXImporter(ofx_file, bank_account, user)
-
-        transactions = ofx_importer.run()
-
-        assert len(transactions) == 1
-        transaction = transactions[0]
-        assert transaction.reference == "16b3dab5-d1ca-41e1-87c2-a26920ae70ac"
-        assert transaction.date == datetime.date(2024, 8, 19)
-        assert transaction.description == "Debito em Conta"
-        assert transaction.amount == decimal.Decimal("-2500.50")
-        assert transaction.notes == ""
-        assert transaction.bank_account == bank_account
-        assert transaction.created_by == user
-        assert transaction.category is None
-
-
 def test_bradesco_ofx_file_with_one_transaction(db, request, bank_account, user):
     ofx_file_path = request.path.parent / "data" / "bradesco-one-transaction.ofx"
     with open(ofx_file_path, "r") as ofx_file:
@@ -66,29 +47,6 @@ def test_bradesco_ofx_file_with_one_transaction(db, request, bank_account, user)
         assert transaction.category is None
 
 
-def test_ofx_file_with_multiple_transactions(db, request, bank_account, user):
-    ofx_file_path = request.path.parent / "data" / "cora-multiple-transactions.ofx"
-    with open(ofx_file_path, "r") as ofx_file:
-        ofx_importer = OFXImporter(ofx_file, bank_account, user)
-
-        transactions = ofx_importer.run()
-
-        references = sorted([transaction.reference for transaction in transactions])
-        expected_references = sorted(
-            [
-                "3825c888-1017-497d-bee2-c0737d5dafc0",
-                "63c41497-5e0b-4a3c-ada1-d9abebb0af39",
-                "69b66fe5-0360-466c-b2e5-08efc1768389",
-                "39221b44-f648-44ec-b6d1-1d8eefe54e02",
-                "6b01e19f-fc2f-4ea7-b524-6f6c634aea63",
-            ]
-        )
-
-        assert len(transactions) == 5
-        assert Transaction.objects.count() == 5
-        assert references == expected_references
-
-
 def test_bradesco_ofx_file_with_multiple_transactions(db, request, bank_account, user):
     ofx_file_path = request.path.parent / "data" / "bradesco-multiple-transactions.ofx"
     with open(ofx_file_path, "r") as ofx_file:
@@ -98,122 +56,6 @@ def test_bradesco_ofx_file_with_multiple_transactions(db, request, bank_account,
 
         assert len(transactions) == 57
         assert Transaction.objects.count() == 57
-
-
-def test_import_same_ofx_file_twice_will_not_duplicate_transactions(
-    db, request, bank_account, user
-):
-    ofx_file_path = request.path.parent / "data" / "cora-multiple-transactions.ofx"
-    with open(ofx_file_path, "r") as ofx_file:
-        ofx_importer = OFXImporter(ofx_file, bank_account, user)
-        transactions = ofx_importer.run()
-        assert Transaction.objects.all().count() == 5
-
-    with open(ofx_file_path, "r") as ofx_file:
-        ofx_importer = OFXImporter(ofx_file, bank_account, user)
-        transactions = ofx_importer.run()
-        assert Transaction.objects.all().count() == 5
-
-
-def test_import_ofx_file_that_overlaps_other_already_imported_do_not_duplicate_transactions(
-    db, request, bank_account, user
-):
-    ofx_file_path = request.path.parent / "data" / "cora-multiple-transactions.ofx"
-    with open(ofx_file_path, "r") as ofx_file:
-        ofx_importer = OFXImporter(ofx_file, bank_account, user)
-        _ = ofx_importer.run()
-        assert Transaction.objects.all().count() == 5
-
-    ofx_file_path = (
-        request.path.parent / "data" / "cora-multiple-transactions-extended.ofx"
-    )
-    with open(ofx_file_path, "r") as ofx_file:
-        ofx_importer = OFXImporter(ofx_file, bank_account, user)
-        transactions = ofx_importer.run()
-    assert Transaction.objects.all().count() == 7
-
-    references = sorted([transaction.reference for transaction in transactions])
-    expected_references = sorted(
-        [
-            "3825c888-1017-497d-bee2-c0737d5dafc0",
-            "63c41497-5e0b-4a3c-ada1-d9abebb0af39",
-            "69b66fe5-0360-466c-b2e5-08efc1768389",
-            "39221b44-f648-44ec-b6d1-1d8eefe54e02",
-            "6b01e19f-fc2f-4ea7-b524-6f6c634aea63",
-            "b3950c28-8b64-49ed-bdfb-d83a4df39c96",
-            "f5098c7d-81f0-44d9-b0f7-3b8eadee5c34",
-        ]
-    )
-
-    assert len(transactions) == 7
-    assert references == expected_references
-
-
-def test_ofx_file_with_multiple_transactions_filter_by_start_date(
-    db, request, bank_account, user
-):
-    ofx_file_path = request.path.parent / "data" / "cora-multiple-transactions.ofx"
-    with open(ofx_file_path, "r") as ofx_file:
-        ofx_importer = OFXImporter(ofx_file, bank_account, user)
-
-        transactions = ofx_importer.run(start_date=datetime.date(2024, 8, 25))
-
-        references = sorted([transaction.reference for transaction in transactions])
-        expected_references = sorted(
-            [
-                "69b66fe5-0360-466c-b2e5-08efc1768389",
-                "39221b44-f648-44ec-b6d1-1d8eefe54e02",
-                "6b01e19f-fc2f-4ea7-b524-6f6c634aea63",
-            ]
-        )
-
-        assert len(transactions) == 3
-        assert references == expected_references
-
-
-def test_ofx_file_with_multiple_transactions_filter_by_end_date(
-    db, request, bank_account, user
-):
-    ofx_file_path = request.path.parent / "data" / "cora-multiple-transactions.ofx"
-    with open(ofx_file_path, "r") as ofx_file:
-        ofx_importer = OFXImporter(ofx_file, bank_account, user)
-
-        transactions = ofx_importer.run(end_date=datetime.date(2024, 8, 25))
-
-        references = sorted([transaction.reference for transaction in transactions])
-        expected_references = sorted(
-            [
-                "3825c888-1017-497d-bee2-c0737d5dafc0",
-                "63c41497-5e0b-4a3c-ada1-d9abebb0af39",
-            ]
-        )
-
-        assert len(transactions) == 2
-        assert references == expected_references
-
-
-def test_ofx_file_with_multiple_transactions_filter_by_start_date_and_end_date(
-    db, request, bank_account, user
-):
-    ofx_file_path = request.path.parent / "data" / "cora-multiple-transactions.ofx"
-    with open(ofx_file_path, "r") as ofx_file:
-        ofx_importer = OFXImporter(ofx_file, bank_account, user)
-
-        transactions = ofx_importer.run(
-            start_date=datetime.date(2024, 8, 24), end_date=datetime.date(2024, 9, 15)
-        )
-
-        references = sorted([transaction.reference for transaction in transactions])
-        expected_references = sorted(
-            [
-                "63c41497-5e0b-4a3c-ada1-d9abebb0af39",
-                "69b66fe5-0360-466c-b2e5-08efc1768389",
-                "39221b44-f648-44ec-b6d1-1d8eefe54e02",
-            ]
-        )
-
-        assert len(transactions) == 3
-        assert references == expected_references
 
 
 @pytest.mark.parametrize(
