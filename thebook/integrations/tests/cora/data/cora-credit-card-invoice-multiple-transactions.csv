@@ -1,0 +1,5 @@
+Data,Nome no Cartão,Final do Cartão,Categoria,Descrição,Moeda,Valor Moeda Local,Conversão Dólar na Data,Valor em Dólar,IOF,Valor
+01/03/2026,ACCOUNT HOLDER,8888,Lançamentos,FIRST        ,USD,"17,00","5,7224","17,00","3,40","100,69"
+21/03/2026,ACCOUNT HOLDER,8888,Lançamentos,SECOND            ,USD,"1,50","5,7366","1,50","0,30","8,91"
+01/04/2026,ACCOUNT HOLDER,8888,Lançamentos,THIRD        ,USD,"17,00","5,7224","17,00","3,40","100,69"
+21/04/2026,ACCOUNT HOLDER,8888,Lançamentos,FOURTH            ,USD,"1,50","5,7366","1,50","0,30","8,91"

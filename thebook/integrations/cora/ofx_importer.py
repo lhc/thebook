@@ -25,9 +25,6 @@ class CoraOFXImporter:
         except (UnicodeDecodeError, TypeError, ValueError) as exc:
             logger.error(
                 "CoraOFXImporter.__init__.invalid_cora_ofx_file",
-                start_date=start_date,
-                end_date=end_date,
-                exclude_existing=exclude_existing,
             )
             raise InvalidCoraOFXFile() from exc
 
