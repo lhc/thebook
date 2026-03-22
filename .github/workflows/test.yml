@@ -1,0 +1,43 @@
+name: Django CI Tests
+
+on:
+  push:
+    # Roda em pushes para qualquer branch
+    branches:
+      - '**'
+  pull_request:
+    # Roda em pull requests para qualquer branch
+    branches:
+      - '**'
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: latest
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+
+      - name: Install Dependencies
+        run: poetry install --no-interaction --no-root --with dev
+
+      - name: Run Django Tests
+        # Executa python manage.py test através do poetry
+        run: poetry run python manage.py test
+        env:
+          # Variáveis de ambiente genéricas necessárias para os testes passarem no CI
+          SECRET_KEY: "dummy-secret-key-for-github-actions"
+          DEBUG: "True"
