@@ -41,3 +41,6 @@ jobs:
           # Variáveis de ambiente genéricas necessárias para os testes passarem no CI
           SECRET_KEY: "dummy-secret-key-for-github-actions"
           DEBUG: "True"
+          ALLOWED_HOSTS: "127.0.0.1,localhost"
+          REIMBURSEMENT_REQUEST_EMAILS: "admin@example.com"
+          DEFAULT_FROM_EMAIL: "noreply@example.com"
