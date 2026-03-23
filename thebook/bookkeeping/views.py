@@ -84,7 +84,7 @@ def _get_bank_account_transactions_context(bank_account, *, year=None, month=Non
 
     transactions = bank_account.transactions.select_related(
         "category"
-    ).prefetch_related("documents")
+    ).prefetch_related("documents", "tags")
     if year:
         transactions = transactions.filter(date__year=year)
         if month in range(1, 13):
