@@ -44,3 +44,4 @@ jobs:
           ALLOWED_HOSTS: "127.0.0.1,localhost"
           REIMBURSEMENT_REQUEST_EMAILS: "admin@example.com"
           DEFAULT_FROM_EMAIL: "noreply@example.com"
+          STORAGES: '{"default": {"BACKEND": "django.core.files.storage.FileSystemStorage"}, "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"}}'

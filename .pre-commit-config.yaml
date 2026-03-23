@@ -17,4 +17,12 @@ repos:
     rev: 25.1.0
     hooks:
     -   id: black
-        language_version: python3.12
+-   repo: local
+    hooks:
+    -   id: run-tests
+        name: Run Django Tests
+        entry: poetry run python manage.py test
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-push]
