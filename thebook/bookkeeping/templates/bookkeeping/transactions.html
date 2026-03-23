@@ -173,7 +173,12 @@
             <td {% if transaction.amount < 0 %}class="text-danger"{% endif %}>
               {{ transaction.amount|money }}
             </td>
-            <td>{{ transaction.description }}</td>
+            <td>
+              {{ transaction.description }}
+              {% for tag in transaction.tags.all %}
+                <span class="badge badge-primary">{{ tag }}</span>&nbsp;
+              {% endfor %}
+            </td>
             <td>{{ transaction.category }}</td>
             <td style="display: block; text-align: center;">
               <a href="{% url 'admin:bookkeeping_transaction_change' transaction.id %}">
