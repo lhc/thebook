@@ -26,6 +26,16 @@
         <img class="img-profile rounded-circle"
              src="{% static 'img/undraw_profile_1.svg' %}" />
       </a>
+      <!-- Dropdown - User Information -->
+      <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+           aria-labelledby="userDropdown">
+        <form method="post" action="{% url 'logout' %}">
+          {% csrf_token %}
+          <button type="submit" class="dropdown-item">
+            Logout
+          </button>
+        </form>
+      </div>
     </li>
   </ul>
 </nav>
