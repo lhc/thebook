@@ -10,7 +10,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 
 from thebook.bookkeeping.models import BankAccount, Category, Transaction
-from thebook.webhooks.paypal.services import fetch_transactions
+from thebook.integrations.paypal.services import fetch_transactions
 
 SAMPLE_PAYLOADS_DIR = Path(__file__).parent / "sample_payloads"
 
