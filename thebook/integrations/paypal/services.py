@@ -1,10 +1,36 @@
 import datetime
+import decimal
 
 import jmespath
+import requests
 
 from django.conf import settings
+from django.contrib.auth import get_user_model
 
 from thebook.bookkeeping.models import BankAccount, Category, Transaction
+
+
+def _get_paypal_access_token():
+    response = requests.post(
+        f"{settings.PAYPAL_API_BASE_URL}/v1/oauth2/token",
+        data={
+            "grant_type": "client_credentials",
+        },
+        auth=(settings.PAYPAL_CLIENT_ID, settings.PAYPAL_CLIENT_SECRET),
+    )
+    auth_data = response.json()
+    return response.json().get("access_token") or ""
+
+
+def _get_subscription(billing_agreement_id, access_token=None):
+    if access_token is None:
+        access_token = _get_paypal_access_token()
+    response = requests.get(
+        f"{settings.PAYPAL_API_BASE_URL}/v1/billing/subscriptions/{billing_agreement_id}",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+    subscription = response.json()
+    return subscription
 
 
 def fetch_transactions(start_date: datetime.date, end_date: datetime.date):
