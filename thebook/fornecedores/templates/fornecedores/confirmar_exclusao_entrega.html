@@ -1,0 +1,29 @@
+{% extends "base/main.html" %}
+
+{% block content %}
+  <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Remover entrega</h1>
+    <a class="btn btn-secondary" href="{% url 'fornecedores:detalhar' fornecedor.id %}">
+      <i class="fas fa-arrow-left mr-1"></i> Cancelar
+    </a>
+  </div>
+
+  <div class="card shadow-sm border-left-danger">
+    <div class="card-body">
+      <p class="mb-4">
+        Tem certeza de que deseja excluir a entrega <strong>{{ entrega.titulo }}</strong>?
+        Essa operação não pode ser desfeita.
+      </p>
+
+      <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">
+          <i class="fas fa-trash-alt mr-1"></i> Sim, excluir
+        </button>
+        <a class="btn btn-outline-secondary" href="{% url 'fornecedores:detalhar' fornecedor.id %}">
+          Voltar sem excluir
+        </a>
+      </form>
+    </div>
+  </div>
+{% endblock content %}

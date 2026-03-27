@@ -6,8 +6,6 @@ from pathlib import Path
 from taggit.managers import TaggableManager
 
 from django.conf import settings
-from django.contrib.contenttypes.fields import GenericForeignKey
-from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.db.models import Sum
 from django.urls import reverse
@@ -113,6 +111,7 @@ class Category(models.Model):
 
 
 class CategoryMatchRule(models.Model):
+    priority = models.IntegerField(unique=True)
     pattern = models.CharField(max_length=512)
     category = models.ForeignKey("bookkeeping.Category", on_delete=models.CASCADE)
     value = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
@@ -130,7 +129,7 @@ class CategoryMatchRule(models.Model):
     tags = models.CharField(max_length=512, blank=True, null=True)
 
     def __str__(self):
-        return f"{self.pattern}"
+        return f"{self.pattern} ({self.priority})"
 
     class Meta:
         constraints = [
@@ -209,15 +208,6 @@ class Document(models.Model):
     document_file = models.FileField(upload_to=document_upload_path)
     notes = models.CharField(max_length=128)
 
-    content_type = models.ForeignKey(ContentType, null=True, on_delete=models.CASCADE)
-    object_id = models.PositiveBigIntegerField(null=True)
-    content_object = GenericForeignKey("content_type", "object_id")
-
-    class Meta:
-        indexes = [
-            models.Index(fields=["content_type", "object_id"]),
-        ]
-
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -244,11 +234,6 @@ class Transaction(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     notes = models.TextField(blank=True)
 
-    source = models.CharField(
-        blank=True,
-        default="",
-        help_text="Source of the transaction (e.g. manual, paypal-webhook, etc.)",
-    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -265,6 +250,15 @@ class Transaction(models.Model):
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
+    )
+
+    fornecedor = models.ForeignKey(
+        "fornecedores.Fornecedor",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name="Fornecedor",
+        related_name="transactions",
     )
 
     tags = TaggableManager(blank=True)
@@ -286,7 +280,7 @@ class Transaction(models.Model):
 
     def categorize(self, rules=None):
         if rules is None:
-            rules = CategoryMatchRule.objects.all()
+            rules = CategoryMatchRule.objects.order_by("priority")
 
         for rule in rules:
             self, applied = rule.apply_rule(self)

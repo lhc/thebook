@@ -49,6 +49,7 @@ class CategoryAdmin(admin.ModelAdmin): ...
 @admin.register(CategoryMatchRule)
 class CategoryMatchRuleAdmin(admin.ModelAdmin):
     list_display = [
+        "priority",
         "pattern",
         "category",
     ]
@@ -84,16 +85,19 @@ class TransactionAdmin(admin.ModelAdmin):
         "amount",
         "category",
         "bank_account",
+        "fornecedor",
         "tag_list",
     ]
     list_filter = [
         "bank_account",
         "category",
         "date",
+        "fornecedor",
     ]
     list_select_related = [
         "bank_account",
         "category",
+        "fornecedor",
     ]
     inlines = [
         DocumentInline,
