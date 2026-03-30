@@ -16,6 +16,8 @@ def calculate_openpix_fee(amount, transaction_type):
     on the amount received, the active account plan and the type of the transaction
     """
     fee = 0.0
+    if transaction_type == "REFUND":
+        return fee
 
     if transaction_type == "WITHDRAW":
         fee = -1
@@ -68,10 +70,23 @@ def fetch_transactions(start_date: datetime.date, end_date: datetime.date):
 
         transaction_type = jmespath.search("type", transaction)
         is_bank_account_transfer = transaction_type == "WITHDRAW"
+        is_refund = transaction_type == "REFUND"
         if is_bank_account_transfer:
             transaction_category = bank_account_transfer_category
             transaction_description = (
                 f"Transferência entre contas bancárias - {transaction_id}"
+            )
+            transaction_amount = -1 * transaction_amount
+        elif is_refund:
+            transaction_category = None
+            credit_party_name = (
+                jmespath.search("creditParty.holder.name", transaction) or ""
+            )
+            credit_party_tax_id = jmespath.search(
+                "creditParty.holder.taxID.taxID", transaction
+            )
+            transaction_description = (
+                f"Reembolso - {credit_party_name} - {credit_party_tax_id}"
             )
             transaction_amount = -1 * transaction_amount
         else:
@@ -97,17 +112,18 @@ def fetch_transactions(start_date: datetime.date, end_date: datetime.date):
             transaction_amount, transaction_type
         )
 
-        results.append(
-            Transaction(
-                reference=f"{transaction_id}-T",
-                date=transaction_date,
-                description=f"Taxa OpenPix - {transaction_description}",
-                amount=transaction_fee_amount,
-                bank_account=bank_account,
-                category=bank_fee_category,
-                source="openpix-fetch-transactions",
-                created_by=user,
+        if transaction_fee_amount != 0.0:
+            results.append(
+                Transaction(
+                    reference=f"{transaction_id}-T",
+                    date=transaction_date,
+                    description=f"Taxa OpenPix - {transaction_description}",
+                    amount=transaction_fee_amount,
+                    bank_account=bank_account,
+                    category=bank_fee_category,
+                    source="openpix-fetch-transactions",
+                    created_by=user,
+                )
             )
-        )
 
     return results

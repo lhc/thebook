@@ -1,0 +1,69 @@
+{
+  "pageInfo": {
+    "skip": 0,
+    "limit": 100,
+    "hasPreviousPage": false,
+    "hasNextPage": false
+  },
+  "status": "OK",
+  "transactions": [
+    {
+      "value": 10200,
+      "time": "2026-03-24T23:36:42.136Z",
+      "endToEndId": "D54811417202603242336EmE2DpJUiYc",
+      "status": "CONFIRMED",
+      "type": "REFUND",
+      "pixQrCode": {
+        "name": "MSVG9",
+        "value": 10200,
+        "comment": "good",
+        "identifier": "MSVG9",
+        "correlationID": "ABCD9",
+        "paymentLinkID": "4da5a308-cf3b-430b-8f71-66a565857703",
+        "createdAt": "2026-03-16T23:53:19.385Z",
+        "updatedAt": "2026-03-16T23:53:19.385Z"
+      },
+      "subType": "REFUND_SENT",
+      "debitParty": {
+        "pixKey": {
+          "pixKey": "e77996eb-d15e-46ea-99a7-3190af4e293e",
+          "type": "RANDOM"
+        },
+        "account": {
+          "branch": "0001",
+          "account": "987654",
+          "accountType": "TRAN"
+        },
+        "psp": {
+          "id": "11111111",
+          "name": "WOOVI IP LTDA."
+        },
+        "holder": {
+          "taxID": {
+            "taxID": "12345678000110",
+            "type": "BR:CNPJ"
+          }
+        }
+      },
+      "creditParty": {
+        "account": {
+          "branch": "0001",
+          "account": "12345678",
+          "accountType": "TRAN"
+        },
+        "psp": {
+          "id": "12345678",
+          "name": "NU PAGAMENTOS - IP"
+        },
+        "holder": {
+          "name": "John Doe",
+          "taxID": {
+            "taxID": "12345678910",
+            "type": "BR:CPF"
+          }
+        }
+      },
+      "createdAt": "2026-03-24T23:36:42.225Z"
+    }
+  ]
+}

@@ -22,6 +22,8 @@ from thebook.webhooks.openpix.services import calculate_openpix_fee
         ("FIXO", "PAYMENT", 630, -0.85),
         ("PERCENTUAL", "WITHDRAW", 630, -1),
         ("FIXO", "WITHDRAW", 630, -1),
+        ("FIXO", "REFUND", 630, 0.0),
+        ("PERCENTUAL", "REFUND", 630, 0.0),
     ],
 )
 def test_calculate_openpix_fee_based_on_selected_plan(

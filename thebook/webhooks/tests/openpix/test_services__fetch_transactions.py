@@ -77,6 +77,14 @@ def openpix_fetch_transactions__withdraw_transaction():
         return payload.read()
 
 
+@pytest.fixture
+def openpix__refund_transaction():
+    with open(
+        Path(SAMPLE_PAYLOADS_DIR / "openpix__refund_transaction.json"), "r"
+    ) as payload:
+        return payload.read()
+
+
 @responses.activate
 def test_fetch_multiple_transactions(
     db,
@@ -267,3 +275,32 @@ def test_fetch_withdraw_transaction(
     assert transactions[1].bank_account == openpix_bank_account
     assert transactions[1].category == bank_fee_category
     assert transactions[1].created_by == user
+
+
+@responses.activate
+def test_fetch_refund_transaction(
+    db,
+    openpix__refund_transaction,
+    openpix_bank_account,
+    user,
+):
+    responses.add(
+        responses.GET,
+        f"{settings.OPENPIX_API_BASE_URL}/api/v1/transaction",
+        body=openpix__refund_transaction,
+        content_type="application/json",
+    )
+
+    transactions = fetch_transactions(
+        start_date=datetime.date(2026, 3, 24), end_date=datetime.date(2026, 3, 26)
+    )
+
+    assert len(transactions) == 1
+
+    assert transactions[0].reference == "D54811417202603242336EmE2DpJUiYc"
+    assert transactions[0].date == datetime.date(2026, 3, 24)
+    assert transactions[0].description == "Reembolso - John Doe - 12345678910"
+    assert transactions[0].amount == Decimal("-102")
+    assert transactions[0].bank_account == openpix_bank_account
+    assert transactions[0].source == "openpix-fetch-transactions"
+    assert transactions[0].created_by == user
