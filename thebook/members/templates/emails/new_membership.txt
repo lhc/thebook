@@ -1,0 +1,12 @@
+Olá,
+
+Recebemos um novo cadastro de {{ membership.member.name }} no The Book.
+
+Caso esta pessoa já tenha realizado o processo de associação e se apresentado
+na Reunião de Conselho, por favor, ative o seu cadastro em:
+
+- https://thebook.lhc.net.br/admin/members/membership/
+
+Após a ativação deste cadastro, a pessoa receberá um e-mail contendo as informações
+necessárias sobre o hackerspace, além de instruções sobre como começar o pagamento
+da contribuição associativa.

@@ -21,9 +21,23 @@ def _send_onboarding_message(membership):
     )
 
 
+def _new_membership_created(membership):
+    send_mail(
+        "[thebook] Novo cadastro realizado",
+        render_to_string(
+            "emails/new_membership.txt",
+            context={"membership": membership},
+        ),
+        "noreply@lhc.net.br",
+        ["contato@lhc.net.br"],
+        fail_silently=False,
+    )
+
+
 @receiver(post_save, sender=Membership)
 def check_active_status(sender, instance, created, **kwargs):
     if created:
+        _new_membership_created(instance)
         instance.create_next_receivable_fee()
         return
 

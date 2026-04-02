@@ -20,6 +20,11 @@ https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=MTSKUDJM463
 Mensalmente - R$110 - via PayPal
 https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4WXUZR98BEF22
 
+> Estamos testando a opção de Pix Automático, onde o LHC inicia uma cobrança que será debitida da conta via Pix mensalmente
+> em um data pré-determinada. Caso queira usar essa opção, mande uma mensagem para contato@lhc.net.br para solicitar
+> mais informações. Porém por ser algo novo, alguns bancos não implementam corretamente o protocolo (até o momento sabemos que o
+> banco XP não funciona), então nem todas as contas podem ser cadastradas.
+
 # Estatuto e Regimento Interno
 
 O LHC é uma associação sem fins lucrativos. Desta maneira temos registrado um Estatuto e um Regimento Interno que definem todas as regras e burocracias necessárias para o funcionamento da Associação. Muito importante conhecer estes documentos.
