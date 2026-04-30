@@ -5,6 +5,7 @@ from thebook.members.models import (
     Member,
     MemberMetadata,
     Membership,
+    MembershipForm,
     ReceivableFee,
     ReceivableFeeTransactionMatchRule,
 )
@@ -74,4 +75,13 @@ class ReceivableFeeTransactionMatchRuleAdmin(admin.ModelAdmin):
     list_display = [
         "membership",
         "pattern",
+    ]
+
+
+@admin.register(MembershipForm)
+class MembershipFormAdmin(admin.ModelAdmin):
+    list_display = [
+        "uuid",
+        "email",
+        "valid_until",
     ]

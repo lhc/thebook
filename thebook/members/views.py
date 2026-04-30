@@ -29,3 +29,16 @@ def members_list(request):
         .order_by("name")
     )
     return render(request, "members/members.html", {"members": members})
+
+
+@login_not_required
+def membership_form(request, membership_form_uuid):
+    if request.method == "POST":
+        form = NewMemberForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse("login"))
+    else:
+        form = NewMemberForm()
+
+    return render(request, "members/new_member.html", {"form": form})

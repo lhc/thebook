@@ -2,6 +2,7 @@ import calendar
 import datetime
 import itertools
 import re
+import uuid
 
 from dateutil.relativedelta import relativedelta
 from localflavor.br.models import BRCPFField
@@ -9,6 +10,7 @@ from localflavor.br.models import BRCPFField
 from django.conf import settings
 from django.db import models
 from django.db.models import UniqueConstraint
+from django.urls import reverse
 from django.utils.functional import classproperty
 from django.utils.translation import gettext as _
 
@@ -371,3 +373,22 @@ class ReceivableFeeTransactionMatchRule(models.Model):
         "members.Membership",
         on_delete=models.CASCADE,
     )
+
+
+def get_valid_until():
+    return datetime.date.today() + datetime.timedelta(days=30)
+
+
+class MembershipForm(models.Model):
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    email = models.EmailField()
+    valid_until = models.DateField(default=get_valid_until)
+
+    @property
+    def is_still_valid(self):
+        return datetime.date.today() <= self.valid_until
+
+    def get_absolute_url(self):
+        return reverse(
+            "members:membership-form", kwargs={"membership_form_uuid": self.uuid}
+        )
