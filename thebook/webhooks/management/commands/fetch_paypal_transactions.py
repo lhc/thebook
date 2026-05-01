@@ -2,7 +2,7 @@ import datetime
 
 from django.core.management.base import BaseCommand
 
-from thebook.webhooks.paypal.services import fetch_transactions
+from thebook.integrations.paypal.services import fetch_transactions
 
 
 class Command(BaseCommand):
