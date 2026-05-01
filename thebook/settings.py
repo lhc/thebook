@@ -84,6 +84,7 @@ structlog.configure(
 ALLOWED_HOSTS = config(
     "ALLOWED_HOSTS",
     cast=lambda v: [s.strip() for s in v.split(",")],
+    default="123.0.0.1",
 )
 
 CSRF_TRUSTED_ORIGINS = config(
@@ -222,7 +223,7 @@ MESSAGE_TAGS = {
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
-STATIC_URL = config("STATIC_URL", default="static/")
+STATIC_URL = config("STATIC_URL", default="/static/")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -260,7 +261,7 @@ EMAIL_HOST = config("EMAIL_HOST", default="")
 EMAIL_PORT = config("EMAIL_PORT", default=587, cast=int)
 EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
-DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL")
+DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default="")
 
 PAYPAL_BANK_ACCOUNT = "PayPal"
 PAYPAL_API_BASE_URL = config("PAYPAL_API_BASE_URL", default="https://api-m.paypal.com")
