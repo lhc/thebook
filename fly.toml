@@ -5,7 +5,7 @@ console_command = '/code/manage.py shell'
 [build]
 
 [deploy]
-  release_command = 'python manage.py collectstatic --noinput && python manage.py migrate --noinput'
+  release_command = 'python manage.py collectstatic --noinput'
 
 [env]
   ALLOWED_HOSTS = 'thebook.lhc.net.br,thebook.fly.dev'
