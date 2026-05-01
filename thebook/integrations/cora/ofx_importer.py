@@ -5,12 +5,12 @@ import io
 import uuid
 
 import structlog
-from ofxparse import OfxParser
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
 
 from thebook.bookkeeping.models import BankAccount, Category, Transaction
+from thebook.utils.ofxparse import OfxParser
 
 logger = structlog.get_logger(__name__)
 

@@ -16,7 +16,6 @@ gunicorn = "^23.0.0"
 psycopg = {extras = ["binary"], version = "^3.2.3"}
 django-storages = {extras = ["s3"], version = "^1.14.4"}
 ofxtools = "^0.9.5"
-ofxparse = {git = "https://github.com/rennerocha/ofxparse.git", rev = "master"}
 django-taggit = "^6.1.0"
 setuptools = "^75.6.0"
 django-htmx = "^1.23.0"
@@ -32,6 +31,7 @@ django-structlog = "^10.0.0"
 orjson = "^3.11.5"
 django-localflavor = "^5.0"
 markdown = "^3.10.2"
+beautifulsoup4 = "^4.14.3"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"

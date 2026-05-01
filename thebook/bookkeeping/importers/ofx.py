@@ -2,13 +2,13 @@ from datetime import date, datetime
 from decimal import Decimal
 
 import structlog
-from ofxparse import OfxParser
 from ofxtools.Parser import OFXTree
 
 from django.conf import settings
 from django.db import IntegrityError
 
 from thebook.bookkeeping.models import Category, Transaction
+from thebook.utils.ofxparse import OfxParser
 
 logger = structlog.get_logger(__name__)
 
