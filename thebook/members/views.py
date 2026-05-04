@@ -1,10 +1,11 @@
 from django.contrib.auth.decorators import login_not_required
+from django.http import Http404
 from django.http.response import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 
 from thebook.members.forms import NewMemberForm
-from thebook.members.models import Member
+from thebook.members.models import Member, MembershipForm
 
 
 @login_not_required
@@ -33,6 +34,10 @@ def members_list(request):
 
 @login_not_required
 def membership_form(request, membership_form_uuid):
+    membership_form_obj = get_object_or_404(MembershipForm, uuid=membership_form_uuid)
+    if not membership_form_obj.is_still_valid:
+        raise Http404()
+
     if request.method == "POST":
         form = NewMemberForm(request.POST)
         if form.is_valid():

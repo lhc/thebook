@@ -20,17 +20,23 @@ def test_when_created_valid_until_set_to_30_days_from_today(db):
 
 
 @pytest.mark.parametrize(
-    "current_date,is_still_valid",
+    "current_date,processed,is_still_valid",
     [
-        (datetime.date(2026, 5, 15), True),
-        (datetime.date(2026, 5, 30), True),
-        (datetime.date(2026, 5, 31), False),
+        (datetime.date(2026, 5, 15), False, True),
+        (datetime.date(2026, 5, 30), False, True),
+        (datetime.date(2026, 5, 31), False, False),
+        (datetime.date(2026, 5, 15), True, False),
+        (datetime.date(2026, 5, 30), True, False),
+        (datetime.date(2026, 5, 31), True, False),
     ],
 )
-def test_check_if_membership_form_is_still_valid(db, current_date, is_still_valid):
+def test_check_if_membership_form_is_still_valid(
+    db, current_date, processed, is_still_valid
+):
     membership_form = MembershipForm(
         email="new_member@example.com",
         valid_until=datetime.date(2026, 5, 30),
+        processed=processed,
     )
     membership_form.save()
     membership_form.refresh_from_db()

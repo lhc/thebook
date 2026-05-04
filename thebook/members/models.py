@@ -383,10 +383,11 @@ class MembershipForm(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField()
     valid_until = models.DateField(default=get_valid_until)
+    processed = models.BooleanField(default=False)
 
     @property
     def is_still_valid(self):
-        return datetime.date.today() <= self.valid_until
+        return not self.processed and datetime.date.today() <= self.valid_until
 
     def get_absolute_url(self):
         return reverse(
