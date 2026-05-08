@@ -1,4 +1,4 @@
-name: Process Cora emails
+name: Cora - Process Mailbox
 
 on:
   workflow_dispatch:
@@ -7,11 +7,11 @@ on:
 
 jobs:
   schedule:
-    name: 💰 Process Cora emails
+    name: 📩 Cora - Process Mailbox
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: flyctl ssh console -C "python manage.py process_cora_email"
+      - run: flyctl ssh console -C "python manage.py cora__process_mailbox"
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}

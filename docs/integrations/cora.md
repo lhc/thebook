@@ -6,7 +6,7 @@ na conta bancária do Cora:
 - Importação do extrato com as transações em Conta-Corrente (automatizado)
 - Importação da fatura do Cartão de Crédito (semi-automatizado)
 
-## Extrato da Conta-Corrente
+## Extrato da Conta-Corrente (processo automatizado)
 
 O Cora não fornece nenhuma API ou Webhook que possamos utilizar para fazer a
 ingestão automática das transações realizadas na Conta-Corrente, porém é
@@ -25,24 +25,29 @@ manualmente podem ser encontradas [aqui](https://discourse.lhc.net.br/t/importar
 
 Atualmente o sistema do Cora está configurado para que o arquivo OFX do mês atual seja enviado
 semanalmente (todas as segundas-feira) para o endereço de e-mail thebook@lhc.net.br. A
-caixa de entrada deste endereço pode ser processada através do comando de
-gerenciamento localizado em `bookkeeping.management.process_cora_email` que irá verificar
-novos e-mails, baixar o extrato em OFX e importá-lo automaticamente.
+caixa de entrada deste endereço pode ser processada através da função
+`integrations.cora.services.process_mailbox`.
+
+Para simplificar o processo, podemos executar o comando de gerenciamento
+`python manage.py cora__process_mailbox` localizado em `integrations.management.commands.cora__process_mailbox.py` que irá executar esta função
+e processar as mensagens existentes.
 
 A execução deste comando de gerenciamento está sendo feita automaticamente semanalmente
-através do Github Actions definido em `.github/workflows/process_cora_email.yml`. Assim
+através do Github Actions definido em `.github/workflows/cora__process_mailbox.yml`. Assim
 não é necessário fazer o processamento destes arquivos manualmente e os dados da conta
 do Cora devem estar atualizados com os dados de pelo menos até a segunda-feira anterior
 mais próxima.
+
+> As seguintes variáveis de ambiente **devem estar configuradas** no ambiente onde esta função será executada, contendo as credenciais de acesso a conta de email: `CORA_EMAIL_HOST_IMAP`, `CORA_EMAIL_HOST_USER` e `CORA_EMAIL_HOST_PASSWORD`.
+
+O arquivo OFX do Cora é bem definido, sendo possível importar o mesmo arquivo múltiplas vezes
+e não ter nenhuma transação duplicada sendo inserida.
 
 > **É importante conferir se o processo está sendo realizado automaticamente. Caso perceba que
 estamos a mais de uma semana sem nenhuma transação, verifique se o sistema está funcionando
 corretamente.**
 
-O arquivo OFX do Cora é bem definido, sendo possível importar o mesmo arquivo múltiplas vezes
-e não ter nenhuma transação duplicada sendo inserida.
-
-## Fatura do Cartão de Crédito
+## Fatura do Cartão de Crédito (processo semi automatizado)
 
 O Cora não fornece nenhuma API, Webhook ou a possibilidade de enviar automaticamente
 um relatório das transações com Cartão de Crédito, porém é possível solicitar a
@@ -50,9 +55,7 @@ fatura em formato CSV manualmente para ser enviada para um e-mail determinado. E
 fatura pode ser importada no sistema de maneira manual através do importador
 `integrations.cora.importers.credit_card_invoice.CoraCreditCardInvoiceImporter`.
 
-Após solicitar o arquivo CSV no aplicativo do Cora e baixá-lo para o seu endereço de
-e-mail, você pode enviá-lo na página de transações do The Book, dentro
-da conta bancária "Cora - Cartão de Crédito" na opção "Import Credit Card Cora CSV".
+> Se você solicitar o envio deste arquivo para thebook@lhc.net.br, o mesmo processo de importação automático que ocorre com o extrato da conta-corrente (descrito na seção anterior) vai processar e importar o conteúdo da fatura. Porém não é possível que o envio do e-mail seja feito automaticamente pelo Cora, então é fundamental que ele seja solicitado manualmente ao menos uma vez ao mês.
 
 O arquivo CSV fornecido não possui um identificador único de cada transação, mas
 o importador está configurado para considerar qualquer transação com a mesma
