@@ -74,7 +74,7 @@ class OFXImporter:
                     description=transaction.memo,
                     amount=transaction.amount,
                     bank_account=self.bank_account,
-                    source="ofx-import",
+                    source="bradesco.importers.ofx",
                     created_by=self.user,
                 )
             )

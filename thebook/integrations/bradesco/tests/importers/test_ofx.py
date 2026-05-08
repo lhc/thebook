@@ -8,8 +8,8 @@ from model_bakery import baker
 from django.contrib.auth import get_user_model
 
 from thebook.bookkeeping.importers import InvalidOFXFile
-from thebook.bookkeeping.importers.ofx import OFXImporter
 from thebook.bookkeeping.models import BankAccount, Category, Transaction
+from thebook.integrations.bradesco.importers.ofx import OFXImporter
 
 
 @pytest.fixture
@@ -29,7 +29,7 @@ def test_raise_error_when_providing_invalid_ofx_file(db, bank_account, user):
 
 
 def test_bradesco_ofx_file_with_one_transaction(db, request, bank_account, user):
-    ofx_file_path = request.path.parent / "data" / "bradesco-one-transaction.ofx"
+    ofx_file_path = request.path.parent / "data" / "ofx-one-transaction.ofx"
     with open(ofx_file_path, "r") as ofx_file:
         ofx_importer = OFXImporter(ofx_file, bank_account, user)
 
@@ -48,7 +48,7 @@ def test_bradesco_ofx_file_with_one_transaction(db, request, bank_account, user)
 
 
 def test_bradesco_ofx_file_with_multiple_transactions(db, request, bank_account, user):
-    ofx_file_path = request.path.parent / "data" / "bradesco-multiple-transactions.ofx"
+    ofx_file_path = request.path.parent / "data" / "ofx-multiple-transactions.ofx"
     with open(ofx_file_path, "r") as ofx_file:
         ofx_importer = OFXImporter(ofx_file, bank_account, user)
 
@@ -88,7 +88,7 @@ def test_bradesco_ofx_file_with_multiple_transactions(db, request, bank_account,
 def test_ofx_file_ignoring_transactions_by_exact_description(
     db, request, bank_account, user, ignored_memos, expected_references
 ):
-    ofx_file_path = request.path.parent / "data" / "bradesco-with-memos-to-ignore.ofx"
+    ofx_file_path = request.path.parent / "data" / "ofx-with-memos-to-ignore.ofx"
     with open(ofx_file_path, "r") as ofx_file:
         ofx_importer = OFXImporter(ofx_file, bank_account, user)
 
@@ -129,9 +129,10 @@ def test_use_default_list_of_ignored_descriptions_if_not_provided(
     db, request, bank_account, user, default_ignored_memos, expected_references, mocker
 ):
     mocker.patch(
-        "thebook.bookkeeping.importers.ofx.DEFAULT_IGNORED_MEMOS", default_ignored_memos
+        "thebook.integrations.bradesco.importers.ofx.DEFAULT_IGNORED_MEMOS",
+        default_ignored_memos,
     )
-    ofx_file_path = request.path.parent / "data" / "bradesco-with-memos-to-ignore.ofx"
+    ofx_file_path = request.path.parent / "data" / "ofx-with-memos-to-ignore.ofx"
     with open(ofx_file_path, "r") as ofx_file:
         ofx_importer = OFXImporter(ofx_file, bank_account, user)
 

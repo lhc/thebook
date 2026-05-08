@@ -4,8 +4,8 @@ from django.conf import settings
 from django.utils.translation import gettext as _
 
 from thebook.bookkeeping.importers.csv import CSVImporter
-from thebook.bookkeeping.importers.ofx import OFXImporter
 from thebook.bookkeeping.models import BankAccount, Transaction
+from thebook.integrations.bradesco.importers.ofx import OFXImporter
 from thebook.integrations.cora.importers.credit_card_invoice import (
     CoraCreditCardInvoiceImporter,
 )
