@@ -71,7 +71,7 @@ def test_ofx_file_with_one_transaction(db, request, cora_bank_account, user):
         assert transactions[0].description == "Debito em Conta"
         assert transactions[0].amount == decimal.Decimal("-2500.50")
         assert transactions[0].notes == ""
-        assert transactions[0].source == "cora-ofx-importer"
+        assert transactions[0].source == "cora.importers.ofx"
         assert transactions[0].bank_account == cora_bank_account
         assert transactions[0].created_by == user
         assert transactions[0].category is None
@@ -224,7 +224,7 @@ def test_ofx_file_with_credit_card_invoice_pay(
             transactions[0].notes
             == f"Transferência entre contas bancárias - 3db4aa9c-af0d-4cf4-ba4f-fc4c3be4deae"
         )
-        assert transactions[0].source == "cora-ofx-importer"
+        assert transactions[0].source == "cora.importers.ofx"
         assert transactions[0].bank_account == cora_credit_card_bank_account
         assert transactions[0].created_by == user
         assert transactions[0].category == bank_account_transfer_category
@@ -241,7 +241,7 @@ def test_ofx_file_with_credit_card_invoice_pay(
             transactions[1].notes
             == f"Transferência entre contas bancárias - {transactions[0].reference}"
         )
-        assert transactions[1].source == "cora-ofx-importer"
+        assert transactions[1].source == "cora.importers.ofx"
         assert transactions[1].bank_account == cora_bank_account
         assert transactions[1].created_by == user
         assert transactions[1].category == bank_account_transfer_category

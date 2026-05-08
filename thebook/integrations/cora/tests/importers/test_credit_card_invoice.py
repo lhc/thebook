@@ -77,7 +77,7 @@ class TestCoraCreditCardInvoiceImporter:
             assert transactions[0].amount == decimal.Decimal("-8.91")
             assert transactions[0].notes == "BACKBLAZE INC - USD1,50"
             assert transactions[0].bank_account == cora_credit_card_bank_account
-            assert transactions[0].source == "cora-credit-card-invoice-importer"
+            assert transactions[0].source == "cora.importers.credit_card_invoice"
             assert transactions[0].created_by == user
 
     def test_one_transaction_excluding_existing_true(
