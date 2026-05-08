@@ -97,7 +97,7 @@ class CoraOFXImporter:
                         notes=f"Transferência entre contas bancárias - {transaction.id}",
                         bank_account=self.cora_credit_card_bank_account,
                         category=transaction_category,
-                        source="cora-ofx-importer",
+                        source="cora.importers.ofx",
                         created_by=self.user,
                     )
                 )
@@ -111,7 +111,7 @@ class CoraOFXImporter:
                     amount=transaction.amount,
                     bank_account=self.cora_bank_account,
                     category=transaction_category,
-                    source="cora-ofx-importer",
+                    source="cora.importers.ofx",
                     created_by=self.user,
                 )
             )

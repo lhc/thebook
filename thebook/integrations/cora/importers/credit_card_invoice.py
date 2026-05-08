@@ -116,7 +116,7 @@ class CoraCreditCardInvoiceImporter:
                     amount=amount,
                     notes=f"{description} - {currency}{amount_in_local_currency}",
                     bank_account=self.bank_account,
-                    source="cora-credit-card-invoice-importer",
+                    source="cora.importers.credit_card_invoice",
                     created_by=self.user,
                 )
             )

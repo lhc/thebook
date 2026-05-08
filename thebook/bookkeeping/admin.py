@@ -89,6 +89,7 @@ class TransactionAdmin(admin.ModelAdmin):
     list_filter = [
         "bank_account",
         "category",
+        "source",
         "date",
     ]
     list_select_related = [
