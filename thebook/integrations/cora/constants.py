@@ -1,0 +1,2 @@
+CORA_BANK_ACCOUNT = "Cora"
+CORA_CREDIT_CARD_BANK_ACCOUNT = "Cora - Cartão de Crédito"

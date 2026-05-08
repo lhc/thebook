@@ -9,7 +9,8 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 
 from thebook.bookkeeping.models import BankAccount, Transaction
-from thebook.integrations.cora.credit_card_invoice import (
+from thebook.integrations.cora.constants import CORA_CREDIT_CARD_BANK_ACCOUNT
+from thebook.integrations.cora.importers.credit_card_invoice import (
     CoraCreditCardInvoiceImporter,
     InvalidCoraCreditCardInvoice,
 )
@@ -28,7 +29,7 @@ class TestCoraCreditCardInvoiceImporter:
     @pytest.fixture
     def cora_credit_card_bank_account(self, db):
         bank_account, _ = BankAccount.objects.get_or_create(
-            name=settings.CORA_CREDIT_CARD_BANK_ACCOUNT
+            name=CORA_CREDIT_CARD_BANK_ACCOUNT
         )
         return bank_account
 
@@ -40,7 +41,7 @@ class TestCoraCreditCardInvoiceImporter:
         self, db, request, cora_credit_card_bank_account, user
     ):
         invoice_file_path = (
-            request.path.parent / "data" / "empty-cora-credit-card-invoice.csv"
+            request.path.parent / "data" / "credit-card-invoice-empty.csv"
         )
         with open(invoice_file_path, "rb") as invoice_file:
             importer = CoraCreditCardInvoiceImporter(invoice_file)
@@ -49,7 +50,7 @@ class TestCoraCreditCardInvoiceImporter:
 
     def test_invalid_invoice_file(self, db, request):
         invoice_file_path = (
-            request.path.parent / "data" / "invalid-cora-credit-card-invoice.csv"
+            request.path.parent / "data" / "credit-card-invoice-invalid.csv"
         )
         with open(invoice_file_path, "rb") as invoice_file:
             importer = CoraCreditCardInvoiceImporter(invoice_file)
@@ -61,9 +62,7 @@ class TestCoraCreditCardInvoiceImporter:
         self, db, request, cora_credit_card_bank_account, user
     ):
         invoice_file_path = (
-            request.path.parent
-            / "data"
-            / "cora-credit-card-invoice-one-transaction.csv"
+            request.path.parent / "data" / "credit-card-invoice-one-transaction.csv"
         )
         with open(invoice_file_path, "rb") as invoice_file:
             importer = CoraCreditCardInvoiceImporter(invoice_file)
@@ -93,9 +92,7 @@ class TestCoraCreditCardInvoiceImporter:
         )
 
         invoice_file_path = (
-            request.path.parent
-            / "data"
-            / "cora-credit-card-invoice-one-transaction.csv"
+            request.path.parent / "data" / "credit-card-invoice-one-transaction.csv"
         )
         with open(invoice_file_path, "rb") as invoice_file:
             importer = CoraCreditCardInvoiceImporter(invoice_file)
@@ -113,9 +110,7 @@ class TestCoraCreditCardInvoiceImporter:
         )
 
         invoice_file_path = (
-            request.path.parent
-            / "data"
-            / "cora-credit-card-invoice-one-transaction.csv"
+            request.path.parent / "data" / "credit-card-invoice-one-transaction.csv"
         )
         with open(invoice_file_path, "rb") as invoice_file:
             importer = CoraCreditCardInvoiceImporter(invoice_file)
@@ -134,9 +129,7 @@ class TestCoraCreditCardInvoiceImporter:
         )
 
         invoice_file_path = (
-            request.path.parent
-            / "data"
-            / "cora-credit-card-invoice-two-transactions.csv"
+            request.path.parent / "data" / "credit-card-invoice-two-transactions.csv"
         )
         with open(invoice_file_path, "rb") as invoice_file:
             importer = CoraCreditCardInvoiceImporter(invoice_file)
@@ -157,9 +150,7 @@ class TestCoraCreditCardInvoiceImporter:
         )
 
         invoice_file_path = (
-            request.path.parent
-            / "data"
-            / "cora-credit-card-invoice-two-transactions.csv"
+            request.path.parent / "data" / "credit-card-invoice-two-transactions.csv"
         )
         with open(invoice_file_path, "rb") as invoice_file:
             importer = CoraCreditCardInvoiceImporter(invoice_file)
@@ -200,7 +191,7 @@ class TestCoraCreditCardInvoiceImporter:
         invoice_file_path = (
             request.path.parent
             / "data"
-            / "cora-credit-card-invoice-multiple-transactions.csv"
+            / "credit-card-invoice-multiple-transactions.csv"
         )
         with open(invoice_file_path, "rb") as invoice_file:
             importer = CoraCreditCardInvoiceImporter(invoice_file)

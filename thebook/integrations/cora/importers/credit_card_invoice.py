@@ -10,6 +10,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 
 from thebook.bookkeeping.models import BankAccount, Transaction
+from thebook.integrations.cora.constants import CORA_CREDIT_CARD_BANK_ACCOUNT
 
 logger = structlog.get_logger(__name__)
 
@@ -38,7 +39,7 @@ class CoraCreditCardInvoiceImporter:
     def __init__(self, invoice_file):
         self.invoice_file = invoice_file
         self.bank_account, _ = BankAccount.objects.get_or_create(
-            name=settings.CORA_CREDIT_CARD_BANK_ACCOUNT
+            name=CORA_CREDIT_CARD_BANK_ACCOUNT
         )
         self.user = get_user_model().objects.get_or_create_automation_user()
 

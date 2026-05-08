@@ -6,10 +6,13 @@ import uuid
 
 import structlog
 
-from django.conf import settings
 from django.contrib.auth import get_user_model
 
 from thebook.bookkeeping.models import BankAccount, Category, Transaction
+from thebook.integrations.cora.constants import (
+    CORA_BANK_ACCOUNT,
+    CORA_CREDIT_CARD_BANK_ACCOUNT,
+)
 from thebook.utils.ofxparse import OfxParser
 
 logger = structlog.get_logger(__name__)
@@ -29,10 +32,10 @@ class CoraOFXImporter:
             raise InvalidCoraOFXFile() from exc
 
         self.cora_bank_account, _ = BankAccount.objects.get_or_create(
-            name=settings.CORA_BANK_ACCOUNT
+            name=CORA_BANK_ACCOUNT
         )
         self.cora_credit_card_bank_account, _ = BankAccount.objects.get_or_create(
-            name=settings.CORA_CREDIT_CARD_BANK_ACCOUNT
+            name=CORA_CREDIT_CARD_BANK_ACCOUNT
         )
         self.bank_account_transfer_category, _ = Category.objects.get_or_create(
             name="Transferência entre contas bancárias"

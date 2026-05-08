@@ -6,11 +6,14 @@ from uuid import UUID
 import pytest
 from model_bakery import baker
 
-from django.conf import settings
 from django.contrib.auth import get_user_model
 
 from thebook.bookkeeping.models import BankAccount, Category, Transaction
-from thebook.integrations.cora.ofx_importer import CoraOFXImporter, InvalidCoraOFXFile
+from thebook.integrations.cora.constants import (
+    CORA_BANK_ACCOUNT,
+    CORA_CREDIT_CARD_BANK_ACCOUNT,
+)
+from thebook.integrations.cora.importers.ofx import CoraOFXImporter, InvalidCoraOFXFile
 
 
 def valid_uuid(value):
@@ -23,14 +26,14 @@ def valid_uuid(value):
 
 @pytest.fixture
 def cora_bank_account(db):
-    bank_account, _ = BankAccount.objects.get_or_create(name=settings.CORA_BANK_ACCOUNT)
+    bank_account, _ = BankAccount.objects.get_or_create(name=CORA_BANK_ACCOUNT)
     return bank_account
 
 
 @pytest.fixture
 def cora_credit_card_bank_account(db):
     bank_account, _ = BankAccount.objects.get_or_create(
-        name=settings.CORA_CREDIT_CARD_BANK_ACCOUNT
+        name=CORA_CREDIT_CARD_BANK_ACCOUNT
     )
     return bank_account
 
@@ -55,7 +58,7 @@ def test_raise_error_when_providing_invalid_ofx_file(db):
 
 
 def test_ofx_file_with_one_transaction(db, request, cora_bank_account, user):
-    ofx_file_path = request.path.parent / "data" / "cora-one-transaction.ofx"
+    ofx_file_path = request.path.parent / "data" / "ofx-one-transaction.ofx"
     with open(ofx_file_path, "r") as ofx_file:
         ofx_importer = CoraOFXImporter(ofx_file)
 
@@ -75,7 +78,7 @@ def test_ofx_file_with_one_transaction(db, request, cora_bank_account, user):
 
 
 def test_ofx_file_with_multiple_transactions(db, request, cora_bank_account, user):
-    ofx_file_path = request.path.parent / "data" / "cora-multiple-transactions.ofx"
+    ofx_file_path = request.path.parent / "data" / "ofx-multiple-transactions.ofx"
     with open(ofx_file_path, "r") as ofx_file:
         ofx_importer = CoraOFXImporter(ofx_file)
 
@@ -99,7 +102,7 @@ def test_ofx_file_with_multiple_transactions(db, request, cora_bank_account, use
 def test_test_ofx_file_exclude_existing_true(db, request, cora_bank_account, user):
     baker.make(Transaction, reference="16b3dab5-d1ca-41e1-87c2-a26920ae70ac")
 
-    ofx_file_path = request.path.parent / "data" / "cora-one-transaction.ofx"
+    ofx_file_path = request.path.parent / "data" / "ofx-one-transaction.ofx"
     with open(ofx_file_path, "r") as ofx_file:
         ofx_importer = CoraOFXImporter(ofx_file)
 
@@ -111,7 +114,7 @@ def test_test_ofx_file_exclude_existing_true(db, request, cora_bank_account, use
 def test_test_ofx_file_exclude_existing_false(db, request, cora_bank_account, user):
     baker.make(Transaction, reference="16b3dab5-d1ca-41e1-87c2-a26920ae70ac")
 
-    ofx_file_path = request.path.parent / "data" / "cora-one-transaction.ofx"
+    ofx_file_path = request.path.parent / "data" / "ofx-one-transaction.ofx"
     with open(ofx_file_path, "r") as ofx_file:
         ofx_importer = CoraOFXImporter(ofx_file)
 
@@ -125,7 +128,7 @@ def test_test_ofx_file_exclude_existing_false(db, request, cora_bank_account, us
 def test_ofx_file_with_multiple_transactions_filter_by_start_date(
     db, request, cora_bank_account, user
 ):
-    ofx_file_path = request.path.parent / "data" / "cora-multiple-transactions.ofx"
+    ofx_file_path = request.path.parent / "data" / "ofx-multiple-transactions.ofx"
     with open(ofx_file_path, "r") as ofx_file:
         ofx_importer = CoraOFXImporter(ofx_file)
 
@@ -149,7 +152,7 @@ def test_ofx_file_with_multiple_transactions_filter_by_start_date(
 def test_ofx_file_with_multiple_transactions_filter_by_end_date(
     db, request, cora_bank_account, user
 ):
-    ofx_file_path = request.path.parent / "data" / "cora-multiple-transactions.ofx"
+    ofx_file_path = request.path.parent / "data" / "ofx-multiple-transactions.ofx"
     with open(ofx_file_path, "r") as ofx_file:
         ofx_importer = CoraOFXImporter(ofx_file)
 
@@ -172,7 +175,7 @@ def test_ofx_file_with_multiple_transactions_filter_by_end_date(
 def test_ofx_file_with_multiple_transactions_filter_by_start_date_and_end_date(
     db, request, cora_bank_account, user
 ):
-    ofx_file_path = request.path.parent / "data" / "cora-multiple-transactions.ofx"
+    ofx_file_path = request.path.parent / "data" / "ofx-multiple-transactions.ofx"
     with open(ofx_file_path, "r") as ofx_file:
         ofx_importer = CoraOFXImporter(ofx_file)
 
@@ -201,9 +204,7 @@ def test_ofx_file_with_credit_card_invoice_pay(
     bank_account_transfer_category,
     user,
 ):
-    ofx_file_path = (
-        request.path.parent / "data" / "cora-one-pay-credit-card-invoice.ofx"
-    )
+    ofx_file_path = request.path.parent / "data" / "ofx-one-pay-credit-card-invoice.ofx"
     with open(ofx_file_path, "r") as ofx_file:
         ofx_importer = CoraOFXImporter(ofx_file)
 

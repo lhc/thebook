@@ -17,14 +17,14 @@ uma determinada freqüência. A menor freqüência possível é semanal (toda se
 
 O The Book possui um importador capaz de processar os arquivos OFX gerados pelo
 sistema do Cora. Este importador está localizado em
-`bookkeeping.integrations.cora.ofx_importer.CoraOFXImporter`.
+`integrations.cora.importers.ofx.CoraOFXImporter`.
 
 Você pode enviar um desses arquivos manualmente na página de transações do The Book, dentro
 da conta bancária "Cora" na opção "Import OFX". Instruções detalhadas de como gerar o arquivo
 manualmente podem ser encontradas [aqui](https://discourse.lhc.net.br/t/importar-transa%C3%A7%C3%B5es-do-cora/1173).
 
 Atualmente o sistema do Cora está configurado para que o arquivo OFX do mês atual seja enviado
-semanalmente (todas as segunda-feira) para o endereço de e-mail thebook@lhc.net.br. A
+semanalmente (todas as segundas-feira) para o endereço de e-mail thebook@lhc.net.br. A
 caixa de entrada deste endereço pode ser processada através do comando de
 gerenciamento localizado em `bookkeeping.management.process_cora_email` que irá verificar
 novos e-mails, baixar o extrato em OFX e importá-lo automaticamente.
@@ -48,7 +48,7 @@ O Cora não fornece nenhuma API, Webhook ou a possibilidade de enviar automatica
 um relatório das transações com Cartão de Crédito, porém é possível solicitar a
 fatura em formato CSV manualmente para ser enviada para um e-mail determinado. Esta
 fatura pode ser importada no sistema de maneira manual através do importador
-`bookkeeping.integrations.cora.credit_card_invoce.CoraCreditCardInvoiceImporter`.
+`integrations.cora.importers.credit_card_invoice.CoraCreditCardInvoiceImporter`.
 
 Após solicitar o arquivo CSV no aplicativo do Cora e baixá-lo para o seu endereço de
 e-mail, você pode enviá-lo na página de transações do The Book, dentro

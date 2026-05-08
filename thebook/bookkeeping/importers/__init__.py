@@ -6,8 +6,10 @@ from django.utils.translation import gettext as _
 from thebook.bookkeeping.importers.csv import CSVImporter
 from thebook.bookkeeping.importers.ofx import OFXImporter
 from thebook.bookkeeping.models import BankAccount, Transaction
-from thebook.integrations.cora.credit_card_invoice import CoraCreditCardInvoiceImporter
-from thebook.integrations.cora.ofx_importer import CoraOFXImporter
+from thebook.integrations.cora.importers.credit_card_invoice import (
+    CoraCreditCardInvoiceImporter,
+)
+from thebook.integrations.cora.importers.ofx import CoraOFXImporter
 
 logger = logging.getLogger(__name__)
 
