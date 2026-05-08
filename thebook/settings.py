@@ -289,3 +289,5 @@ def show_callback(request):
 SHOW_TOOLBAR_CALLBACK = show_callback
 
 SITE_URL = config("SITE_URL", default="http://127.0.0.1:8000")
+
+MEDIA_ROOT = config("MEDIA_ROOT", default="")
