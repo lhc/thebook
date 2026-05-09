@@ -63,7 +63,7 @@ def process_mailbox():
                     # Unable to process this attachment type
                     continue
 
-                transactions = csv_importer.get_transactions(exclude_existing=True)
+                transactions = importer.get_transactions(exclude_existing=True)
                 Transaction.objects.bulk_create(
                     transactions,
                     update_conflicts=True,
