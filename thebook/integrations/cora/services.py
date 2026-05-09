@@ -9,7 +9,7 @@ from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand, CommandError
 
 from thebook.bookkeeping.importers import import_transactions
-from thebook.bookkeeping.models import BankAccount
+from thebook.bookkeeping.models import BankAccount, Transaction
 from thebook.integrations.cora.constants import (
     CORA_BANK_ACCOUNT,
     CORA_CREDIT_CARD_BANK_ACCOUNT,
