@@ -2,6 +2,7 @@ import email
 import imaplib
 import io
 
+import structlog
 from decouple import config
 
 from django.conf import settings
@@ -19,6 +20,8 @@ from thebook.integrations.cora.importers.credit_card_invoice import (
 )
 from thebook.integrations.cora.importers.ofx import CoraOFXImporter
 
+logger = structlog.get_logger(__name__)
+
 
 def process_mailbox():
     """
@@ -33,6 +36,8 @@ def process_mailbox():
     folder avoiding it to be processed multiple times.
     """
 
+    logger.info("integrations.cora.services.process_mailbox.start")
+
     M = imaplib.IMAP4_SSL(config("CORA_EMAIL_HOST_IMAP"))
     M.login(config("CORA_EMAIL_HOST_USER"), config("CORA_EMAIL_HOST_PASSWORD"))
     M.select(mailbox="INBOX")
@@ -40,6 +45,8 @@ def process_mailbox():
     typ, msgnums = M.search(None, "FROM", "naoresponda@cora.com.br")
 
     for msgnum in msgnums[0].split():
+        logger.info("integrations.cora.services.process_mailbox.processing_message")
+
         typ, data = M.fetch(msgnum, "(RFC822)")
         raw_email_string = data[0][1].decode("utf-8")
         message = email.message_from_string(raw_email_string)
@@ -76,3 +83,5 @@ def process_mailbox():
 
     M.close()
     M.logout()
+
+    logger.info("integrations.cora.services.process_mailbox.finished")
