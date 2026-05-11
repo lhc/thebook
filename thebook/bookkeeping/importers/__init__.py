@@ -6,6 +6,7 @@ from django.utils.translation import gettext as _
 from thebook.bookkeeping.importers.csv import CSVImporter
 from thebook.bookkeeping.models import BankAccount, Transaction
 from thebook.integrations.bradesco.importers.ofx import OFXImporter
+from thebook.integrations.cora.constants import CORA_BANK_ACCOUNT
 from thebook.integrations.cora.importers.credit_card_invoice import (
     CoraCreditCardInvoiceImporter,
 )
@@ -27,9 +28,7 @@ class InvalidOFXFile(Exception):
 def import_transactions(
     transactions_file, file_type, bank_account, user, start_date, end_date
 ):
-    cora_bank_account, _ = BankAccount.objects.get_or_create(
-        name=settings.CORA_BANK_ACCOUNT
-    )
+    cora_bank_account, _ = BankAccount.objects.get_or_create(name=CORA_BANK_ACCOUNT)
 
     importer = None
     if file_type == "csv":
