@@ -133,7 +133,7 @@ def bank_account_import_transactions(request, bank_account_slug):
 
     end_date = request.POST.get("end_date") or None
     if end_date is not None:
-        end_date = datetime.datetime.strptime(start_date, "%d/%m/%Y").date()
+        end_date = datetime.datetime.strptime(end_date, "%d/%m/%Y").date()
 
     try:
         file_type = request.POST["file_type"]
